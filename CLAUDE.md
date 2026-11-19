@@ -19,13 +19,16 @@ hosted on GitHub Pages: https://sclim999.github.io/kidlearning-/
 `ALL = {v:2, cur, kids:{id: S}, updatedAt}`; `S` is the current child, see `blank()` for every field:
 stars, bamboo (pet currency, +1 per star in `addStars`), days{YYYY-MM-DD:{stars,correct,wrong,mins,secs,rec,mc,sc,extra}},
 words{"lang:topic:en":{c,w,m}} (mastered at c>=3), math{}, sci{}, sessions[], pet{owned,wear,bg,fed,happy},
-adv{done{}}, missions{date,done[]}, settings (lang, subj, showZh, sound, goal, limit).
-Old saves are upgraded in `normalize()`; keep it backward compatible.
+adv{done{}}, missions{date,done[]}, custom[{id,name,lang,words[{w,zh,e}]}] (parent's school word lists), settings (lang, subj, showZh, sound, goal, limit).
+`ALL.lastBackup` = time of the last backup download.
+Old saves and imported backups are upgraded in `normalize()` / `fixKid()`; keep it backward compatible.
 Voice choices are per device in `momo-voice`.
 In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.claude.use('db')`; on GitHub Pages that is skipped and data stays on the device.
 
 ## Where things live in index.html
 - `TOPICS` — 11 English/BM word topics (Super Minds 1 Units 1–4 + BM everyday themes), each with `sent` sentence templates.
+- Custom word lists: `syncCustom()` (called in `render()`) turns `S.custom` into topics with id `my-<id>` and `only:<lang>`, appended to `TOPICS`. `BASE` = built-in topics only (album, duel, growth totals use it). Custom words may have no emoji: draw pictures with `pic(w)`, which falls back to the Chinese meaning. Word key uses `w.k||w.en`.
+- Backup: `exportData()` downloads `momo-backup-YYYY-MM-DD.json` (`{app:'momo-learn',data:ALL}`); `importData()` replaces `ALL` after a confirm.
 - `MODES` — word game modes: learn, listen, read, spell, sent, match, bubble (+ internal review/boss/math/sci).
 - `MG` — 8 maths games, `SG` — 7 science games. Each has `gen(level)` returning `{title, say, html(hint), opts[{v,l}], ans, explain, sayAns}`; they all run on the shared engine (`startMath`, `vMath`, `answer`).
 - `SHOP`, `BGS` — Momo pet items; `STATIONS`, `REGIONS` — adventure map (20 stations incl. 4 bosses); `MISSIONS` — daily real-life tasks; duel = `D`, `startDuel`, `vDuel`.
@@ -43,6 +46,5 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 Commit to `main`; GitHub Pages serves the repo root.
 
 ## Ideas not done yet
-- Export / import a child's progress (GitHub Pages version has no cross-device sync).
 - Align BM vocabulary exactly to the SJKC Year 1 Bahasa Melayu textbook units; Science 地球 (soil) unit.
 - Year 2 content.

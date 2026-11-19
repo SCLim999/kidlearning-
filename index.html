@@ -16,7 +16,7 @@
 :root{
   --bg:#DDF0FF; --dot:#C3E2FB; --surface:#FFFFFF; --ink:#2A2F6B; --muted:#6B70A8; --edge:#2A2F6B;
   --sun:#FFD23F; --pink:#FF8FB1; --mint:#6FD6A8; --sky:#5AB8FF; --line:#C9E2F7;
-  --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF;
+  --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF; --custom:#FFE9A8;
   /* skin shape tokens: border width, button/panel radius, shadows, press motion, page paper, font */
   --bw:3px; --rb:18px; --rp:28px; --shb:0 5px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(4px); --shp:none;
   --paper:radial-gradient(var(--dot) 2px, transparent 2.5px) 0 0/28px 28px, var(--bg);
@@ -131,6 +131,13 @@ h1,h2,h3{margin:0;line-height:1.15}
   transition:transform .08s, box-shadow .08s;
 }
 .opt.emo{font-size:72px}
+.zpic{display:inline-block;font-size:.4em;font-weight:800;line-height:1.2;max-width:6em;word-break:break-word}
+.topic.add{background:var(--surface);border-style:dashed;color:var(--ink)}
+.cl-in{width:100%;font-size:20px;border:3px solid var(--edge);border-radius:14px;padding:8px 12px;background:var(--surface);color:var(--ink);font-family:inherit;user-select:text;-webkit-user-select:text}
+textarea.cl-in{min-height:220px;line-height:1.5;resize:vertical}
+.cl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:2px dashed var(--line)}
+.cl-row:last-child{border-bottom:0}
+.cl-bad{background:var(--soft);border:3px dashed var(--bad);border-radius:18px;padding:10px 14px;margin:10px 0}
 .opt:active{transform:var(--press);box-shadow:var(--shpress)}
 .opt.right{background:var(--good);color:#fff}
 .opt.wrong{background:var(--bad);color:#fff;opacity:.6;pointer-events:none}
@@ -422,6 +429,28 @@ const TOPICS=[
 ];
 TOPICS.forEach(t=>t.words=t.w.map(a=>({e:a[0],en:a[1],ms:a[2],zh:a[3],t:t.id})));
 const WMAP={};TOPICS.forEach(t=>t.words.forEach(w=>WMAP[t.id+':'+w.en]=w));
+/* custom word lists (per child, S.custom): parent types this week's school words; each list becomes a topic for one language */
+const BASE=TOPICS.slice();
+const CL_MAX_LISTS=12,CL_MAX_WORDS=30,CL_MIN_WORDS=4;
+let clSig=null;
+function syncCustom(){const sig=ALL.cur+'|'+JSON.stringify(S.custom||[]);if(sig===clSig)return;clSig=sig;
+  TOPICS.length=0;BASE.forEach(t=>TOPICS.push(t));Object.keys(WMAP).forEach(k=>{if(k.startsWith('my-'))delete WMAP[k]});
+  (S.custom||[]).forEach(c=>{const id='my-'+c.id;const t={id,custom:c.id,only:c.lang,zh:c.name,en:c.name,ms:c.name,tag:'',icon:'📝',hue:'var(--custom)',sent:null};
+    t.words=c.words.map(a=>({e:a.e||'',en:c.lang==='en'?a.w:'',ms:c.lang==='ms'?a.w:'',zh:a.zh||'',k:a.w,t:id}));
+    TOPICS.push(t);t.words.forEach(w=>WMAP[id+':'+w.k]=w)})}
+function findBuiltin(word){const x=word.toLowerCase();for(const t of BASE)for(const w of t.words)if(w.en.toLowerCase()===x||w.ms.toLowerCase()===x)return w;return null}
+function parseWords(txt){const out=[],bad=[];
+  String(txt||'').split(/\n/).forEach(line=>{line=line.trim();if(!line)return;
+    const parts=line.split(/[,，|\t=、;；]+/).map(x=>x.trim()).filter(Boolean);let w='',zh='',e='';
+    parts.forEach(p=>{if(/\p{Extended_Pictographic}/u.test(p)&&!/[A-Za-z\u3400-\u9fff]/.test(p)){if(!e)e=p}else if(/[\u3400-\u9fff]/.test(p)){if(!zh)zh=p.slice(0,12)}else if(!w)w=p.replace(/\s+/g,' ').slice(0,30)});
+    if(!w||!/[A-Za-z]/.test(w)){bad.push(line+'  ← 找不到英文/国文单词');return}
+    if(!e){const m=findBuiltin(w);if(m){e=m.e;zh=zh||m.zh}}
+    if(!e&&!zh){bad.push(line+'  ← 请加上中文意思或一个表情图');return}
+    if(out.some(o=>o.w.toLowerCase()===w.toLowerCase()))return;
+    if(out.length>=CL_MAX_WORDS){bad.push(line+'  ← 一个词表最多 '+CL_MAX_WORDS+' 个词');return}
+    out.push({w,zh,e})});
+  return{out,bad}}
+const pic=w=>w.e||`<span class="zpic">${esc(w.zh||'？')}</span>`;
 const LANGS={en:{label:'English',zh:'英文',flag:'🇬🇧'},ms:{label:'Bahasa Melayu',zh:'国文',flag:'🇲🇾'}};
 const MODES={
  learn:{e:'📖',zh:'认识单词',t:{en:'Learn',ms:'Belajar'},d:'看图、听发音，翻卡片'},
@@ -444,10 +473,14 @@ const MASTER=3;
 
 /* ---------------- state ---------------- */
 const KEY='momo-learn.v1';
-function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},skin:'toy',updatedAt:0}}
+function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,custom:[],pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},skin:'toy',updatedAt:0}}
+function fixKid(k){const b=blank();['days','words','math','sci','adv','missions','pet'].forEach(f=>{if(!k[f]||typeof k[f]!=='object'||Array.isArray(k[f]))k[f]=b[f]});
+  ['sessions','custom'].forEach(f=>{if(!Array.isArray(k[f]))k[f]=b[f]});
+  k.custom=k.custom.filter(c=>c&&c.id&&(c.lang==='en'||c.lang==='ms')&&Array.isArray(c.words));if(typeof k.stars!=='number')k.stars=0;return k}
 function normalize(o){
-  if(o&&o.kids){Object.keys(o.kids).forEach(k=>{const raw=o.kids[k];o.kids[k]=Object.assign(blank(),raw);if(!raw.bambooInit)o.kids[k].bamboo=raw.stars||0});if(!o.kids[o.cur])o.cur=Object.keys(o.kids)[0];return o}
-  const k=Object.assign(blank(),o||{});if(!(o&&o.bambooInit))k.bamboo=(o&&o.stars)||0;return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
+  if(o&&o.kids&&typeof o.kids==='object'){Object.keys(o.kids).forEach(k=>{const raw=o.kids[k];if(!raw||typeof raw!=='object'){delete o.kids[k];return}o.kids[k]=fixKid(Object.assign(blank(),raw));if(!raw.bambooInit)o.kids[k].bamboo=raw.stars||0});
+    if(!Object.keys(o.kids).length)o.kids={k1:blank()};if(!o.kids[o.cur])o.cur=Object.keys(o.kids)[0];return o}
+  const k=fixKid(Object.assign(blank(),o||{}));if(!(o&&o.bambooInit))k.bamboo=(o&&o.stars)||0;return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return normalize(JSON.parse(r))}catch(e){}return normalize(null)}
 let ALL=load();let S=ALL.kids[ALL.cur];
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(ALL))}catch(e){}}
@@ -455,11 +488,11 @@ function touch(){S.updatedAt=ALL.updatedAt=Date.now();saveLocal();queueCloud()}
 function dk(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dayRec(){const k=dk();return S.days[k]||(S.days[k]={stars:0,correct:0,wrong:0,mins:0})}
 function addStars(n){S.stars+=n;S.bamboo=(S.bamboo||0)+n;dayRec().stars+=n}
-function wkey(lang,w){return lang+':'+w.t+':'+w.en}
+function wkey(lang,w){return lang+':'+w.t+':'+(w.k||w.en)}
 function wstat(lang,w){return S.words[wkey(lang,w)]||{c:0,w:0}}
 function recordWord(w,ok){const k=wkey(G?G.lang:S.lang,w);const r=S.words[k]||(S.words[k]={c:0,w:0});const d=dayRec();if(ok){r.c++;if(r.c===MASTER)r.m=dk();d.correct++;addStars(1)}else{r.w++;d.wrong++}touch()}
 function streak(){let n=0;const d=new Date();if(!((S.days[dk(d)]||{}).stars>0))d.setDate(d.getDate()-1);while((S.days[dk(d)]||{}).stars>0){n++;d.setDate(d.getDate()-1)}return n}
-function mastered(lang,topic){let n=0;TOPICS.forEach(t=>{if(topic&&t.id!==topic)return;t.words.forEach(w=>{if(wstat(lang,w).c>=MASTER)n++})});return n}
+function mastered(lang,topic){let n=0;(topic?TOPICS:BASE).forEach(t=>{if(topic&&t.id!==topic)return;t.words.forEach(w=>{if(wstat(lang,w).c>=MASTER)n++})});return n}
 function accuracy(){let c=0,w=0;Object.values(S.days).forEach(d=>{c+=d.correct;w+=d.wrong});return c+w?Math.round(c*100/(c+w)):null}
 
 /* ---------------- cloud sync (Claude artifact storage) ---------------- */
@@ -728,7 +761,7 @@ function vPet(){const p=pet(),h=happyNow(),bg=BGS[p.bg]||BGS.sky;
 function vMatch(){const done=G.cards.filter(c=>c.done).length/2;
   return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button><div style="flex:1;font-weight:800">🃏 找到 ${done} / ${G.qs.length} 对　<span class="zh">翻了 ${G.moves} 次</span></div>${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}</div>
   <p class="zh" style="text-align:center;margin:0 0 12px">翻开两张牌，把图片和${LANGS[G.lang].zh}单词配成一对</p>
-  <div class="cards">${G.cards.map(c=>`<button class="mcard ${c.up||c.done?'up':''} ${c.done?'done':''}" data-act="card" data-v="${c.i}" ${c.done?'disabled':''} aria-label="第${c.i+1}张牌">${c.up||c.done?(c.k==='e'?`<span class="ce">${c.w.e}</span>`:`<span class="ct">${esc(c.w[G.lang])}</span>`):'<span class="cb">🐼</span>'}</button>`).join('')}</div>`}
+  <div class="cards">${G.cards.map(c=>`<button class="mcard ${c.up||c.done?'up':''} ${c.done?'done':''}" data-act="card" data-v="${c.i}" ${c.done?'disabled':''} aria-label="第${c.i+1}张牌">${c.up||c.done?(c.k==='e'?`<span class="ce">${pic(c.w)}</span>`:`<span class="ct">${esc(c.w[G.lang])}</span>`):'<span class="cb">🐼</span>'}</button>`).join('')}</div>`}
 function comboBadge(){return G&&G.combo>=2?`<span class="combo">🔥 连对 ${G.combo} 题！</span>`:''}
 
 /* ---------------- 冒险地图 ---------------- */
@@ -763,11 +796,11 @@ function vMap(){const nx=advNext();let html='',lastR=-1;
 
 /* ---------------- 卡片册 ---------------- */
 function cardOn(w){return ['en','ms'].some(l=>wstat(l,w).c>=2)}
-function cardCount(){let n=0;TOPICS.forEach(t=>t.words.forEach(w=>{if(cardOn(w))n++}));return n}
-function vAlbum(){const total=TOPICS.reduce((a,t)=>a+t.words.length,0),n=cardCount();const bosses=STATIONS.map((s,i)=>s.k==='boss'?i:-1).filter(i=>i>=0);
+function cardCount(){let n=0;BASE.forEach(t=>t.words.forEach(w=>{if(cardOn(w))n++}));return n}
+function vAlbum(){const total=BASE.reduce((a,t)=>a+t.words.length,0),n=cardCount();const bosses=STATIONS.map((s,i)=>s.k==='boss'?i:-1).filter(i=>i>=0);
   return bar('home')+`<div class="panel row"><span style="font-size:44px">📚</span><div style="flex:1"><h1 style="font-size:30px">我的卡片册</h1><div class="zh">一个词答对 2 次就能得到它的卡片。点卡片听英文、国文和华文！</div></div><span class="pill">${n} / ${total}</span><button class="btn" data-act="home">⬅ 返回</button></div>
   <div class="panel"><h2>🏆 奖杯卡片</h2><div class="album">${bosses.map((bi,k)=>{const on=adv().done[bi],R=REGIONS[STATIONS[bi].r];return `<div class="pcard trophy ${on?'':'off'}"><span class="pe">${on?R.e:'🏆'}</span><b>${on?R.zh+'勇士':'？'}</b><span>${on?'打败第 '+(k+1)+' 区大魔王':'打败第 '+(k+1)+' 区大魔王就能得到'}</span></div>`}).join('')}</div></div>
-  ${TOPICS.map(t=>{const got=t.words.filter(cardOn).length;return `<div class="panel"><h2>${t.icon} ${t.zh} <span class="zh" style="font-size:16px">${got}/${t.words.length}${got===t.words.length?' 🏅 全套收集！':''}</span></h2><div class="album">${t.words.map(w=>cardOn(w)?`<button class="pcard" data-act="cardsay" data-t="${t.id}" data-v="${esc(w.en)}"><span class="pe">${w.e}</span><b>${esc(w.en)}</b><span>${esc(w.ms)}</span><span class="zh">${w.zh}</span></button>`:`<div class="pcard off"><span class="pe">${w.e}</span><b>？</b></div>`).join('')}</div></div>`}).join('')}`}
+  ${BASE.map(t=>{const got=t.words.filter(cardOn).length;return `<div class="panel"><h2>${t.icon} ${t.zh} <span class="zh" style="font-size:16px">${got}/${t.words.length}${got===t.words.length?' 🏅 全套收集！':''}</span></h2><div class="album">${t.words.map(w=>cardOn(w)?`<button class="pcard" data-act="cardsay" data-t="${t.id}" data-v="${esc(w.en)}"><span class="pe">${w.e}</span><b>${esc(w.en)}</b><span>${esc(w.ms)}</span><span class="zh">${w.zh}</span></button>`:`<div class="pcard off"><span class="pe">${w.e}</span><b>？</b></div>`).join('')}</div></div>`}).join('')}`}
 
 /* ---------------- 生活任务 ---------------- */
 const MISSIONS=[['🔴','在家里找 3 样红色的东西，用英文说 red'],['🪑','数一数家里有几张椅子'],['🍎','吃水果时，用国文说出水果的名字'],['👃','闭上眼睛闻一闻，猜猜是什么食物'],['🧲','用冰箱贴的磁铁试一试，哪些东西会被吸住'],['💧','试一试纸巾和塑料袋，哪一个会吸水'],['🌱','找一棵植物，指出根、茎、叶、花'],['👨‍👩‍👧','用英文介绍家人：This is my father.'],['🔺','在家里找一样圆形、一样正方形、一样三角形的东西'],['💰','跟爸爸妈妈买东西时，帮忙数一数要付多少钱'],['🐱','学一种动物的叫声，再说出它的英文和国文名字'],['🌙','晚上看看天空，用国文说 bulan 和 bintang'],['🦷','刷牙时，慢慢从 1 数到 20'],['👟','把家里的鞋子排好，数一数有几双'],['🧸','收拾玩具，一边收一边用英文说出玩具的名字'],['🚗','坐车时，找一找路上的 bas、teksi、motosikal'],['🖐️','用英文说出 5 个身体部位，再用手指一指'],['🍚','吃饭时，用国文说 nasi、telur、air']];
@@ -788,7 +821,7 @@ function vDuelSetup(){const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length
   <div style="margin-top:18px"><button class="btn sun big" data-act="dstart">开始对战 ⚔️</button></div></div>`}
 function makeDuelQs(sub){const qs=[];for(let n=0;n<10;n++){
   if(sub==='math'){const q0=MG[pick(['count','add','sub'])].gen(1);qs.push({top:`<div class="mq">${q0.title}</div><div class="mview">${q0.html(false)}</div>`,opts:q0.opts,ans:q0.ans,say:q0.say,ansText:q0.sayAns,ansLang:'zh'})}
-  else{const t=pick(TOPICS),w=pick(t.words);qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${w.e}</div>${zh(w.zh)}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
+  else{const t=pick(BASE),w=pick(t.words);qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${w.e}</div>${zh(w.zh)}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
   return qs}
 function startDuel(){if(overLimit()){showRest();return}const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
   D={p:[[S.avatar,S.name],opps[sel]],sub,opp:sel,i:0,sc:[0,0],qs:makeDuelQs(sub),lock:[false,false],done:false,winner:null,over:false};go({name:'duelplay'});setTimeout(duelSay,300)}
@@ -861,22 +894,22 @@ function vHome(){
   </div>
   <div class="feats">${[['map','🗺️','冒险地图',Math.min(advNext(),STATIONS.length)+' / '+STATIONS.length+' 站'],['album','📚','卡片册',cardCount()+' 张卡片'],['missions','🏠','生活任务','今天 '+missionState().done.length+' / 3'],['duel','⚔️','亲子对战','两人一起玩']].map(([a,e,t,x])=>`<button class="btn feat" data-act="${a}"><span class="fe">${e}</span><b>${t}</b><span class="fs">${x}</span></button>`).join('')}</div>
   ${S.subj!=='lang'?'':(()=>{const rv=reviewWords().length;return `<div class="panel row"><span style="font-size:44px">🔁</span><div style="flex:1"><b style="font-size:22px">今日复习</b><div class="zh">${rv?'有 '+rv+' 个词还没完全学会，复习一下吧！':'还没有要复习的词，先去玩主题游戏吧。'}</div></div>${rv>=3?'<button class="btn sun" data-act="play" data-v="review">开始复习 ▶</button>':''}</div>`})()}
-  <div class="grid">${S.subj==="math"?mathCards():S.subj==="sci"?sciCards():TOPICS.map(t=>{const m=mastered(L(),t.id),n=t.words.length;
+  <div class="grid">${S.subj==="math"?mathCards():S.subj==="sci"?sciCards():TOPICS.filter(t=>!t.only||t.only===L()).map(t=>{const m=mastered(L(),t.id),n=t.words.length;
     return `<button class="topic" style="background:${t.hue}" data-act="topic" data-v="${t.id}">
       <div class="ic">${t.icon}</div><h3>${t.zh}</h3><div class="t2">${esc(t[L()])}</div>${t.tag&&L()==='en'?`<span class="tag">${t.tag.replace('Super Minds 1 · ','📗 课本 ')}</span>`:''}
-      <div class="meter"><i style="width:${m*100/n}%"></i></div><div class="cnt">${m===n?'🏅 全部学会！':'学会 '+m+' / '+n}</div></button>`}).join('')}</div>`}
+      <div class="meter"><i style="width:${m*100/n}%"></i></div><div class="cnt">${m===n?'🏅 全部学会！':'学会 '+m+' / '+n}</div></button>`}).join('')+`<button class="topic add" data-act="cl" data-v="${(S.custom||[]).length?'':'new'}"><div class="ic">📝</div><h3>学校词表</h3><div class="t2">家长输入本周要学的词</div><div class="cnt">➕ 新增 / 编辑</div></button>`}</div>`}
 
 function vTopic(){
-  const t=T(view.topic);
+  const t=T(view.topic);if(!t){view={name:'home'};return vHome()}
   return bar('home')+`
   <div class="panel row" style="background:${t.hue};color:#2A2F6B">
     <div style="font-size:72px;line-height:1">${t.icon}</div>
     <div><h1 style="font-size:36px">${t.zh}</h1><div style="font-weight:700">${esc(t.en)} · ${esc(t.ms)}</div>${t.tag?`<span class="tag">${t.tag}</span>`:''}</div>
-    <div class="spacer"></div><button class="btn" data-act="home">⬅ 返回</button>
+    <div class="spacer"></div>${t.custom?`<button class="btn" data-act="cl" data-v="${t.custom}">✏️ 编辑词表</button>`:''}<button class="btn" data-act="home">⬅ 返回</button>
   </div>
   <div class="modes">${Object.entries(MODES).filter(([k])=>k!=='review'&&k!=='boss'&&k!=='math'&&k!=='sci'&&(k!=='sent'||t.sent)).map(([k,m])=>`<button class="btn mode" data-act="play" data-v="${k}"><span class="e">${m.e}</span><b>${m.zh} · ${m.t[L()]}</b><span>${m.d}</span></button>`).join('')}</div>
   <div class="panel" style="margin-top:18px"><h2>这个主题的单词 <span class="zh" style="font-size:16px">点一下听发音</span></h2>
-    <div class="chips">${t.words.map(w=>{const s=wstat(L(),w);return `<button class="chip" data-act="say" data-v="${esc(w[L()])}">${w.e} ${esc(w[L()])}${S.showZh?' <span class="zh">'+w.zh+'</span>':''}${s.c>=MASTER?' 🏅':''}</button>`}).join('')}</div></div>`}
+    <div class="chips">${t.words.map(w=>{const s=wstat(L(),w);return `<button class="chip" data-act="say" data-v="${esc(w[L()])}">${w.e} ${esc(w[L()])}${S.showZh||!w.e?' <span class="zh">'+esc(w.zh)+'</span>':''}${s.c>=MASTER?' 🏅':''}</button>`}).join('')}</div></div>`}
 
 /* ---------- game ---------- */
 function reviewWords(){const all=[];TOPICS.forEach(t=>t.words.forEach(w=>{const r=wstat(S.lang,w);if(r.c+r.w>0&&r.c<MASTER)all.push({w,k:r.w*2-r.c})}));
@@ -915,7 +948,7 @@ function gameBar(){
 function feedbackBox(){
   const q=cur();if(!q.done)return '';const c=pick(CHEER);const first=!q.missed&&!q.hinted;
   return `<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?c[G.lang==='en'?0:1]+' '+c[2]:'答对了！下次会更快哦 💪'}
-    <small>${q.m==='sent'?q.w.e+' '+esc(sentOf(q,G.lang))+(S.showZh?' ＝ '+esc(sentOf(q,'zh')):''):q.w.e+' '+esc(q.w[G.lang])+' = '+esc(q.w[G.lang==='en'?'ms':'en'])+(S.showZh?' = '+q.w.zh:'')}</small></div>
+    <small>${q.m==='sent'?q.w.e+' '+esc(sentOf(q,G.lang))+(S.showZh?' ＝ '+esc(sentOf(q,'zh')):''):[q.w.e+' '+esc(q.w[G.lang]),esc(q.w[G.lang==='en'?'ms':'en']),S.showZh||!q.w.e?esc(q.w.zh):''].filter(x=>x.trim()).join(' = ')}</small></div>
     <button class="btn sun big" data-act="next" autofocus>${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`}
 
 function vGame(){
@@ -924,8 +957,8 @@ function vGame(){
   const q=cur();const w=q.w;const lg=G.lang;const m=q.m;
   if(m==='learn'){
     return gameBar()+`<div class="stage"><div class="card" data-act="sayCur">
-      <div class="prompt">${w.e}</div><div class="word">${esc(w[lg])}</div>
-      <div class="other">${esc(w[lg==='en'?'ms':'en'])}</div>${zh(w.zh)}</div>
+      <div class="prompt">${pic(w)}</div><div class="word">${esc(w[lg])}</div>
+      <div class="other">${esc(w[lg==='en'?'ms':'en'])}</div>${w.e?zh(w.zh):''}</div>
       <div class="row" style="justify-content:center;margin-top:24px">
         <button class="btn round" data-act="prev" ${G.i===0?'disabled':''} aria-label="上一个">◀</button>
         <button class="btn sky big" data-act="sayCur">🔊 ${LANGS[lg].zh}</button>
@@ -936,7 +969,7 @@ function vGame(){
         ${recUrl&&recState!=='rec'?'<button class="btn big" data-act="mine">▶ 听我的</button><button class="btn big" data-act="compare">🔁 对比</button>':''}</div>
       <p class="zh">${recState==='rec'?'正在录音……大声念出来！':'先听一听，再按「跟读」念一次，听听自己念得像不像～'}</p></div>`}
   if(m==='bubble'){
-    return gameBar()+`<div class="stage"><div class="prompt" style="font-size:84px;margin:0">${w.e}</div>${zh(w.zh)}
+    return gameBar()+`<div class="stage"><div class="prompt" style="font-size:84px;margin:0">${pic(w)}</div>${w.e?zh(w.zh):''}
       ${q.done?`<div class="word" style="margin:14px 0">${esc(w[lg])}</div>${feedbackBox()}`:`<p class="zh" style="margin:4px 0">戳破写着对的${LANGS[lg].zh}单词的泡泡！🫧</p>
       <div class="pond">${q.opts.map((o,i)=>{const n=q.opts.length,dur=6+((i*3+G.i)%4),delay=-(((i*2.3)+G.i*0.7)%dur);
         return `<button class="bub ${q.wrongIdx.includes(i)?'popx':''}" style="left:${3+i*(82/n)}%;--y:${8+((i*37+G.i*11)%62)}%;animation-duration:${dur}s;animation-delay:${delay.toFixed(1)}s" data-act="ans" data-v="${i}">${esc(o[lg])}</button>`}).join('')}</div>`}</div>`}
@@ -944,16 +977,16 @@ function vGame(){
     return gameBar()+`<div class="stage">
       <button class="btn sky big" data-act="sayCur" style="font-size:30px;margin:10px 0">🔊 再听一次</button>
       <p class="zh" style="margin:4px 0">听到的是哪一个？</p>
-      <div class="opts">${q.opts.map((o,i)=>`<button class="opt emo ${q.done&&o===w?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''} aria-label="选项 ${i+1}">${o.e}</button>`).join('')}</div>
+      <div class="opts">${q.opts.map((o,i)=>`<button class="opt emo ${q.done&&o===w?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''} aria-label="选项 ${i+1}">${pic(o)}</button>`).join('')}</div>
       ${feedbackBox()}</div>`}
   if(m==='read'){
-    return gameBar()+`<div class="stage"><div class="prompt">${w.e}</div>${zh(w.zh)}
+    return gameBar()+`<div class="stage"><div class="prompt">${pic(w)}</div>${w.e?zh(w.zh):''}
       <p class="zh" style="margin:4px 0">哪一个是${LANGS[lg].zh}？</p>
       <div class="opts">${q.opts.map((o,i)=>`<button class="opt ${q.done&&o===w?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${esc(o[lg])}</button>`).join('')}</div>
       ${feedbackBox()}</div>`}
   // spell / sent
   const wd=m==='sent'?' wd':'';
-  return gameBar()+`<div class="stage"><div class="prompt" style="font-size:96px">${w.e}</div>${m==='sent'?(S.showZh?`<div class="helpzh">${esc(sentOf(q,'zh'))}</div>`:''):zh(w.zh)}
+  return gameBar()+`<div class="stage"><div class="prompt" style="font-size:96px">${pic(w)}</div>${m==='sent'?(S.showZh?`<div class="helpzh">${esc(sentOf(q,'zh'))}</div>`:''):w.e?zh(w.zh):''}
     <div class="row" style="justify-content:center"><button class="btn sky" data-act="sayCur">🔊 ${m==='sent'?'听句子':'听一听'}</button>${q.done?'':`<button class="btn" data-act="hint">💡 提示</button><button class="btn" data-act="clear">↺ 重来</button>`}</div>
     <div class="slots" id="slots">${q.slots.map((s,i)=>s.fixed?(s.ch===' '?'<div class="slot gap"></div>':`<div class="slot f">${esc(s.ch)}</div>`):`<button class="slot${wd} ${s.val?'f':''}" data-act="unslot" data-v="${i}" aria-label="第${i+1}格">${s.val?esc(s.val):''}</button>`).join('')}</div>
     ${q.done?'':`<div class="tiles">${q.tiles.map(t=>`<button class="btn tile${wd} ${t.used?'used':''}" data-act="tile" data-v="${t.id}">${esc(t.ch)}</button>`).join('')}</div>`}
@@ -1039,7 +1072,7 @@ function chart(){
 function vGrowth(){
   const lv=Math.min(Math.floor(S.stars/25),LEVELS.length-1);const into=S.stars-lv*25;const isMax=lv===LEVELS.length-1;
   const acc=accuracy();const st=streak();
-  const totalWords=TOPICS.reduce((a,t)=>a+t.words.length,0);
+  const totalWords=BASE.reduce((a,t)=>a+t.words.length,0);
   const weak=Object.entries(S.words).filter(([k,r])=>r.w>0&&r.c<MASTER).sort((a,b)=>b[1].w-a[1].w).slice(0,10)
     .map(([k,r])=>{const [lang,t,en]=k.split(':');return {lang,w:WMAP[t+':'+en]}}).filter(x=>x.w);
   const recent=S.sessions.slice(-8).reverse();
@@ -1061,7 +1094,7 @@ function vGrowth(){
   </div>
   <div class="panel"><h2>最近 14 天 📈</h2>${chart()}</div>
   <div class="panel"><h2>每个主题学会了多少</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">一个词第一次就答对 ${MASTER} 次，就算学会 🏅</div>
-    <div class="bars2">${TOPICS.map(t=>{const n=t.words.length,e=mastered('en',t.id),m=mastered('ms',t.id);
+    <div class="bars2">${BASE.map(t=>{const n=t.words.length,e=mastered('en',t.id),m=mastered('ms',t.id);
       return `<div style="font-weight:700">${t.icon} ${t.zh}</div><div class="m2">
       <div class="mrow">🇬🇧<div class="meter"><i class="en" style="width:${e*100/n}%"></i></div>${e}/${n}</div>
       <div class="mrow">🇲🇾<div class="meter"><i class="ms" style="width:${m*100/n}%"></i></div>${m}/${n}</div></div>`}).join('')}</div></div>
@@ -1087,10 +1120,58 @@ function vSettings(){
   </div>
   <div class="panel"><h2>画风皮肤 🎨</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">换一个喜欢的画风，整个 App 都会变样子</div>
     <div class="skins">${SKINS.map(([id,e,name])=>`<button class="skin ${S.skin===id?'on':''}" data-skin="${id}" data-act="skin" data-v="${id}" aria-pressed="${S.skin===id}" aria-label="画风 ${name}"><span class="sk-row">${panda(46,'happy')}<span class="sk-b">Aa</span></span><b>${e} ${name}</b></button>`).join('')}</div></div>
+  <div class="panel row"><span style="font-size:44px">📝</span><div style="flex:1"><h2 style="margin:0">学校词表</h2><div class="zh" style="font-size:15px">输入学校这星期要学的英文或国文词，Momo 会把它们变成游戏。现在有 ${(S.custom||[]).length} 个词表。</div></div><button class="btn sun" data-act="cl">管理词表 ▶</button></div>
   ${voiceSettings()}
+  ${backupPanel()}
   <div class="panel"><h2>学习记录保存</h2>
     <p style="margin:0 0 10px">${cloudOn?'☁️ 学习记录会自动保存在你的 Claude 帐号里，换设备打开同一个链接也能继续。':'💾 学习记录保存在这台设备的浏览器里（换设备不会同步）。'}</p>
     <div class="row"><button class="btn pink" data-act="reset">清除 ${esc(S.name)} 的学习记录</button>${Object.keys(ALL.kids).length>1?`<button class="btn" data-act="delkid">删除 ${esc(S.name)}</button>`:''}</div></div>`}
+
+function backupPanel(){const lb=ALL.lastBackup,days=lb?Math.floor((Date.now()-lb)/864e5):null;
+  return `<div class="panel"><h2>备份 / 恢复 💾</h2>
+    <p style="margin:0 0 10px">把所有孩子的星星、单词、宠物和学校词表存成一个文件。换设备、换浏览器或清除了浏览器资料之后，可以用这个文件恢复。</p>
+    <p class="zh" style="font-size:15px;margin:0 0 12px">${lb?'上次备份：'+dk(new Date(lb))+(days>=14?' ⚠️ 已经 '+days+' 天没备份了':''):'⚠️ 还没有备份过'}</p>
+    <div class="row"><button class="btn mint" data-act="export">⬇️ 下载备份文件</button><button class="btn" data-act="import">⬆️ 从备份文件恢复</button><input type="file" id="imp" hidden></div>
+    <p class="zh" style="font-size:14px;margin:10px 0 0">iPad / iPhone：文件会存到「文件」App 的「下载」里。恢复时会取代这台设备上现在的全部资料。</p></div>`}
+function exportData(){
+  const name='momo-backup-'+dk()+'.json';const blob=new Blob([JSON.stringify({app:'momo-learn',exported:new Date().toISOString(),data:ALL})],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);ALL.lastBackup=Date.now();saveLocal();toast('备份文件已下载：'+name);render()}
+function importData(file){if(!file)return;const r=new FileReader();
+  r.onload=()=>{let n;try{let o=JSON.parse(r.result);if(o&&o.app==='momo-learn')o=o.data;if(!o||typeof o!=='object'||!(o.kids||o.days||o.words))throw 0;n=normalize(o)}catch(e){sBad();toast('这个文件不是 Momo 的备份文件 😕');return}
+    const names=Object.values(n.kids).map(k=>(k.avatar||'')+(k.name||'?')+' ⭐'+k.stars).join('、');
+    if(!confirm('要用备份文件里的资料取代这台设备上现在的全部资料吗？\n\n备份里有：'+names))return;
+    ALL=n;S=ALL.kids[ALL.cur];G=null;touch();sGood();toast('已恢复 ✓');go({name:S.name?'home':'setup'})};
+  r.onerror=()=>toast('读不到这个文件');r.readAsText(file)}
+
+/* ---------- custom word lists ---------- */
+function clDraft(id){if(!id)return null;if(id==='new')return{id:'new',name:'',lang:S.subj==='lang'?S.lang:'en',text:''};
+  const c=(S.custom||[]).find(x=>x.id===id);if(!c)return null;return{id,name:c.name,lang:c.lang,text:c.words.map(a=>[a.w,a.zh,a.e].filter(Boolean).join(', ')).join('\n')}}
+function clKeep(){const d=view.draft;if(!d)return;const n=document.getElementById('cl-name'),t=document.getElementById('cl-text');if(n)d.name=n.value;if(t)d.text=t.value}
+function vCustom(){const d=view.draft,lists=S.custom||[];
+  return bar('settings')+`<div class="panel row"><span style="font-size:56px">📝</span><div style="flex:1"><h1 style="font-size:30px">学校词表</h1><div class="zh">输入学校这星期要学的词，孩子就能用「认识单词、听音选图、看图选词、拼一拼、翻牌配对、泡泡」来练习。</div></div><button class="btn" data-act="settings">⬅ 返回</button></div>
+  ${d?`<div class="panel"><h2>${d.id==='new'?'新增词表':'编辑词表'}</h2>
+    <div style="font-weight:700;margin-bottom:6px">词表名字</div><input id="cl-name" class="cl-in" maxlength="20" value="${esc(d.name)}" placeholder="例如：第 12 周英文听写" autocomplete="off">
+    <div class="row" style="margin:14px 0 6px"><b>语言</b><div class="seg" role="group" aria-label="词表语言">${Object.entries(LANGS).map(([k,v])=>`<button data-act="cllang" data-v="${k}" class="${d.lang===k?'on':''}">${v.flag} ${v.zh}</button>`).join('')}</div></div>
+    <div style="font-weight:700;margin:12px 0 6px">单词（每行一个）</div>
+    <textarea id="cl-text" class="cl-in" spellcheck="false" autocapitalize="off" placeholder="${d.lang==='ms'?'kucing, 猫, 🐱\nsekolah, 学校\nmerah':'apple, 苹果, 🍎\nschool bag, 书包\nred'}">${esc(d.text)}</textarea>
+    <p class="zh" style="font-size:15px;margin:8px 0 12px">💡 每行写：单词, 中文意思, 表情图（中文和表情图可以不写其中一个）。Momo 认识的词会自动配上图。至少 ${CL_MIN_WORDS} 个词，最多 ${CL_MAX_WORDS} 个。</p>
+    ${clBad()}
+    <div class="row"><button class="btn sun big" data-act="clsave">💾 保存</button><button class="btn" data-act="clcancel">取消</button></div></div>`:''}
+  ${d?'':clBad()}
+  <div class="panel"><h2>${esc(S.name)} 的词表</h2>
+    ${lists.length?lists.map(c=>{const t=T('my-'+c.id),m=t?mastered(c.lang,t.id):0;return `<div class="cl-row"><span style="font-size:30px">${LANGS[c.lang].flag}</span><div style="flex:1;min-width:140px"><b>${esc(c.name)}</b><div class="zh" style="font-size:14px">${LANGS[c.lang].zh} · ${c.words.length} 个词 · 学会 ${m}</div></div>
+      <button class="btn sky" data-act="clplay" data-v="${c.id}">▶ 去玩</button><button class="btn" data-act="cl" data-v="${c.id}">✏️ 编辑</button><button class="btn pink" data-act="cldel" data-v="${c.id}">🗑</button></div>`}).join(''):'<p class="zh" style="margin:0 0 10px">还没有词表。</p>'}
+    ${d||lists.length>=CL_MAX_LISTS?'':`<button class="btn mint" data-act="cl" data-v="new" style="margin-top:10px">➕ 新增词表</button>`}</div>`}
+function clBad(){return view.bad&&view.bad.length?`<div class="cl-bad"><b>这些行看不懂，没有加进去：</b>${view.bad.map(b=>`<div>${esc(b)}</div>`).join('')}</div>`:''}
+function clSave(){clKeep();const d=view.draft;const {out,bad}=parseWords(d.text);
+  if(out.length<CL_MIN_WORDS){view.bad=bad;sBad();toast('至少要 '+CL_MIN_WORDS+' 个看得懂的词哦（现在 '+out.length+' 个）');render();return}
+  const name=(d.name||'').trim()||('学校词表 '+dk().slice(5));
+  S.custom=S.custom||[];let c=S.custom.find(x=>x.id===d.id);
+  if(!c){if(S.custom.length>=CL_MAX_LISTS){toast('最多 '+CL_MAX_LISTS+' 个词表');return}c={id:'c'+Date.now().toString(36)};S.custom.push(c)}
+  Object.assign(c,{name,lang:d.lang,words:out});touch();syncCustom();sGood();
+  if(bad.length){view.draft=null;view.bad=bad;toast('已保存 '+out.length+' 个词，有 '+bad.length+' 行跳过了');render();return}
+  toast('已保存 '+out.length+' 个词 ✓');S.subj='lang';S.lang=c.lang;go({name:'topic',topic:'my-'+c.id})}
 
 function voiceSettings(){
   const row=(l,flag,name,sample)=>{const vs=voicesFor(l);const cur=pickVoice(l);
@@ -1108,9 +1189,10 @@ function voiceSettings(){
     <p class="zh" style="font-size:15px;margin:0">加装马来语声音：<br>• iPad：设置 › 辅助功能 › 朗读内容 › 声音 › 马来语<br>• Android：设置 › 系统 › 语言 › 文字转语音输出，在语音引擎里安装马来语（如果有）<br>• Windows：用 Edge 打开通常已有 Microsoft 马来语声音；或 设置 › 时间和语言 › 语音 › 添加语音</p></div>`}
 
 function render(){
+  syncCustom();
   const v=view.name;
   document.documentElement.dataset.skin=SKINS.some(s=>s[0]===S.skin)?S.skin:'toy';
-  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():vSettings();
+  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():v==='custom'?vCustom():vSettings();
 }
 
 /* ---------------- actions ---------------- */
@@ -1158,6 +1240,14 @@ app.addEventListener('click',e=>{
       if(q.opts[i].v===q.ans){D.done=true;D.winner=p;D.sc[p]++;render();sGood();burst(document.querySelector('.dside.p'+p),'⚡');speak(q.ansText,q.ansLang);setTimeout(duelNext,1900)}
       else{D.lock[p]=true;sBad();if(D.lock[0]&&D.lock[1]){D.done=true;D.winner=null;render();speak(q.ansText,q.ansLang);setTimeout(duelNext,1900)}else render()}break}
     case 'limit':S.limit=+v;touch();render();break;
+    case 'cl':{const d=clDraft(v||((S.custom||[]).length?'':'new'));sTap();go({name:'custom',draft:d,bad:null});if(d){const el=document.getElementById(d.id==='new'?'cl-name':'cl-text');if(el)el.focus()}break}
+    case 'cllang':clKeep();view.draft.lang=v;sTap();render();break;
+    case 'clcancel':go({name:'custom',draft:null});break;
+    case 'clsave':clSave();break;
+    case 'clplay':{const c=(S.custom||[]).find(x=>x.id===v);if(!c)return;S.subj='lang';S.lang=c.lang;touch();sTap();go({name:'topic',topic:'my-'+c.id});break}
+    case 'cldel':{const c=(S.custom||[]).find(x=>x.id===v);if(!c)return;if(confirm('要删除词表「'+c.name+'」吗？')){S.custom=S.custom.filter(x=>x!==c);touch();toast('已删除');render()}break}
+    case 'export':exportData();break;
+    case 'import':document.getElementById('imp').click();break;
     case 'pat':{const t=pick(MOMO_TALK),li=rnd(0,2);const el=document.getElementById('petsay');if(el)el.innerHTML=esc(t[2])+'<small>'+esc(li===2?t[0]:t[li])+'</small>';speak(t[li],['en','ms','zh'][li]);
       const m=document.querySelector('.room .momo');if(m){m.classList.remove('dance');void m.offsetWidth;m.classList.add('dance');setTimeout(()=>m.classList.remove('dance'),1500);burst(m,'💖')}break}
     case 'feed':{if((S.bamboo||0)<3)return;const p=pet();S.bamboo-=3;p.happy=Math.min(100,happyNow()+25);p.fed=Date.now();touch();render();sGood();speak('好吃！谢谢你！','zh');burst(document.querySelector('.room .momo'),'🎋');break}
@@ -1195,10 +1285,10 @@ app.addEventListener('click',e=>{
     case 'zh':S.showZh=!S.showZh;touch();render();break;
     case 'snd':S.sound=!S.sound;touch();render();break;
     case 'skin':S.skin=v;touch();render();sGood();break;
-    case 'reset':if(confirm('确定要清除全部学习记录吗？星星、贴纸和成长记录都会归零。')&&confirm('真的确定吗？这个动作不能复原。')){const keep={name:S.name,avatar:S.avatar};S=ALL.kids[ALL.cur]=Object.assign(blank(),keep);touch();toast('已清除');go({name:'home'})}break;
+    case 'reset':if(confirm('确定要清除全部学习记录吗？星星、贴纸和成长记录都会归零。')&&confirm('真的确定吗？这个动作不能复原。')){const keep={name:S.name,avatar:S.avatar,custom:S.custom||[]};S=ALL.kids[ALL.cur]=Object.assign(blank(),keep);touch();toast('已清除');go({name:'home'})}break;
   }
 });
-app.addEventListener('change',e=>{const t=e.target;if(t.classList&&t.classList.contains('vsel')){VP[t.dataset.l]=t.value;saveVP();speak({en:'Hello!',ms:'Selamat pagi!',zh:'你好！'}[t.dataset.l],t.dataset.l)}});
+app.addEventListener('change',e=>{const t=e.target;if(t.id==='imp'){importData(t.files&&t.files[0]);t.value='';return}if(t.classList&&t.classList.contains('vsel')){VP[t.dataset.l]=t.value;saveVP();speak({en:'Hello!',ms:'Selamat pagi!',zh:'你好！'}[t.dataset.l],t.dataset.l)}});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nm'){app.querySelector('[data-act="start"]').click()}});
 
 render();
