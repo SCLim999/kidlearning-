@@ -961,7 +961,13 @@ setInterval(()=>{if(document.hidden||!S.name)return;const d=dayRec();d.secs=(d.s
 /* ---------------- views ---------------- */
 let view={name:S.name?'home':'setup'};
 let G=null;
-function go(v){view=v;render();window.scrollTo(0,0)}
+/* 全屏: Chrome/Edge/Android + iPad Safari (webkit prefix); iPhone Safari has no page fullscreen, so the button hides there */
+const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;
+const fsOK=()=>{const d=document.documentElement;return !!(d.requestFullscreen||d.webkitRequestFullscreen)};
+let fsOff=false; // the child left fullscreen with the button: stop auto-entering this visit
+function fsSet(on){const d=document.documentElement;try{const p=on?(d.requestFullscreen||d.webkitRequestFullscreen).call(d):(document.exitFullscreen||document.webkitExitFullscreen).call(document);if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+['fullscreenchange','webkitfullscreenchange'].forEach(e=>document.addEventListener(e,()=>view.name==='game'&&render()));
+function go(v){view=v;if(v.name==='game'&&!fsOff&&fsOK()&&!fsEl())fsSet(true);render();window.scrollTo(0,0)}
 
 function bar(active){
   return `<div class="bar">
@@ -1056,7 +1062,7 @@ function setupTiles(){const q=cur();
 function gameBar(){
   return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button>
   <div class="dots">${G.qs.map((q,i)=>`<i class="${i===G.i&&!q.done?'now':q.done?(q.missed||q.hinted?'no':'ok'):''}"></i>`).join('')}</div>
-  ${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span></div>`}
+  ${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span>${fsOK()?`<button class="btn round" data-act="fs" aria-label="${fsEl()?'退出全屏':'全屏'}">${fsEl()?'🗗':'⛶'}</button>`:''}</div>`}
 
 function feedbackBox(){
   const q=cur();if(!q.done)return '';const c=pick(CHEER);const first=!q.missed&&!q.hinted;const lg=q.lang||G.lang;
@@ -1492,6 +1498,7 @@ app.addEventListener('click',e=>{
     case 'mtopic':sTap();go({name:'mtopic',game:v});break;
     case 'mplay':startMath(view.game,+v);break;
     case 'mhint':cur().hint=true;render();break;
+    case 'fs':fsOff=!!fsEl();fsSet(!fsEl());break;
     case 'back':G.station!=null?go({name:'map'}):isMG(G.mode)?go({name:'mtopic',game:G.game}):G.mode==='mist'||G.mode==='test'?go({name:G.mode}):G.topic==='review'?go({name:'home'}):go({name:'topic',topic:G.topic});break;
     case 'rename':{const n=(document.getElementById('nm2').value||'').trim();if(n){S.name=n;touch();toast('已保存 ✓');render()}break}
     case 'setava':S.avatar=v;touch();render();break;
