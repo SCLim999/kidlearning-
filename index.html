@@ -146,6 +146,71 @@ h1,h2,h3{margin:0;line-height:1.15}
 .tiles{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:700px;margin:0 auto}
 .tile{width:60px;height:64px;font-size:32px;padding:0;border-radius:16px;background:var(--pink);color:#2A2F6B}
 .tile.used{visibility:hidden}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.feat{flex-direction:column;min-height:118px;border-radius:24px;gap:0}
+.feat .fe{font-size:40px;line-height:1.15}.feat b{font-size:19px}.feat .fs{font-size:13px;font-weight:500;color:var(--muted)}
+@media (max-width:640px){.feats{grid-template-columns:repeat(2,1fr)}}
+.map{display:flex;flex-direction:column;gap:10px}
+.region{border-radius:18px;padding:8px 16px;font-weight:800;font-size:20px;color:#2A2F6B;margin:8px 0 2px}
+.stn{display:flex;align-items:center;gap:14px}
+.node{width:76px;height:76px;border-radius:50%;border:3px solid var(--edge);box-shadow:0 5px 0 var(--edge);font-size:36px;background:var(--surface);cursor:pointer;flex:none}
+.stn.done .node{background:var(--sun)}.stn.now .node{background:var(--sky);animation:pulse2 1.2s ease-in-out infinite}.stn.lock .node{background:var(--soft)}
+.stn.boss .node{width:92px;height:92px;font-size:46px;border-radius:28px}
+@keyframes pulse2{50%{transform:scale(1.1)}}
+.sl{display:flex;flex-direction:column;min-width:0}.sl b{font-size:19px}.sl span{font-size:14px;color:var(--muted)}.stn.lock .sl{opacity:.55}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px}
+.pcard{border:3px solid var(--edge);border-radius:18px;background:linear-gradient(160deg,#FFF6D6,#FFE0EC);color:#2A2F6B;box-shadow:0 5px 0 var(--edge);padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;text-align:center}
+.pcard .pe{font-size:46px;line-height:1.15}.pcard b{font-size:17px}.pcard span{font-size:14px}.pcard .zh{color:#6B70A8}
+.pcard.off{background:var(--soft);color:var(--muted);cursor:default;box-shadow:none}.pcard.off .pe{filter:grayscale(1) brightness(.3);opacity:.3}
+.pcard.trophy{background:linear-gradient(160deg,#FFE07A,#FFB547)}.pcard.trophy.off{background:var(--soft)}
+.mission.ok{opacity:.7}
+.chip.onc{background:var(--sun);color:#2A2F6B}
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.dside{border:3px solid var(--edge);border-radius:24px;padding:12px;color:#2A2F6B}
+.dside.p0{background:#DFF4FF}.dside.p1{background:#FFE6EE}
+.dhead{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;margin-bottom:10px}
+.dsc{margin-left:auto;background:var(--sun);border:3px solid #2A2F6B;border-radius:99px;padding:0 14px;font-size:26px}
+.dopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dopts .opt{min-height:84px;font-size:22px;color:var(--ink)}
+.opt.locked{opacity:.4}
+.dwin,.dno{text-align:center;font-weight:800;font-size:20px;margin-top:8px}
+@media (max-width:640px){.duel{grid-template-columns:1fr}}
+.rest{position:fixed;inset:0;background:rgba(27,31,69,.7);display:grid;place-items:center;z-index:80;padding:20px}
+@media (prefers-reduced-motion: reduce){.stn.now .node{animation:none}}
+.momo{position:relative;display:inline-block;flex:none;line-height:1;vertical-align:middle}
+.momo svg{display:block}
+.acc{position:absolute;line-height:1;pointer-events:none}
+.a-hat{font-size:.44em;left:50%;top:-24%;transform:translateX(-50%)}
+.a-ear{font-size:.26em;left:70%;top:2%}
+.a-face{font-size:.40em;left:50%;top:31%;transform:translateX(-50%)}
+.a-hand{font-size:.34em;right:-16%;bottom:-2%}
+.momobtn{background:none;border:0;padding:0;cursor:pointer;position:relative;z-index:1;flex:none}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.dance{animation:dance .5s ease-in-out infinite}
+@keyframes dance{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-6px)}}
+.combo{display:inline-block;background:var(--pink);color:#2A2F6B;border-radius:99px;padding:0 10px;font-size:16px;margin:0 6px 2px 0;animation:pulse .5s}
+@keyframes pulse{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.room{position:relative;min-height:330px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden}
+.deco span{position:absolute;font-size:46px;opacity:.9}
+.petsay{flex:none;max-width:440px;text-align:center;position:relative;z-index:1;background:var(--surface)}
+.shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.item{border:3px solid var(--edge);border-radius:18px;background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--edge);padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .08s,box-shadow .08s}
+.item:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.item span{font-size:38px;line-height:1.1}.item small{font-size:13px;font-weight:700}
+.item.on{background:var(--mint);color:#2A2F6B}.item.lock span{filter:grayscale(.5);opacity:.75}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:720px;margin:0 auto}
+.mcard{aspect-ratio:3/4;border:3px solid var(--edge);border-radius:20px;box-shadow:0 5px 0 var(--edge);background:var(--sky);cursor:pointer;display:grid;place-items:center;padding:6px}
+.mcard.up{background:var(--surface);animation:flip .25s ease-out}
+.mcard.done{background:var(--mint);animation:none}
+@keyframes flip{from{transform:rotateY(90deg)}to{transform:rotateY(0)}}
+.mcard .ce{font-size:54px}.mcard .ct{font-size:22px;font-weight:800;color:var(--ink);word-break:break-word;line-height:1.15}.mcard.done .ct{color:#2A2F6B}.mcard .cb{font-size:40px;opacity:.9}
+.pond{position:relative;height:440px;max-width:720px;margin:10px auto 0;border-radius:28px;background:linear-gradient(#CFEFFF,#7CC8F5);border:3px solid var(--edge);overflow:hidden}
+.bub{position:absolute;bottom:-130px;width:128px;height:128px;border-radius:50%;border:3px solid rgba(255,255,255,.95);background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.98),rgba(255,255,255,.5) 38%,rgba(150,205,255,.45));color:#2A2F6B;font-weight:800;font-size:22px;display:grid;place-items:center;padding:10px;cursor:pointer;animation-name:rise;animation-timing-function:linear;animation-iteration-count:infinite;box-shadow:0 6px 14px rgba(42,47,107,.12);word-break:break-word;line-height:1.1}
+@keyframes rise{0%{transform:translate(0,0)}25%{transform:translate(10px,-150px)}50%{transform:translate(-8px,-300px)}75%{transform:translate(8px,-450px)}100%{transform:translate(0,-600px)}}
+.bub.popx{visibility:hidden}
+@media (max-width:560px){.cards{grid-template-columns:repeat(3,1fr)}.mcard .ce{font-size:40px}.mcard .ct{font-size:17px}.bub{width:96px;height:96px;font-size:17px}.pond{height:400px}}
+@media (prefers-reduced-motion: reduce){.bob,.dance,.combo,.mcard.up{animation:none}.bub{animation:none!important;bottom:auto;top:var(--y)}}
 .obs{display:inline-block;line-height:1.25;max-width:560px}
 .ob{position:relative;display:inline-block;font-size:40px;margin:2px}
 .ob i{position:absolute;top:-6px;right:-8px;font-style:normal;font-size:13px;font-weight:800;background:var(--sun);color:#2A2F6B;border:2px solid #2A2F6B;border-radius:99px;min-width:24px;height:24px;line-height:20px;text-align:center}
@@ -257,6 +322,9 @@ const MODES={
  read:{e:'👀',zh:'看图选词',t:{en:'Read',ms:'Baca'},d:'看图，选出对的单词'},
  spell:{e:'✏️',zh:'拼一拼',t:{en:'Spell',ms:'Eja'},d:'把字母排好，拼出单词'},
  sent:{e:'🧩',zh:'排句子',t:{en:'Sentences',ms:'Ayat'},d:'把词语排好，组成句子'},
+ match:{e:'🃏',zh:'翻牌配对',t:{en:'Match',ms:'Padan'},d:'翻开两张牌，图片和单词配成一对'},
+ bubble:{e:'🫧',zh:'泡泡爆爆',t:{en:'Bubbles',ms:'Buih'},d:'看图，戳破写着对的单词的泡泡'},
+ boss:{e:'👹',zh:'大魔王',t:{en:'Boss',ms:'Bos'},d:''},
  review:{e:'🔁',zh:'今日复习',t:{en:'Review',ms:'Ulang kaji'},d:''},
  math:{e:'🔢',zh:'数学',t:{en:'Maths',ms:'Matematik'},d:''},
  sci:{e:'🔬',zh:'科学',t:{en:'Science',ms:'Sains'},d:''}
@@ -269,20 +337,20 @@ const MASTER=3;
 
 /* ---------------- state ---------------- */
 const KEY='momo-learn.v1';
-function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',updatedAt:0}}
+function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},updatedAt:0}}
 function normalize(o){
-  if(o&&o.kids){Object.keys(o.kids).forEach(k=>o.kids[k]=Object.assign(blank(),o.kids[k]));if(!o.kids[o.cur])o.cur=Object.keys(o.kids)[0];return o}
-  const k=Object.assign(blank(),o||{});return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
+  if(o&&o.kids){Object.keys(o.kids).forEach(k=>{const raw=o.kids[k];o.kids[k]=Object.assign(blank(),raw);if(!raw.bambooInit)o.kids[k].bamboo=raw.stars||0});if(!o.kids[o.cur])o.cur=Object.keys(o.kids)[0];return o}
+  const k=Object.assign(blank(),o||{});if(!(o&&o.bambooInit))k.bamboo=(o&&o.stars)||0;return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return normalize(JSON.parse(r))}catch(e){}return normalize(null)}
 let ALL=load();let S=ALL.kids[ALL.cur];
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(ALL))}catch(e){}}
 function touch(){S.updatedAt=ALL.updatedAt=Date.now();saveLocal();queueCloud()}
 function dk(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dayRec(){const k=dk();return S.days[k]||(S.days[k]={stars:0,correct:0,wrong:0,mins:0})}
-function addStars(n){S.stars+=n;dayRec().stars+=n}
+function addStars(n){S.stars+=n;S.bamboo=(S.bamboo||0)+n;dayRec().stars+=n}
 function wkey(lang,w){return lang+':'+w.t+':'+w.en}
 function wstat(lang,w){return S.words[wkey(lang,w)]||{c:0,w:0}}
-function recordWord(w,ok){const k=wkey(S.lang,w);const r=S.words[k]||(S.words[k]={c:0,w:0});const d=dayRec();if(ok){r.c++;if(r.c===MASTER)r.m=dk();d.correct++;addStars(1)}else{r.w++;d.wrong++}touch()}
+function recordWord(w,ok){const k=wkey(G?G.lang:S.lang,w);const r=S.words[k]||(S.words[k]={c:0,w:0});const d=dayRec();if(ok){r.c++;if(r.c===MASTER)r.m=dk();d.correct++;addStars(1)}else{r.w++;d.wrong++}touch()}
 function streak(){let n=0;const d=new Date();if(!((S.days[dk(d)]||{}).stars>0))d.setDate(d.getDate()-1);while((S.days[dk(d)]||{}).stars>0){n++;d.setDate(d.getDate()-1)}return n}
 function mastered(lang,topic){let n=0;TOPICS.forEach(t=>{if(topic&&t.id!==topic)return;t.words.forEach(w=>{if(wstat(lang,w).c>=MASTER)n++})});return n}
 function accuracy(){let c=0,w=0;Object.values(S.days).forEach(d=>{c+=d.correct;w+=d.wrong});return c+w?Math.round(c*100/(c+w)):null}
@@ -319,9 +387,9 @@ function voicesFor(l){const pf=l==='ms'?['ms','id']:[l];return voices.filter(v=>
 function pickVoice(l){if(VP[l]){const v=voices.find(x=>x.voiceURI===VP[l]);if(v)return v}for(const p of PREF[l]){const v=voices.find(x=>vlang(x).startsWith(p));if(v)return v}return null}
 function hasMalay(){return voices.some(v=>vlang(v).startsWith('ms'))}
 if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=()=>{loadVoices();if(typeof view!=='undefined'&&view.name==='settings')render()}}
-function speak(text,lang){
+function speak(text,lang,queue){
   if(!('speechSynthesis' in window))return;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
+  try{if(!queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
     const v=pickVoice(lang);
     if(v){u.voice=v;u.lang=v.lang}else u.lang=PREF[lang][0];
     u.rate=(lang==='zh'?0.9:0.78)*VP.rate;u.pitch=1.1;speechSynthesis.speak(u)}catch(e){}
@@ -426,8 +494,8 @@ const MG={
    return{title:'一共有多少钱？',say:'一共有多少仙？',html:h=>`<div>${cs.map(v=>`<span class="coin">${v}<small>sen</small></span>`).join('')}</div>${h?`<div class="hintbox">💡 ${cs.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,10,100,10,v=>v===100?'100 sen<br><small>= RM1</small>':v+' sen'),explain:`${cs.map(v=>v+' sen').join(' + ')} = <b>${s} sen</b>${s===100?'，也就是 RM1':''}`,sayAns:`一共${s}仙`}}},
 };
 function recordMath(g,ok){const sci=!!SG[g];const store=sci?(S.sci||(S.sci={})):S.math;const r=store[g]||(store[g]={c:0,w:0});const d=dayRec();if(ok){r.c++;d.correct++;if(sci)d.sc=(d.sc||0)+1;else d.mc=(d.mc||0)+1;addStars(1)}else{r.w++;d.wrong++}touch()}
-function startMath(game,level){resetRec();const sci=!!SG[game],g=sci?SG[game]:MG[game];
-  G={topic:(sci?'sci:':'math:')+game,mode:sci?'sci':'math',game,level,lang:'zh',i:0,score:0,start:Date.now(),starsBefore:S.stars,
+function startMath(game,level){if(overLimit()){showRest();return}resetRec();const sci=!!SG[game],g=sci?SG[game]:MG[game];
+  G={topic:(sci?'sci:':'math:')+game,mode:sci?'sci':'math',game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
      qs:Array.from({length:8},()=>Object.assign(g.gen(level),{m:'math',missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
   go({name:'game'});setTimeout(speakCur,350)}
 function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);const first=!q.missed&&!q.hinted;
@@ -436,7 +504,7 @@ function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.op
    <div class="mview">${q.html(h)}</div>
    <div class="row" style="justify-content:center;margin:6px 0"><button class="btn sky" data-act="sayCur">🔊 听题目</button>${q.done||q.hint?'':'<button class="btn" data-act="mhint">💡 提示</button>'}</div>
    <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
-   ${q.done?`<div class="feedback">${panda(64)}<div class="ft">${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
+   ${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
   </div>`}
 function mathCards(){return Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0};
   return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
@@ -517,6 +585,129 @@ function sciPanel(){const st=S.sci||{};const rows=Object.entries(SG).map(([k,g])
   return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--mint)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>科学 🔬</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">绿色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
 
+/* ---------------- Momo 的家 (pet) ---------------- */
+const SHOP=[
+ {id:'cap',slot:'hat',e:'🧢',zh:'棒球帽',p:10},{id:'straw',slot:'hat',e:'👒',zh:'草帽',p:20},{id:'tophat',slot:'hat',e:'🎩',zh:'魔术帽',p:25},{id:'grad',slot:'hat',e:'🎓',zh:'博士帽',p:35},{id:'crown',slot:'hat',e:'👑',zh:'皇冠',p:60},
+ {id:'bow',slot:'ear',e:'🎀',zh:'蝴蝶结',p:8},{id:'flower',slot:'ear',e:'🌸',zh:'小花',p:8},{id:'sunflower',slot:'ear',e:'🌻',zh:'向日葵',p:12},
+ {id:'glasses',slot:'face',e:'👓',zh:'眼镜',p:12},{id:'shades',slot:'face',e:'🕶️',zh:'墨镜',p:18},
+ {id:'balloon',slot:'hand',e:'🎈',zh:'气球',p:10},{id:'ball',slot:'hand',e:'⚽',zh:'足球',p:12},{id:'teddy',slot:'hand',e:'🧸',zh:'小熊',p:15},{id:'kite',slot:'hand',e:'🪁',zh:'风筝',p:15},
+ {id:'bg-forest',slot:'bg',e:'🎋',zh:'竹林',p:20},{id:'bg-beach',slot:'bg',e:'🏖️',zh:'海边',p:25},{id:'bg-space',slot:'bg',e:'🚀',zh:'太空',p:40},{id:'bg-castle',slot:'bg',e:'🏰',zh:'城堡',p:50}];
+const BGS={sky:{g:'linear-gradient(#BFE6FF,#EAF7FF)',d:['☁️','☀️','☁️']},'bg-forest':{g:'linear-gradient(#D8F5D2,#8FD48A)',d:['🎋','🌳','🎋']},'bg-beach':{g:'linear-gradient(#9FE0FF 62%,#FFE3A3 62%)',d:['🌴','☀️','🐚']},'bg-space':{g:'linear-gradient(#20235A,#4A3D8F)',d:['⭐','🪐','🌙']},'bg-castle':{g:'linear-gradient(#FFD6E7,#C9B8FF)',d:['🌈','🏰','✨']}};
+const MOMO_TALK=[['Hello!','Hai!','你好！'],['I love bamboo!','Saya suka buluh!','我最爱吃竹子！'],['Let’s learn together!','Jom belajar bersama!','我们一起学习吧！'],['You are great!','Kamu hebat!','你真棒！'],['Give me a hug!','Peluk saya!','抱抱我！'],['That tickles!','Gelilah!','好痒哦，哈哈！']];
+const PRAISE=[['Awesome!','en'],['Hebat!','ms'],['太厉害了！','zh']];
+function pet(){return S.pet||(S.pet={owned:[],wear:{},bg:'sky',fed:0,happy:60})}
+function happyNow(){const p=pet();const days=p.fed?(Date.now()-p.fed)/86400000:0;return Math.max(0,Math.min(100,Math.round(p.happy-days*25)))}
+function pandaDressed(size,mood,cls){const w=pet().wear||{};const it=id=>{const x=SHOP.find(s=>s.id===id);return x?x.e:''};
+  const m=mood||(happyNow()<35?'oops':'happy');
+  return `<span class="momo ${cls||''}" style="width:${size}px;height:${size}px;font-size:${size}px">${panda(size,m)}${w.hat?`<span class="acc a-hat">${it(w.hat)}</span>`:''}${w.ear?`<span class="acc a-ear">${it(w.ear)}</span>`:''}${w.face?`<span class="acc a-face">${it(w.face)}</span>`:''}${w.hand?`<span class="acc a-hand">${it(w.hand)}</span>`:''}</span>`}
+function vPet(){const p=pet(),h=happyNow(),bg=BGS[p.bg]||BGS.sky;
+  const mood=h>=70?['Momo 好开心！谢谢你～','I’m so happy!']:h>=35?['Momo 有点饿了，喂我吃竹子好吗？','A little hungry…']:['Momo 肚子好饿……快去学习赚竹子吧 😢','So hungry…'];
+  const slots=[['hat','🎩 帽子'],['ear','🎀 耳朵'],['face','👓 眼镜'],['hand','🎈 手上'],['bg','🏠 房间']];
+  return bar('pet')+`<div class="panel room" style="background:${bg.g}">
+    <div class="deco">${bg.d.map((d,i)=>`<span style="left:${8+i*38}%;top:${6+(i%2)*16}%">${d}</span>`).join('')}</div>
+    <button class="momobtn" data-act="pat" aria-label="摸摸 Momo">${pandaDressed(190,null,'bob')}</button>
+    <div class="bubble petsay" id="petsay">${mood[0]}<small>${mood[1]}　（点一下 Momo 跟它玩）</small></div>
+  </div>
+  <div class="panel row">
+    <div style="flex:1;min-width:200px"><b>💖 开心度</b><div class="meter" style="height:18px;background:var(--soft)"><i style="width:${h}%;background:${h>=70?'var(--mint)':h>=35?'var(--sun)':'var(--bad)'}"></i></div><div class="zh" style="font-size:14px">每天喂 Momo，它就会很开心</div></div>
+    <div style="text-align:center"><div style="font-size:30px;font-weight:800">🎋 ${S.bamboo||0}</div><div class="zh" style="font-size:14px">竹子（每拿 1 颗星就有 1 根）</div></div>
+    <button class="btn mint big" data-act="feed" ${(S.bamboo||0)<3?'disabled':''}>🎋 喂竹子 <span style="font-size:15px">−3</span></button></div>
+  <div class="panel"><h2>Momo 的商店 🛍️</h2><div class="zh" style="font-size:14px;margin:-6px 0 4px">用竹子买东西，买了以后点一下就能穿上或拿下来</div>
+   ${slots.map(([sl,name])=>`<div style="font-weight:700;margin:12px 0 6px">${name}</div><div class="shop">${sl==='bg'?`<button class="item ${p.bg==='sky'?'on':''}" data-act="wear" data-v="sky"><span>☁️</span><small>${p.bg==='sky'?'用着 ✓':'天空'}</small></button>`:''}${SHOP.filter(x=>x.slot===sl).map(x=>{const own=p.owned.includes(x.id);const on=sl==='bg'?p.bg===x.id:(p.wear||{})[sl]===x.id;
+     return `<button class="item ${on?'on':''} ${own?'':'lock'}" data-act="${own?'wear':'buy'}" data-v="${x.id}"><span>${x.e}</span><small>${own?(on?'用着 ✓':x.zh):'🎋 '+x.p}</small></button>`}).join('')}</div>`).join('')}
+  </div>`}
+
+/* ---------------- 翻牌配对 & 泡泡 ---------------- */
+function vMatch(){const done=G.cards.filter(c=>c.done).length/2;
+  return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button><div style="flex:1;font-weight:800">🃏 找到 ${done} / ${G.qs.length} 对　<span class="zh">翻了 ${G.moves} 次</span></div>${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}</div>
+  <p class="zh" style="text-align:center;margin:0 0 12px">翻开两张牌，把图片和${LANGS[G.lang].zh}单词配成一对</p>
+  <div class="cards">${G.cards.map(c=>`<button class="mcard ${c.up||c.done?'up':''} ${c.done?'done':''}" data-act="card" data-v="${c.i}" ${c.done?'disabled':''} aria-label="第${c.i+1}张牌">${c.up||c.done?(c.k==='e'?`<span class="ce">${c.w.e}</span>`:`<span class="ct">${esc(c.w[G.lang])}</span>`):'<span class="cb">🐼</span>'}</button>`).join('')}</div>`}
+function comboBadge(){return G&&G.combo>=2?`<span class="combo">🔥 连对 ${G.combo} 题！</span>`:''}
+
+/* ---------------- 冒险地图 ---------------- */
+const REGIONS=[{zh:'竹林村',e:'🎋',bg:'#D8F5D2'},{zh:'阳光海边',e:'🏖️',bg:'#FFF1C9'},{zh:'动物园',e:'🦁',bg:'#FFE0D0'},{zh:'太空站',e:'🚀',bg:'#DDD8FF'}];
+const STATIONS=[
+ {r:0,k:'word',topic:'school',mode:'read',lang:'en'},{r:0,k:'math',game:'count',level:1},{r:0,k:'math',game:'living',level:1},{r:0,k:'word',topic:'toys',mode:'listen',lang:'en'},
+ {r:0,k:'boss',words:['school','toys'],lang:'en',games:['count','living']},
+ {r:1,k:'word',topic:'pets',mode:'bubble',lang:'ms'},{r:1,k:'math',game:'add',level:1},{r:1,k:'math',game:'senses',level:1},{r:1,k:'word',topic:'lunch',mode:'match',lang:'ms'},
+ {r:1,k:'boss',words:['pets','lunch'],lang:'ms',games:['add','senses']},
+ {r:2,k:'word',topic:'zoo',mode:'listen',lang:'en'},{r:2,k:'math',game:'sub',level:1},{r:2,k:'math',game:'animal',level:1},{r:2,k:'word',topic:'family',mode:'read',lang:'ms'},
+ {r:2,k:'boss',words:['zoo','family'],lang:'en',games:['sub','animal']},
+ {r:3,k:'word',topic:'vehicles',mode:'read',lang:'en'},{r:3,k:'math',game:'make10',level:1},{r:3,k:'math',game:'magnet',level:1},{r:3,k:'word',topic:'colours',mode:'spell',lang:'en'},
+ {r:3,k:'boss',words:['vehicles','colours'],lang:'ms',games:['make10','magnet']}];
+function adv(){return S.adv||(S.adv={done:{}})}
+function advNext(){let i=0;while(i<STATIONS.length&&adv().done[i])i++;return i}
+function stLabel(st){if(st.k==='word'){const t=T(st.topic);return{e:t.icon,t:t.zh+' · '+MODES[st.mode].zh,s:LANGS[st.lang].flag+' '+LANGS[st.lang].zh}}
+  if(st.k==='math'){const g=MG[st.game]||SG[st.game];return{e:g.e,t:g.zh,s:MG[st.game]?'🔢 数学':'🔬 科学'}}return{e:'👹',t:'大魔王',s:'综合挑战 · 答对 6 题过关'}}
+function startStation(idx){if(overLimit()){showRest();return}const st=STATIONS[idx];
+  if(st.k==='word'){view.topic=st.topic;startGame(st.mode,st.topic,st.lang)}else if(st.k==='math')startMath(st.game,st.level);else startBoss(idx);
+  if(G)G.station=idx}
+function startBoss(idx){const st=STATIONS[idx];const qs=[];
+  st.words.forEach(tid=>{const pool=T(tid).words;shuffle(pool).slice(0,2).forEach(w=>qs.push({w,m:pick(['read','listen']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}))});
+  st.games.forEach(g=>{const gm=MG[g]||SG[g];for(let k=0;k<2;k++)qs.push(Object.assign(gm.gen(1),{m:'math',g,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))});
+  resetRec();G={topic:'boss:'+idx,mode:'boss',lang:st.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs),station:idx};
+  go({name:'game'});setTimeout(()=>{const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
+function vMap(){const nx=advNext();let html='',lastR=-1;
+  STATIONS.forEach((st,i)=>{if(st.r!==lastR){lastR=st.r;const R=REGIONS[st.r];html+=`<div class="region" style="background:${R.bg}">${R.e} 第 ${st.r+1} 区：${R.zh}</div>`}
+    const L=stLabel(st),state=adv().done[i]?'done':i===nx?'now':'lock';
+    html+=`<div class="stn ${state} ${st.k==='boss'?'boss':''}" style="margin-left:${[0,56,96,56][i%4]}px"><button class="node" data-act="${state==='lock'?'locked':'station'}" data-v="${i}" aria-label="第 ${i+1} 站 ${L.t}">${state==='lock'?'🔒':L.e}</button><div class="sl"><b>${L.t}</b><span>${state==='done'?'⭐ 已过关（可以再玩）':state==='now'?'👉 '+L.s:L.s}</span></div></div>`});
+  if(nx>=STATIONS.length)html+=`<div class="region" style="background:#FFE07A">🏆 全部通关！你是冒险大王！</div>`;
+  return bar('home')+`<div class="panel row"><span style="font-size:44px">🗺️</span><div style="flex:1"><h1 style="font-size:30px">冒险地图</h1><div class="zh">一站一站往前走，答对 6 题就过关，解锁下一站。每一区最后有大魔王！</div></div><button class="btn" data-act="home">⬅ 返回</button></div><div class="panel map">${html}</div>`}
+
+/* ---------------- 卡片册 ---------------- */
+function cardOn(w){return ['en','ms'].some(l=>wstat(l,w).c>=2)}
+function cardCount(){let n=0;TOPICS.forEach(t=>t.words.forEach(w=>{if(cardOn(w))n++}));return n}
+function vAlbum(){const total=TOPICS.reduce((a,t)=>a+t.words.length,0),n=cardCount();const bosses=STATIONS.map((s,i)=>s.k==='boss'?i:-1).filter(i=>i>=0);
+  return bar('home')+`<div class="panel row"><span style="font-size:44px">📚</span><div style="flex:1"><h1 style="font-size:30px">我的卡片册</h1><div class="zh">一个词答对 2 次就能得到它的卡片。点卡片听英文、国文和华文！</div></div><span class="pill">${n} / ${total}</span><button class="btn" data-act="home">⬅ 返回</button></div>
+  <div class="panel"><h2>🏆 奖杯卡片</h2><div class="album">${bosses.map((bi,k)=>{const on=adv().done[bi],R=REGIONS[STATIONS[bi].r];return `<div class="pcard trophy ${on?'':'off'}"><span class="pe">${on?R.e:'🏆'}</span><b>${on?R.zh+'勇士':'？'}</b><span>${on?'打败第 '+(k+1)+' 区大魔王':'打败第 '+(k+1)+' 区大魔王就能得到'}</span></div>`}).join('')}</div></div>
+  ${TOPICS.map(t=>{const got=t.words.filter(cardOn).length;return `<div class="panel"><h2>${t.icon} ${t.zh} <span class="zh" style="font-size:16px">${got}/${t.words.length}${got===t.words.length?' 🏅 全套收集！':''}</span></h2><div class="album">${t.words.map(w=>cardOn(w)?`<button class="pcard" data-act="cardsay" data-t="${t.id}" data-v="${esc(w.en)}"><span class="pe">${w.e}</span><b>${esc(w.en)}</b><span>${esc(w.ms)}</span><span class="zh">${w.zh}</span></button>`:`<div class="pcard off"><span class="pe">${w.e}</span><b>？</b></div>`).join('')}</div></div>`}).join('')}`}
+
+/* ---------------- 生活任务 ---------------- */
+const MISSIONS=[['🔴','在家里找 3 样红色的东西，用英文说 red'],['🪑','数一数家里有几张椅子'],['🍎','吃水果时，用国文说出水果的名字'],['👃','闭上眼睛闻一闻，猜猜是什么食物'],['🧲','用冰箱贴的磁铁试一试，哪些东西会被吸住'],['💧','试一试纸巾和塑料袋，哪一个会吸水'],['🌱','找一棵植物，指出根、茎、叶、花'],['👨‍👩‍👧','用英文介绍家人：This is my father.'],['🔺','在家里找一样圆形、一样正方形、一样三角形的东西'],['💰','跟爸爸妈妈买东西时，帮忙数一数要付多少钱'],['🐱','学一种动物的叫声，再说出它的英文和国文名字'],['🌙','晚上看看天空，用国文说 bulan 和 bintang'],['🦷','刷牙时，慢慢从 1 数到 20'],['👟','把家里的鞋子排好，数一数有几双'],['🧸','收拾玩具，一边收一边用英文说出玩具的名字'],['🚗','坐车时，找一找路上的 bas、teksi、motosikal'],['🖐️','用英文说出 5 个身体部位，再用手指一指'],['🍚','吃饭时，用国文说 nasi、telur、air']];
+function todayMissions(){let x=0;for(const c of dk())x=(x*31+c.charCodeAt(0))%233280;const ids=[];let n=0;while(ids.length<3&&n<200){n++;x=(x*9301+49297)%233280;const i=x%MISSIONS.length;if(!ids.includes(i))ids.push(i)}return ids}
+function missionState(){const m=S.missions||(S.missions={date:'',done:[]});if(m.date!==dk()){m.date=dk();m.done=[]}return m}
+function vMissions(){const ids=todayMissions(),m=missionState();
+  return bar('home')+`<div class="panel row"><span style="font-size:44px">🏠</span><div style="flex:1"><h1 style="font-size:30px">今日生活任务</h1><div class="zh">离开屏幕，在家里动手做！完成一个有 2 颗星，明天会有新任务。</div></div><button class="btn" data-act="home">⬅ 返回</button></div>
+  ${ids.map(i=>{const t=MISSIONS[i],ok=m.done.includes(i);return `<div class="panel row mission ${ok?'ok':''}"><span style="font-size:52px">${t[0]}</span><div style="flex:1;min-width:180px;font-size:21px;font-weight:700">${t[1]}</div><button class="btn round" data-act="sayL" data-l="zh" data-v="${esc(t[1])}" aria-label="读出来">🔊</button>${ok?'<span class="pill" style="background:var(--mint)">✅ 完成了</span>':`<button class="btn sun big" data-act="mdone" data-v="${i}">我做到了！</button>`}</div>`}).join('')}
+  <p class="zh" style="text-align:center">💡 家长可以陪孩子一起做，做完再按「我做到了」。</p>`}
+
+/* ---------------- 亲子对战 ---------------- */
+let D=null;
+function duelOpps(){return [['👨','爸爸'],['👩','妈妈'],...Object.entries(ALL.kids).filter(([id])=>id!==ALL.cur).map(([,k])=>[k.avatar,k.name]),['🧒','朋友']]}
+function vDuelSetup(){const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
+  return bar('home')+`<div class="panel row"><span style="font-size:44px">⚔️</span><div style="flex:1"><h1 style="font-size:30px">亲子对战</h1><div class="zh">两个人用同一台平板，看谁先按对答案！</div></div><button class="btn" data-act="home">⬅ 返回</button></div>
+  <div class="panel"><h2>谁来挑战 ${esc(S.name)}？</h2><div class="chips" style="margin-bottom:16px">${opps.map((o,i)=>`<button class="chip ${i===sel?'onc':''}" data-act="dopp" data-v="${i}"><span style="font-size:26px">${o[0]}</span> ${esc(o[1])}</button>`).join('')}</div>
+  <h2>比什么？</h2><div class="seg">${[['en','🇬🇧 英文'],['ms','🇲🇾 国文'],['math','🔢 数学']].map(([k,l])=>`<button class="${sub===k?'on':''}" data-act="dsub" data-v="${k}">${l}</button>`).join('')}</div>
+  <div style="margin-top:18px"><button class="btn sun big" data-act="dstart">开始对战 ⚔️</button></div></div>`}
+function makeDuelQs(sub){const qs=[];for(let n=0;n<10;n++){
+  if(sub==='math'){const q0=MG[pick(['count','add','sub'])].gen(1);qs.push({top:`<div class="mq">${q0.title}</div><div class="mview">${q0.html(false)}</div>`,opts:q0.opts,ans:q0.ans,say:q0.say,ansText:q0.sayAns,ansLang:'zh'})}
+  else{const t=pick(TOPICS),w=pick(t.words);qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${w.e}</div>${zh(w.zh)}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
+  return qs}
+function startDuel(){if(overLimit()){showRest();return}const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
+  D={p:[[S.avatar,S.name],opps[sel]],sub,opp:sel,i:0,sc:[0,0],qs:makeDuelQs(sub),lock:[false,false],done:false,winner:null,over:false};go({name:'duelplay'});setTimeout(duelSay,300)}
+function duelSay(){const q=D&&D.qs[D.i];if(q&&q.say)speak(q.say,'zh')}
+function duelNext(){if(!D||view.name!=='duelplay')return;D.i++;
+  if(D.i>=D.qs.length){D.over=true;const won=D.sc[0]>D.sc[1];D.earned=3+(won?2:0);addStars(D.earned);dayRec().mins+=2;touch();render();sGood();setTimeout(()=>burst(document.querySelector('.endstar'),'🎉'),200);return}
+  D.done=false;D.lock=[false,false];D.winner=null;render();duelSay()}
+function vDuel(){if(D.over){const a=D.sc[0],b=D.sc[1];const title=a===b?'平手！两个都很棒 🤝':(a>b?esc(D.p[0][1]):esc(D.p[1][1]))+' 赢了！🏆';
+    return `<div class="panel setup">${pandaDressed(120,'happy','dance')}<h1 style="font-size:34px">${title}</h1><p style="font-size:30px;font-weight:800;margin:6px 0">${D.p[0][0]} ${a} : ${b} ${D.p[1][0]}</p><div class="endstar" style="font-size:30px;font-weight:800">⭐ ${esc(S.name)} +${D.earned}</div>
+    <div class="row" style="justify-content:center;margin-top:14px"><button class="btn sun big" data-act="dstart">🔁 再来一局</button><button class="btn big" data-act="duel">⚙️ 换对手</button><button class="btn big" data-act="home">🏠 回首页</button></div></div>`}
+  const q=D.qs[D.i];
+  const side=p=>`<div class="dside p${p}"><div class="dhead">${D.p[p][0]} ${esc(D.p[p][1])}<span class="dsc">${D.sc[p]}</span></div><div class="dopts">${q.opts.map((o,i)=>`<button class="opt ${D.done&&o.v===q.ans?'right':''} ${D.lock[p]?'locked':''}" data-act="dans" data-p="${p}" data-v="${i}" ${D.done||D.lock[p]?'disabled':''}>${o.l}</button>`).join('')}</div>${D.done&&D.winner===p?'<div class="dwin">⚡ 抢到了！+1</div>':''}${D.lock[p]&&!D.done?'<div class="dno">❌ 答错了，等下一题</div>':''}</div>`;
+  return `<div class="gbar"><button class="btn round" data-act="dquit" aria-label="离开">✕</button><div style="flex:1;font-weight:800;text-align:center">⚔️ 第 ${D.i+1} / ${D.qs.length} 题</div>${q.say?'<button class="btn sky round" data-act="dsay" aria-label="听题目">🔊</button>':''}</div>
+  <div class="stage">${q.top}</div><div class="duel">${side(0)}${side(1)}</div>`}
+
+/* ---------------- 时间提醒 ---------------- */
+function todaySecs(){return (S.days[dk()]||{}).secs||0}
+function overLimit(){return S.limit>0&&todaySecs()>=(S.limit+((S.days[dk()]||{}).extra||0))*60}
+function showRest(){if(document.querySelector('.rest'))return;const o=document.createElement('div');o.className='rest';
+  o.innerHTML=`<div class="panel setup" style="max-width:520px">${pandaDressed(130,'happy')}<h1 style="font-size:32px">眼睛要休息啦 😴</h1><p style="font-size:20px">今天已经学习了 ${Math.round(todaySecs()/60)} 分钟，真棒！<br>去喝杯水、看看远方、动一动身体吧。</p><div class="row" style="justify-content:center"><button class="btn sun big" data-rest="ok">好的，休息一下</button><button class="btn" data-rest="parent">家长：再玩 10 分钟</button></div></div>`;
+  o.addEventListener('click',e=>{const t=e.target.closest('[data-rest]');if(!t)return;
+    if(t.dataset.rest==='ok'){o.remove();if(view.name!=='home')go({name:'home'})}
+    else{const a=rnd(6,9),c=rnd(6,9);const ans=prompt('家长确认：'+a+' × '+c+' = ?');if(ans!==null&&+ans===a*c){const d=dayRec();d.extra=(d.extra||0)+10;touch();o.remove();toast('已经多加 10 分钟 ⏱️')}else if(ans!==null)toast('答案不对哦')}});
+  document.body.appendChild(o);speak('眼睛要休息啦，去喝杯水吧！','zh')}
+setInterval(()=>{if(document.hidden||!S.name)return;const d=dayRec();d.secs=(d.secs||0)+30;saveLocal();if(overLimit()&&!['game','duelplay','setup'].includes(view.name))showRest()},30000);
+
 /* ---------------- views ---------------- */
 let view={name:S.name?'home':'setup'};
 let G=null;
@@ -524,10 +715,11 @@ function go(v){view=v;render();window.scrollTo(0,0)}
 
 function bar(active){
   return `<div class="bar">
-    <button class="who" data-act="kids" aria-label="切换孩子"><div class="ava">${esc(S.avatar)}</div><div>${esc(S.name)}${Object.keys(ALL.kids).length>1?' <span class="zh" style="font-size:14px">⇄</span>':''}</div><span class="pill">⭐ ${S.stars}</span></button>
+    <button class="who" data-act="kids" aria-label="切换孩子"><div class="ava">${esc(S.avatar)}</div><div>${esc(S.name)}${Object.keys(ALL.kids).length>1?' <span class="zh" style="font-size:14px">⇄</span>':''}</div><span class="pill">⭐ ${S.stars}</span><span class="pill" style="background:var(--mint)">🎋 ${S.bamboo||0}</span></button>
     <div class="tabs">
       <button class="btn ${active==='home'?'on':''}" data-act="home">🏠 学习</button>
       <button class="btn ${active==='growth'?'on':''}" data-act="growth">🌳 成长</button>
+      <button class="btn ${active==='pet'?'on':''}" data-act="pet">🐼 Momo</button>
       <button class="btn round ${active==='settings'?'on':''}" data-act="settings" aria-label="家长设置">⚙️</button>
     </div></div>`}
 
@@ -549,17 +741,18 @@ function vKids(){
 function vHome(){
   const d=S.days[dk()]||{stars:0};const g=S.goal;const pct=Math.min(1,d.stars/g);const C=2*Math.PI*40;
   const st=streak();
-  const hello=d.stars>=g?['今天的目标完成啦！再玩一会儿也可以哦。','Goal done! 好棒！']:d.stars>0?['继续加油，还差 '+(g-d.stars)+' 颗星！','Keep going!']:['今天想学什么呢？点一个主题吧！',S.lang==='en'?'Let’s learn English!':'Jom belajar Bahasa Melayu!'];
+  const hello=happyNow()<35?['Momo 肚子饿了！学习赚竹子来喂它吧 🎋','Momo is hungry!']:d.stars>=g?['今天的目标完成啦！再玩一会儿也可以哦。','Goal done! 好棒！']:d.stars>0?['继续加油，还差 '+(g-d.stars)+' 颗星！','Keep going!']:['今天想学什么呢？点一个主题吧！',S.lang==='en'?'Let’s learn English!':'Jom belajar Bahasa Melayu!'];
   return bar('home')+`
-  <div class="panel hello">${panda(84)}<div class="bubble">Hi ${esc(S.name)}! ${hello[0]}<small>${esc(hello[1])}</small></div></div>
+  <div class="panel hello"><button class="momobtn" data-act="pet" aria-label="去 Momo 的家">${pandaDressed(84)}</button><div class="bubble">Hi ${esc(S.name)}! ${hello[0]}<small>${esc(hello[1])}</small></div></div>
   <div class="panel today">
     <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--soft)" stroke-width="12"/>
       <circle cx="48" cy="48" r="40" fill="none" stroke="var(--sun)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/></svg><b>${d.stars}/${g}</b></div>
-    <div><div style="font-weight:800;font-size:22px">今天的星星 ⭐</div><div class="zh">${st>0?'🔥 连续学习 '+st+' 天':'今天开始连续学习吧！'}</div></div>
+    <div><div style="font-weight:800;font-size:22px">今天的星星 ⭐</div><div class="zh">${st>0?'🔥 连续学习 '+st+' 天':'今天开始连续学习吧！'}</div>${S.limit?`<div class="zh" style="font-size:15px">⏱️ 今天 ${Math.round(todaySecs()/60)} / ${S.limit+((S.days[dk()]||{}).extra||0)} 分钟</div>`:''}</div>
     <div class="spacer"></div>
     <div><div style="font-weight:700;margin-bottom:6px">我要学：</div>
       <div class="seg" role="group" aria-label="选择语言">${Object.entries(LANGS).map(([k,v])=>`<button data-act="lang" data-v="${k}" class="${S.subj==='lang'&&S.lang===k?'on':''}">${v.flag} ${v.zh}</button>`).join('')}<button data-act="subj" data-v="math" class="${S.subj==='math'?'on':''}">🔢 数学</button><button data-act="subj" data-v="sci" class="${S.subj==='sci'?'on':''}">🔬 科学</button></div></div>
   </div>
+  <div class="feats">${[['map','🗺️','冒险地图',Math.min(advNext(),STATIONS.length)+' / '+STATIONS.length+' 站'],['album','📚','卡片册',cardCount()+' 张卡片'],['missions','🏠','生活任务','今天 '+missionState().done.length+' / 3'],['duel','⚔️','亲子对战','两人一起玩']].map(([a,e,t,x])=>`<button class="btn feat" data-act="${a}"><span class="fe">${e}</span><b>${t}</b><span class="fs">${x}</span></button>`).join('')}</div>
   ${S.subj!=='lang'?'':(()=>{const rv=reviewWords().length;return `<div class="panel row"><span style="font-size:44px">🔁</span><div style="flex:1"><b style="font-size:22px">今日复习</b><div class="zh">${rv?'有 '+rv+' 个词还没完全学会，复习一下吧！':'还没有要复习的词，先去玩主题游戏吧。'}</div></div>${rv>=3?'<button class="btn sun" data-act="play" data-v="review">开始复习 ▶</button>':''}</div>`})()}
   <div class="grid">${S.subj==="math"?mathCards():S.subj==="sci"?sciCards():TOPICS.map(t=>{const m=mastered(L(),t.id),n=t.words.length;
     return `<button class="topic" style="background:${t.hue}" data-act="topic" data-v="${t.id}">
@@ -574,21 +767,25 @@ function vTopic(){
     <div><h1 style="font-size:36px">${t.zh}</h1><div style="font-weight:700">${esc(t.en)} · ${esc(t.ms)}</div>${t.tag?`<span class="tag">${t.tag}</span>`:''}</div>
     <div class="spacer"></div><button class="btn" data-act="home">⬅ 返回</button>
   </div>
-  <div class="modes">${Object.entries(MODES).filter(([k])=>k!=='review'&&k!=='math'&&k!=='sci'&&(k!=='sent'||t.sent)).map(([k,m])=>`<button class="btn mode" data-act="play" data-v="${k}"><span class="e">${m.e}</span><b>${m.zh} · ${m.t[L()]}</b><span>${m.d}</span></button>`).join('')}</div>
+  <div class="modes">${Object.entries(MODES).filter(([k])=>k!=='review'&&k!=='boss'&&k!=='math'&&k!=='sci'&&(k!=='sent'||t.sent)).map(([k,m])=>`<button class="btn mode" data-act="play" data-v="${k}"><span class="e">${m.e}</span><b>${m.zh} · ${m.t[L()]}</b><span>${m.d}</span></button>`).join('')}</div>
   <div class="panel" style="margin-top:18px"><h2>这个主题的单词 <span class="zh" style="font-size:16px">点一下听发音</span></h2>
     <div class="chips">${t.words.map(w=>{const s=wstat(L(),w);return `<button class="chip" data-act="say" data-v="${esc(w[L()])}">${w.e} ${esc(w[L()])}${S.showZh?' <span class="zh">'+w.zh+'</span>':''}${s.c>=MASTER?' 🏅':''}</button>`}).join('')}</div></div>`}
 
 /* ---------- game ---------- */
 function reviewWords(){const all=[];TOPICS.forEach(t=>t.words.forEach(w=>{const r=wstat(S.lang,w);if(r.c+r.w>0&&r.c<MASTER)all.push({w,k:r.w*2-r.c})}));
   return shuffle(all).sort((a,b)=>b.k-a.k).slice(0,8).map(x=>x.w)}
-function startGame(mode){
+function startGame(mode,topicId0,lang0){
+  if(overLimit()){showRest();return}
   resetRec();
+  if(mode==='match'){const t=T(topicId0||view.topic||(G&&G.topic));const ws=shuffle(t.words).slice(0,6);
+    const cards=shuffle(ws.flatMap(w=>[{w,k:'e'},{w,k:'t'}])).map((c,i)=>Object.assign(c,{i,up:false,done:false}));
+    G={topic:t.id,mode,lang:lang0||S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),cards,open:[],moves:0,qs:ws.map(w=>({w,m:'match'}))};go({name:'game'});return}
   let words,topicId;
   if(mode==='review'){words=shuffle(reviewWords());topicId='review'}
-  else{const t=T(view.topic||(G&&G.topic));topicId=t.id;words=shuffle(t.words)}
+  else{const t=T(topicId0||view.topic||(G&&G.topic));topicId=t.id;words=shuffle(t.words)}
   if(!words.length){toast('还没有要复习的词哦');return}
-  G={topic:topicId,mode,lang:S.lang,i:0,score:0,start:Date.now(),starsBefore:S.stars,
-     qs:words.map(w=>{const pool=T(w.t).words;return {w,m:mode==='review'?pick(['listen','read']):mode,opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}})};
+  G={topic:topicId,mode,lang:lang0||S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
+     qs:words.map(w=>{const pool=T(w.t).words;return {w,m:mode==='review'?pick(['listen','read']):mode,opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,mode==='bubble'?4:3)]),missed:false,hinted:false,done:false,wrongIdx:[]}})};
   setupTiles();
   go({name:'game'});
   setTimeout(()=>{const m=cur().m;if(m==='listen'||m==='learn'||m==='sent')speakCur()},350);
@@ -596,7 +793,7 @@ function startGame(mode){
 function cur(){return G.qs[G.i]}
 function sentOf(q,lang){return T(q.w.t).sent[lang](q.w)}
 function curText(){const q=cur();if(q.m==='math')return q.done?q.sayAns:q.say;return q.m==='sent'?sentOf(q,G.lang):q.w[G.lang]}
-function speakCur(){speak(curText(),G.lang)}
+function speakCur(){speak(curText(),cur().m==='math'?'zh':G.lang)}
 function setupTiles(){const q=cur();
   if(q.m==='sent'){const toks=sentOf(q,G.lang).split(' ');q.slots=toks.map(ch=>({ch,val:null,tile:null}));q.tiles=shuffle(toks.map((ch,id)=>({id,ch,used:false})))}
   else if(q.m==='spell'){const word=q.w[G.lang].toLowerCase();
@@ -606,15 +803,16 @@ function setupTiles(){const q=cur();
 function gameBar(){
   return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button>
   <div class="dots">${G.qs.map((q,i)=>`<i class="${i===G.i&&!q.done?'now':q.done?(q.missed||q.hinted?'no':'ok'):''}"></i>`).join('')}</div>
-  <span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span></div>`}
+  ${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span></div>`}
 
 function feedbackBox(){
   const q=cur();if(!q.done)return '';const c=pick(CHEER);const first=!q.missed&&!q.hinted;
-  return `<div class="feedback">${panda(64)}<div class="ft">${first?c[G.lang==='en'?0:1]+' '+c[2]:'答对了！下次会更快哦 💪'}
+  return `<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?c[G.lang==='en'?0:1]+' '+c[2]:'答对了！下次会更快哦 💪'}
     <small>${q.m==='sent'?q.w.e+' '+esc(sentOf(q,G.lang))+(S.showZh?' ＝ '+esc(sentOf(q,'zh')):''):q.w.e+' '+esc(q.w[G.lang])+' = '+esc(q.w[G.lang==='en'?'ms':'en'])+(S.showZh?' = '+q.w.zh:'')}</small></div>
     <button class="btn sun big" data-act="next" autofocus>${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`}
 
 function vGame(){
+  if(G.mode==='match')return vMatch();
   if(cur().m==='math')return vMath();
   const q=cur();const w=q.w;const lg=G.lang;const m=q.m;
   if(m==='learn'){
@@ -630,6 +828,11 @@ function vGame(){
         <button class="btn ${recState==='rec'?'pink':'mint'} big" data-act="rec">${recState==='rec'?'⏹ 录好了':'🎤 跟读'}</button>
         ${recUrl&&recState!=='rec'?'<button class="btn big" data-act="mine">▶ 听我的</button><button class="btn big" data-act="compare">🔁 对比</button>':''}</div>
       <p class="zh">${recState==='rec'?'正在录音……大声念出来！':'先听一听，再按「跟读」念一次，听听自己念得像不像～'}</p></div>`}
+  if(m==='bubble'){
+    return gameBar()+`<div class="stage"><div class="prompt" style="font-size:84px;margin:0">${w.e}</div>${zh(w.zh)}
+      ${q.done?`<div class="word" style="margin:14px 0">${esc(w[lg])}</div>${feedbackBox()}`:`<p class="zh" style="margin:4px 0">戳破写着对的${LANGS[lg].zh}单词的泡泡！🫧</p>
+      <div class="pond">${q.opts.map((o,i)=>{const n=q.opts.length,dur=6+((i*3+G.i)%4),delay=-(((i*2.3)+G.i*0.7)%dur);
+        return `<button class="bub ${q.wrongIdx.includes(i)?'popx':''}" style="left:${3+i*(82/n)}%;--y:${8+((i*37+G.i*11)%62)}%;animation-duration:${dur}s;animation-delay:${delay.toFixed(1)}s" data-act="ans" data-v="${i}">${esc(o[lg])}</button>`}).join('')}</div>`}</div>`}
   if(m==='listen'){
     return gameBar()+`<div class="stage">
       <button class="btn sky big" data-act="sayCur" style="font-size:30px;margin:10px 0">🔊 再听一次</button>
@@ -651,9 +854,10 @@ function vGame(){
 
 function answer(ok,el){
   const q=cur();if(q.done)return;const rect=el&&el.getBoundingClientRect?el.getBoundingClientRect():null;
-  if(ok){q.done=true;const first=!q.missed&&!q.hinted;if(first){G.score++;q.m==='math'?recordMath(G.game,true):recordWord(q.w,true)}
-    sGood();render();burst(rect||document.querySelector('.feedback'));setTimeout(speakCur,250)}
-  else{if(!q.missed){q.missed=true;q.m==='math'?recordMath(G.game,false):recordWord(q.w,false)}sBad()}
+  if(ok){q.done=true;const first=!q.missed&&!q.hinted;if(first){G.score++;G.combo=(G.combo||0)+1;G.best=Math.max(G.best||0,G.combo);q.m==='math'?recordMath(q.g||G.game,true):recordWord(q.w,true)}else G.combo=0;
+    sGood();render();burst(rect||document.querySelector('.feedback'));setTimeout(speakCur,250);
+    if(G.combo>=3){setTimeout(()=>burst(document.querySelector('.feedback .momo'),'🔥'),300);if([3,5,8].includes(G.combo)){const pr=PRAISE[G.combo%3];setTimeout(()=>speak(pr[0],pr[1],true),400)}}}
+  else{G.combo=0;if(!q.missed){q.missed=true;q.m==='math'?recordMath(q.g||G.game,false):recordWord(q.w,false)}sBad()}
 }
 function spellCheck(){
   const q=cur();if(q.slots.some(s=>!s.fixed&&!s.val))return;
@@ -665,24 +869,28 @@ function spellCheck(){
 function endGame(){
   const mins=Math.max(1,Math.round((Date.now()-G.start)/60000));
   if(G.mode==='learn'){addStars(3)}
+  if(G.mode==='match'){addStars(G.moves<=8?6:G.moves<=11?5:G.moves<=14?4:3)}
   dayRec().mins+=mins;
+  let pass=null;if(G.station!=null){pass=G.mode==='learn'||G.mode==='match'||G.score>=Math.ceil(G.qs.length*0.75);if(pass){const first=!adv().done[G.station];adv().done[G.station]=true;if(STATIONS[G.station].k==='boss'&&first)addStars(5)}}
   S.sessions.push({t:Date.now(),topic:G.topic,mode:G.mode,lang:G.lang,score:G.mode==='learn'?null:G.score,total:G.qs.length});
   S.sessions=S.sessions.slice(-60);touch();
   const earned=S.stars-G.starsBefore;const newSt=STICKERS.filter(s=>s.n>G.starsBefore&&s.n<=S.stars);
-  go({name:'end',earned,newSt,mode:G.mode,score:G.score,total:G.qs.length});
+  go({name:'end',earned,newSt,mode:G.mode,score:G.score,total:G.qs.length,best:G.best||0,moves:G.moves||0,station:G.station,pass,newCards:cardCount()-(G.cardsBefore||0)});
   setTimeout(()=>{sGood();burst(document.querySelector('.endstar'),'🌟')},200);
 }
 function vEnd(){
   const v=view;const perfect=v.mode!=='learn'&&v.score===v.total;
   return `<div class="panel setup">
-    <div class="wiggle" style="display:inline-block">${panda(120)}</div>
-    <h1 style="font-size:36px;margin-top:6px">${perfect?'全对！满分！💯':v.mode==='learn'?'学完啦！':'完成啦！'}</h1>
-    ${v.mode!=='learn'?`<p style="font-size:22px;margin:4px 0">答对 <b>${v.score}</b> / ${v.total}</p>`:''}
-    <div class="endstar" style="font-size:54px;font-weight:800">⭐ +${v.earned}</div>
-    ${v.mode==='review'?'':''}${v.newSt.length?`<div class="panel" style="background:var(--soft);border-style:dashed">🎁 获得新贴纸：${v.newSt.map(s=>`<span style="font-size:40px">${s.e}</span> ${s.zh}`).join('、')}</div>`:''}
+    ${pandaDressed(120,'happy','dance')}
+    <h1 style="font-size:36px;margin-top:6px">${v.mode==='match'?'全部配对成功！🎉':perfect?'全对！满分！💯':v.mode==='learn'?'学完啦！':'完成啦！'}</h1>
+    ${v.mode==='match'?`<p style="font-size:22px;margin:4px 0">翻了 <b>${v.moves}</b> 次${v.moves<=8?'，记性超好！🧠':''}</p>`:v.mode!=='learn'?`<p style="font-size:22px;margin:4px 0">答对 <b>${v.score}</b> / ${v.total}</p>`:''}
+    ${v.best>=3?`<p style="font-size:20px;margin:4px 0">🔥 最高连对 <b>${v.best}</b> ${v.mode==='match'?'对':'题'}</p>`:''}
+    <div class="endstar" style="font-size:48px;font-weight:800">⭐ +${v.earned}　🎋 +${v.earned}</div>
+    ${v.station!=null?(v.pass?`<div class="panel" style="background:var(--soft);border-style:dashed">🗺️ 过关啦！${STATIONS[v.station].k==='boss'?'打败大魔王，得到奖杯卡片 🏆！':'下一站已经解锁'}</div>`:`<div class="panel" style="background:var(--soft);border-style:dashed">💪 差一点！答对 ${Math.ceil(v.total*0.75)} 题就能过关，再试一次吧</div>`):''}${v.newCards>0?`<div class="panel row" style="background:var(--soft);border-style:dashed;justify-content:center">📚 得到 ${v.newCards} 张新卡片！<button class="btn sky" data-act="album">去看看</button></div>`:''}${v.newSt.length?`<div class="panel" style="background:var(--soft);border-style:dashed">🎁 获得新贴纸：${v.newSt.map(s=>`<span style="font-size:40px">${s.e}</span> ${s.zh}`).join('、')}</div>`:''}
     <div class="row" style="justify-content:center;margin-top:14px">
       <button class="btn sun big" data-act="again">🔁 再玩一次</button>
-      <button class="btn big" data-act="back">🧩 换个玩法</button>
+      <button class="btn big" data-act="back">${v.station!=null?'🗺️ 回地图':'🧩 换个玩法'}</button>
+      <button class="btn big" data-act="pet">🐼 去喂 Momo</button>
       <button class="btn big" data-act="home">🏠 回首页</button></div></div>`}
 
 /* ---------- growth ---------- */
@@ -765,6 +973,7 @@ function vSettings(){
     <div style="font-weight:700">头像</div>
     <div class="avas" style="justify-content:flex-start">${AVAS.map(a=>`<button data-act="setava" data-v="${a}" class="${a===S.avatar?'on':''}" aria-label="头像 ${a}">${a}</button>`).join('')}</div>
     <div class="row" style="margin-bottom:12px"><b>每日目标</b>${[5,10,15,20].map(n=>`<button class="btn ${S.goal===n?'sky':''}" data-act="goal" data-v="${n}">${n} ⭐</button>`).join('')}</div>
+    <div class="row" style="margin-bottom:12px"><b>每天时间提醒</b>${[0,15,20,30].map(n=>`<button class="btn ${S.limit===n?'sky':''}" data-act="limit" data-v="${n}">${n?n+' 分钟':'关'}</button>`).join('')}</div>
     <div class="row" style="margin-bottom:12px"><b>华文帮助</b><button class="btn ${S.showZh?'mint':''}" data-act="zh">${S.showZh?'开 ✓':'关'}</button>
       <b style="margin-left:12px">音效</b><button class="btn ${S.sound?'mint':''}" data-act="snd">${S.sound?'开 ✓':'关'}</button></div>
   </div>
@@ -790,7 +999,7 @@ function voiceSettings(){
 
 function render(){
   const v=view.name;
-  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='mtopic'?vMTopic():v==='kids'?vKids():vSettings();
+  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():vSettings();
 }
 
 /* ---------------- actions ---------------- */
@@ -814,6 +1023,36 @@ app.addEventListener('click',e=>{
     case 'prev':if(G.i>0){G.i--;resetRec();render();speakCur()}break;
     case 'lnext':cur().done=true;resetRec();if(G.i<G.qs.length-1){G.i++;render();speakCur()}else endGame();break;
     case 'rec':toggleRec();break;
+    case 'card':{if(G.lock)return;const c=G.cards[+v];if(!c||c.up||c.done)return;c.up=true;sTap();if(c.k==='t')speak(c.w[G.lang],G.lang);G.open.push(c);
+      if(G.open.length===2){G.moves++;const [a1,a2]=G.open;G.open=[];
+        if(a1.w===a2.w){a1.done=a2.done=true;G.score++;G.combo++;G.best=Math.max(G.best,G.combo);render();sGood();speak(a1.w[G.lang],G.lang);burst(document.querySelector('.mcard[data-v="'+a1.i+'"]'),G.combo>=3?'🔥':null);
+          if(G.cards.every(x=>x.done))setTimeout(endGame,1300);return}
+        G.combo=0;G.lock=true;render();sBad();setTimeout(()=>{a1.up=false;a2.up=false;G.lock=false;render()},1000);return}
+      render();break}
+    case 'pet':sTap();go({name:'pet'});break;
+    case 'map':sTap();go({name:'map'});break;
+    case 'album':sTap();go({name:'album'});break;
+    case 'missions':sTap();go({name:'missions'});break;
+    case 'duel':sTap();go({name:'duel',opp:D?D.opp:0,sub:D?D.sub:'en'});break;
+    case 'station':startStation(+v);break;
+    case 'locked':sBad();toast('先完成前面的关卡哦 🔒');break;
+    case 'cardsay':{const w=WMAP[b.dataset.t+':'+v];if(!w)return;speak(w.en,'en');speak(w.ms,'ms',true);speak(w.zh,'zh',true);burst(b,'✨');break}
+    case 'mdone':{const m=missionState();if(m.done.includes(+v))return;m.done.push(+v);addStars(2);touch();render();sGood();speak('太棒了！','zh');burst(document.querySelector('.mission.ok:last-of-type')||document.querySelector('.mission'),'🌟');break}
+    case 'dopp':view.opp=+v;sTap();render();break;
+    case 'dsub':view.sub=v;sTap();render();break;
+    case 'dstart':if(view.name==='duelplay'){view.opp=D.opp;view.sub=D.sub}startDuel();break;
+    case 'dsay':duelSay();break;
+    case 'dquit':if(D&&!D.over&&!confirm('要结束对战吗？'))return;go({name:'duel',opp:D?D.opp:0,sub:D?D.sub:'en'});break;
+    case 'dans':{const p=+b.dataset.p,i=+v,q=D.qs[D.i];if(D.done||D.lock[p])return;
+      if(q.opts[i].v===q.ans){D.done=true;D.winner=p;D.sc[p]++;render();sGood();burst(document.querySelector('.dside.p'+p),'⚡');speak(q.ansText,q.ansLang);setTimeout(duelNext,1900)}
+      else{D.lock[p]=true;sBad();if(D.lock[0]&&D.lock[1]){D.done=true;D.winner=null;render();speak(q.ansText,q.ansLang);setTimeout(duelNext,1900)}else render()}break}
+    case 'limit':S.limit=+v;touch();render();break;
+    case 'pat':{const t=pick(MOMO_TALK),li=rnd(0,2);const el=document.getElementById('petsay');if(el)el.innerHTML=esc(t[2])+'<small>'+esc(li===2?t[0]:t[li])+'</small>';speak(t[li],['en','ms','zh'][li]);
+      const m=document.querySelector('.room .momo');if(m){m.classList.remove('dance');void m.offsetWidth;m.classList.add('dance');setTimeout(()=>m.classList.remove('dance'),1500);burst(m,'💖')}break}
+    case 'feed':{if((S.bamboo||0)<3)return;const p=pet();S.bamboo-=3;p.happy=Math.min(100,happyNow()+25);p.fed=Date.now();touch();render();sGood();speak('好吃！谢谢你！','zh');burst(document.querySelector('.room .momo'),'🎋');break}
+    case 'buy':{const x=SHOP.find(i=>i.id===v),p=pet();if(!x||p.owned.includes(x.id))return;if((S.bamboo||0)<x.p){sBad();toast('竹子还不够哦，再去学习赚 '+(x.p-(S.bamboo||0))+' 根竹子吧 🎋');return}
+      S.bamboo-=x.p;p.owned.push(x.id);if(x.slot==='bg')p.bg=x.id;else{p.wear=p.wear||{};p.wear[x.slot]=x.id}touch();render();sGood();toast('买到了 '+x.e+' '+x.zh+'！');burst(document.querySelector('.room .momo'),x.e);break}
+    case 'wear':{const p=pet();if(v==='sky'||v.startsWith('bg-'))p.bg=v;else{const x=SHOP.find(i=>i.id===v);if(!x)return;p.wear=p.wear||{};p.wear[x.slot]=p.wear[x.slot]===x.id?null:x.id}touch();sTap();render();break}
     case 'mine':playMine();break;
     case 'compare':speakCur();setTimeout(playMine,1700);break;
     case 'kids':go({name:'kids'});break;
@@ -822,7 +1061,7 @@ app.addEventListener('click',e=>{
     case 'addkid':go({name:'setup',newKid:true});break;
     case 'delkid':{if(Object.keys(ALL.kids).length<2)return;if(confirm('确定要删除 '+S.name+' 的全部资料吗？')&&confirm('真的确定吗？这个动作不能复原。')){delete ALL.kids[ALL.cur];ALL.cur=Object.keys(ALL.kids)[0];S=ALL.kids[ALL.cur];touch();toast('已删除');go({name:'home'})}break}
     case 'copyrep':{const t=reportText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('报告已复制，可以贴到 WhatsApp 📋'),()=>toast('复制不了，请手动截图保存'));break}
-    case 'ans':{const q=cur(),i=+v;const ok=q.m==='math'?q.opts[i].v===q.ans:q.opts[i]===q.w;if(ok)answer(true,b);else{q.wrongIdx.push(i);b.classList.add('shake');answer(false);setTimeout(render,400)}break}
+    case 'ans':{const q=cur(),i=+v;const ok=q.m==='math'?q.opts[i].v===q.ans:q.opts[i]===q.w;if(ok)answer(true,b);else{q.wrongIdx.push(i);answer(false);if(q.m==='bubble'){b.classList.add('popx')}else{b.classList.add('shake');setTimeout(render,400)}}break}
     case 'tile':{const q=cur(),t=q.tiles.find(x=>x.id===+v);const s=q.slots.find(x=>!x.fixed&&!x.val);if(!t||t.used||!s)return;
       t.used=true;s.val=t.ch;s.tile=t.id;sTap();render();spellCheck();break}
     case 'unslot':{const q=cur();if(q.done)return;const s=q.slots[+v];if(!s||!s.val)return;q.tiles.find(t=>t.id===s.tile).used=false;s.val=null;s.tile=null;render();break}
@@ -832,13 +1071,13 @@ app.addEventListener('click',e=>{
       const blk=q.slots.find((x,j)=>j!==i&&!x.fixed&&x.val===s.ch&&x.ch!==s.ch);if(blk){q.tiles.find(t=>t.id===blk.tile).used=false;blk.val=null;blk.tile=null}
       const t=q.tiles.find(t=>!t.used&&t.ch===s.ch);if(t){t.used=true;s.val=t.ch;s.tile=t.id}render();spellCheck();break}
     case 'next':if(G.i<G.qs.length-1){G.i++;setupTiles();render();const m=cur().m;if(m==='listen'||m==='sent'||m==='math')setTimeout(speakCur,250)}else endGame();break;
-    case 'quit':if(G&&G.qs.some(q=>q.done)&&!confirm('要离开吗？这一轮的进度不会保存成绩（已得的星星会保留）。'))return;(G.mode==='math'||G.mode==='sci')?go({name:'mtopic',game:G.game}):G.topic==='review'?go({name:'home'}):go({name:'topic',topic:G.topic});break;
-    case 'again':(view.mode==='math'||view.mode==='sci')?startMath(G.game,G.level):startGame(view.mode);break;
+    case 'quit':if(G&&G.qs.some(q=>q.done)&&!confirm('要离开吗？这一轮的进度不会保存成绩（已得的星星会保留）。'))return;G.station!=null?go({name:'map'}):(G.mode==='math'||G.mode==='sci')?go({name:'mtopic',game:G.game}):G.topic==='review'?go({name:'home'}):go({name:'topic',topic:G.topic});break;
+    case 'again':G&&G.station!=null?startStation(G.station):(view.mode==='math'||view.mode==='sci')?startMath(G.game,G.level):startGame(view.mode);break;
     case 'subj':S.subj=v||'math';touch();sTap();render();speak(S.subj==='sci'?'我们来学科学！':'我们来学数学！','zh');break;
     case 'mtopic':sTap();go({name:'mtopic',game:v});break;
     case 'mplay':startMath(view.game,+v);break;
     case 'mhint':cur().hint=true;render();break;
-    case 'back':(G.mode==='math'||G.mode==='sci')?go({name:'mtopic',game:G.game}):G.topic==='review'?go({name:'home'}):go({name:'topic',topic:G.topic});break;
+    case 'back':G.station!=null?go({name:'map'}):(G.mode==='math'||G.mode==='sci')?go({name:'mtopic',game:G.game}):G.topic==='review'?go({name:'home'}):go({name:'topic',topic:G.topic});break;
     case 'rename':{const n=(document.getElementById('nm2').value||'').trim();if(n){S.name=n;touch();toast('已保存 ✓');render()}break}
     case 'setava':S.avatar=v;touch();render();break;
     case 'goal':S.goal=+v;touch();render();break;
