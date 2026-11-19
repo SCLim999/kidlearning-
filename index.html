@@ -17,6 +17,10 @@
   --bg:#DDF0FF; --dot:#C3E2FB; --surface:#FFFFFF; --ink:#2A2F6B; --muted:#6B70A8; --edge:#2A2F6B;
   --sun:#FFD23F; --pink:#FF8FB1; --mint:#6FD6A8; --sky:#5AB8FF; --line:#C9E2F7;
   --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF;
+  /* skin shape tokens: border width, button/panel radius, shadows, press motion, page paper, font */
+  --bw:3px; --rb:18px; --rp:28px; --shb:0 5px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(4px); --shp:none;
+  --paper:radial-gradient(var(--dot) 2px, transparent 2.5px) 0 0/28px 28px, var(--bg);
+  --font:"Baloo 2","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -36,9 +40,9 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
 body{
   margin:0;min-height:100%;
-  background:var(--bg) radial-gradient(var(--dot) 2px, transparent 2.5px) 0 0/28px 28px;
+  background:var(--paper);background-attachment:fixed;
   color:var(--ink);
-  font-family:"Baloo 2","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  font-family:var(--font);
   font-size:18px;line-height:1.45;
   -webkit-tap-highlight-color:transparent;
   user-select:none;-webkit-user-select:none;
@@ -52,18 +56,18 @@ h1,h2,h3{margin:0;line-height:1.15}
 
 /* toy-block buttons: the signature element */
 .btn{
-  font-weight:700;border:3px solid var(--edge);border-radius:18px;background:var(--surface);color:var(--ink);
-  padding:10px 18px;box-shadow:0 5px 0 var(--edge);cursor:pointer;
+  font-weight:700;border:var(--bw) solid var(--edge);border-radius:var(--rb);background:var(--surface);color:var(--ink);
+  padding:10px 18px;box-shadow:var(--shb);cursor:pointer;
   transition:transform .08s ease, box-shadow .08s ease;display:inline-flex;align-items:center;gap:8px;justify-content:center;
   min-height:52px;
 }
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.btn:active{transform:var(--press);box-shadow:var(--shpress)}
 .btn:focus-visible,.opt:focus-visible,.topic:focus-visible{outline:4px solid var(--sky);outline-offset:3px}
 .btn.sun{background:var(--sun);color:#2A2F6B}
 .btn.pink{background:var(--pink);color:#2A2F6B}
 .btn.mint{background:var(--mint);color:#2A2F6B}
 .btn.sky{background:var(--sky);color:#fff}
-.btn.big{font-size:24px;padding:14px 28px;border-radius:22px;min-height:66px}
+.btn.big{font-size:24px;padding:14px 28px;min-height:66px}
 .btn.round{border-radius:50%;width:58px;height:58px;padding:0;font-size:26px}
 .btn[disabled]{opacity:.45;pointer-events:none}
 
@@ -77,7 +81,7 @@ h1,h2,h3{margin:0;line-height:1.15}
 .tabs .btn.on{background:var(--sky);color:#fff}
 
 /* panels */
-.panel{background:var(--surface);border:3px solid var(--edge);border-radius:28px;padding:18px 20px;margin-bottom:18px}
+.panel{background:var(--surface);border:var(--bw) solid var(--edge);border-radius:var(--rp);box-shadow:var(--shp);padding:18px 20px;margin-bottom:18px}
 .hello{display:flex;align-items:center;gap:16px}
 .bubble{position:relative;background:var(--soft);border-radius:22px;padding:12px 18px;font-size:20px;font-weight:700;flex:1}
 .bubble small{display:block;font-weight:500;font-size:16px;color:var(--muted)}
@@ -94,10 +98,10 @@ h1,h2,h3{margin:0;line-height:1.15}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
 .topic{
-  border:3px solid var(--edge);border-radius:26px;padding:16px 14px 14px;text-align:left;cursor:pointer;
-  box-shadow:0 6px 0 var(--edge);color:#2A2F6B;transition:transform .08s, box-shadow .08s;position:relative;
+  border:var(--bw) solid var(--edge);border-radius:var(--rp);padding:16px 14px 14px;text-align:left;cursor:pointer;
+  box-shadow:var(--shb);color:#2A2F6B;transition:transform .08s, box-shadow .08s;position:relative;
 }
-.topic:active{transform:translateY(5px);box-shadow:0 1px 0 var(--edge)}
+.topic:active{transform:var(--press);box-shadow:var(--shpress)}
 .topic .ic{font-size:52px;line-height:1}
 .topic h3{font-size:24px;margin-top:6px}
 .topic .t2{font-size:16px;opacity:.8}
@@ -122,12 +126,12 @@ h1,h2,h3{margin:0;line-height:1.15}
 .helpzh{font-size:26px;color:var(--muted);font-weight:700}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:18px auto 0}
 .opt{
-  background:var(--surface);border:3px solid var(--edge);border-radius:24px;box-shadow:0 6px 0 var(--edge);
+  background:var(--surface);border:var(--bw) solid var(--edge);border-radius:var(--rp);box-shadow:var(--shb);
   padding:14px;cursor:pointer;min-height:110px;display:grid;place-items:center;font-weight:800;font-size:30px;
   transition:transform .08s, box-shadow .08s;
 }
 .opt.emo{font-size:72px}
-.opt:active{transform:translateY(5px);box-shadow:0 1px 0 var(--edge)}
+.opt:active{transform:var(--press);box-shadow:var(--shpress)}
 .opt.right{background:var(--good);color:#fff}
 .opt.wrong{background:var(--bad);color:#fff;opacity:.6;pointer-events:none}
 .shake{animation:shake .4s}
@@ -195,12 +199,12 @@ h1,h2,h3{margin:0;line-height:1.15}
 .deco span{position:absolute;font-size:46px;opacity:.9}
 .petsay{flex:none;max-width:440px;text-align:center;position:relative;z-index:1;background:var(--surface)}
 .shop{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
-.item{border:3px solid var(--edge);border-radius:18px;background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--edge);padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .08s,box-shadow .08s}
-.item:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
+.item{border:var(--bw) solid var(--edge);border-radius:var(--rb);background:var(--surface);color:var(--ink);box-shadow:var(--shb);padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .08s,box-shadow .08s}
+.item:active{transform:var(--press);box-shadow:var(--shpress)}
 .item span{font-size:38px;line-height:1.1}.item small{font-size:13px;font-weight:700}
 .item.on{background:var(--mint);color:#2A2F6B}.item.lock span{filter:grayscale(.5);opacity:.75}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:720px;margin:0 auto}
-.mcard{aspect-ratio:3/4;border:3px solid var(--edge);border-radius:20px;box-shadow:0 5px 0 var(--edge);background:var(--sky);cursor:pointer;display:grid;place-items:center;padding:6px}
+.mcard{aspect-ratio:3/4;border:var(--bw) solid var(--edge);border-radius:var(--rb);box-shadow:var(--shb);background:var(--sky);cursor:pointer;display:grid;place-items:center;padding:6px}
 .mcard.up{background:var(--surface);animation:flip .25s ease-out}
 .mcard.done{background:var(--mint);animation:none}
 @keyframes flip{from{transform:rotateY(90deg)}to{transform:rotateY(0)}}
@@ -290,6 +294,74 @@ h2{font-size:26px;margin-bottom:12px}
 @keyframes wig{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 @media (prefers-reduced-motion: reduce){.pop,.wiggle,.shake{animation:none}.pop{display:none}}
 @media (max-width:560px){.prompt{font-size:90px}.word{font-size:36px}.opt.emo{font-size:56px}.opt{font-size:24px;min-height:92px}.slot{width:42px;height:52px;font-size:26px}.tile{width:50px;height:56px;font-size:26px}}
+
+/* ---------- 画风皮肤 skins: set on <html data-skin> (whole app) or on a .skin preview card ---------- */
+.skin[data-skin="toy"]{
+  --bg:#DDF0FF; --dot:#C3E2FB; --surface:#FFFFFF; --ink:#2A2F6B; --muted:#6B70A8; --edge:#2A2F6B;
+  --sun:#FFD23F; --pink:#FF8FB1; --mint:#6FD6A8; --sky:#5AB8FF; --line:#C9E2F7; --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF;
+  --bw:3px; --rb:18px; --rp:28px; --shb:0 5px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(4px); --shp:none;
+  --paper:radial-gradient(var(--dot) 2px, transparent 2.5px) 0 0/28px 28px, var(--bg);
+}
+/* 蜡笔手绘: cream lined paper, wobbly hand-drawn outlines */
+:is(:root,.skin)[data-skin="crayon"]{
+  --bg:#FFF8E7; --dot:#EFDDB4; --surface:#FFFDF6; --ink:#3B3024; --muted:#8A7A62; --edge:#3B3024;
+  --sun:#FFC94D; --pink:#FF9EAA; --mint:#9BDB8F; --sky:#5FA8DC; --line:#EADBB8; --good:#3E9E48; --bad:#E85D4A; --soft:#FFF1D0;
+  --bw:2.5px; --rb:24px 8px 22px 10px/10px 22px 8px 24px; --rp:40px 14px 36px 12px/12px 30px 14px 40px;
+  --shb:3px 4px 0 var(--edge); --shpress:1px 1px 0 var(--edge); --press:translate(2px,3px); --shp:4px 5px 0 rgba(59,48,36,.16);
+  --paper:repeating-linear-gradient(0deg,transparent 0 30px,var(--dot) 30px 32px), linear-gradient(90deg,transparent 46px,#F7B7B7 46px 48px,transparent 48px), var(--bg);
+  color-scheme:light;
+}
+/* 像素游戏: square blocks, hard diagonal shadows, checkerboard */
+:is(:root,.skin)[data-skin="pixel"]{
+  --bg:#9FE6FF; --dot:#88D6F2; --surface:#FFFFFF; --ink:#1B1B2F; --muted:#4D5578; --edge:#1B1B2F;
+  --sun:#FFD000; --pink:#FF6FA5; --mint:#4DE08A; --sky:#3E7BFF; --line:#BFD9E8; --good:#1FA855; --bad:#FF4D4D; --soft:#E8F7FF;
+  --bw:4px; --rb:0px; --rp:0px; --shb:5px 5px 0 var(--edge); --shpress:0 0 0 var(--edge); --press:translate(5px,5px); --shp:7px 7px 0 var(--edge);
+  --paper:conic-gradient(var(--dot) 25%,transparent 0 50%,var(--dot) 0 75%,transparent 0) 0 0/32px 32px, var(--bg);
+  color-scheme:light;
+}
+/* 水墨: rice paper, ink-wash blots, brush-like edges, kai font */
+:is(:root,.skin)[data-skin="ink"]{
+  --bg:#F3EDDF; --dot:#E4D9C2; --surface:#FBF7EE; --ink:#1F1F1F; --muted:#6E655A; --edge:#2B2B2B;
+  --sun:#E9C46A; --pink:#E8A9A0; --mint:#A7C9AE; --sky:#4F7F99; --line:#DCD2BD; --good:#3E7D5A; --bad:#B83227; --soft:#F1EADB;
+  --bw:2px; --rb:14px 26px 12px 24px; --rp:10px; --shb:0 3px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(2px); --shp:inset 0 0 28px rgba(80,60,20,.09);
+  --paper:radial-gradient(ellipse 60% 40% at 92% 6%,rgba(0,0,0,.10),transparent 70%), radial-gradient(ellipse 50% 35% at 4% 96%,rgba(0,0,0,.08),transparent 70%), radial-gradient(rgba(120,100,60,.08) 1px,transparent 1.5px) 0 0/9px 9px, var(--bg);
+  --font:"Kaiti SC","STKaiti","KaiTi","楷体","Baloo 2",serif;
+  color-scheme:light;
+}
+/* 糖果软软: pastel clay, no outlines, soft puffy shadows */
+:is(:root,.skin)[data-skin="candy"]{
+  --bg:#FFE8F1; --dot:#FFD3E4; --surface:#FFFFFF; --ink:#5B3A6E; --muted:#9C77AF; --edge:#F2B3CC;
+  --sun:#FFE27A; --pink:#FFB3CF; --mint:#B5F0D3; --sky:#8CC8FF; --line:#F7D3E2; --good:#2FB47A; --bad:#FF6F87; --soft:#FFF4F8;
+  --bw:0px; --rb:26px; --rp:36px;
+  --shb:0 8px 16px rgba(214,110,160,.28), inset 0 -5px 0 rgba(0,0,0,.07), inset 0 3px 0 rgba(255,255,255,.85);
+  --shpress:0 3px 8px rgba(214,110,160,.25), inset 0 -2px 0 rgba(0,0,0,.07); --press:translateY(3px) scale(.98);
+  --shp:0 10px 30px rgba(214,110,160,.18);
+  --paper:radial-gradient(circle at 15% 20%,#FFD6EA 0 12%,transparent 30%), radial-gradient(circle at 85% 70%,#D9ECFF 0 14%,transparent 34%), radial-gradient(circle at 60% 10%,#FFF2B8 0 8%,transparent 22%), var(--bg);
+  color-scheme:light;
+}
+/* 星空霓虹: night sky, glowing outlines */
+:is(:root,.skin)[data-skin="neon"]{
+  --bg:#0B0B2A; --dot:#1E1E50; --surface:#16163F; --ink:#F2F0FF; --muted:#A9A6E0; --edge:#38E1FF;
+  --sun:#FFE14D; --pink:#FF5FD2; --mint:#3DFFB0; --sky:#7B5CFF; --line:#2A2A66; --good:#22C98A; --bad:#FF5C7A; --soft:#1F1F52;
+  --bw:2px; --rb:16px; --rp:22px;
+  --shb:0 0 12px rgba(56,225,255,.55), inset 0 0 8px rgba(56,225,255,.2); --shpress:0 0 22px rgba(255,95,210,.85); --press:scale(.96);
+  --shp:0 0 18px rgba(56,225,255,.28);
+  --paper:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent) 0 0/260px 260px, radial-gradient(1px 1px at 70% 15%,#fff,transparent) 0 0/180px 180px, radial-gradient(1.5px 1.5px at 45% 70%,#C9F6FF,transparent) 0 0/220px 220px, radial-gradient(1px 1px at 85% 85%,#FFD1F3,transparent) 0 0/140px 140px, linear-gradient(#0B0B2A,#2B0F4E);
+  color-scheme:dark;
+}
+[data-skin="ink"] h1,[data-skin="ink"] h2{color:var(--bad)}
+[data-skin="ink"] .topic{filter:saturate(.55) sepia(.12)}
+[data-skin="candy"] .btn.sky,[data-skin="candy"] .tabs .btn.on{color:var(--ink)}
+[data-skin="neon"] h1,[data-skin="neon"] h2{text-shadow:0 0 10px var(--pink)}
+[data-skin="pixel"] .btn,[data-skin="pixel"] h1,[data-skin="pixel"] h2{letter-spacing:.04em}
+/* picker cards */
+.skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.skin{background:var(--paper);color:var(--ink);font-family:var(--font);border:var(--bw) solid var(--edge);border-radius:var(--rp);box-shadow:var(--shb);padding:12px 10px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .08s,box-shadow .08s}
+.skin:active{transform:var(--press);box-shadow:var(--shpress)}
+.skin.on{outline:4px solid var(--good);outline-offset:3px}
+.skin .sk-row{display:flex;align-items:center;gap:8px}
+.skin .sk-b{background:var(--sun);color:#2A2F6B;border:var(--bw) solid var(--edge);border-radius:var(--rb);box-shadow:var(--shb);padding:2px 12px;font-weight:800}
+.skin b{background:var(--surface);border-radius:999px;padding:2px 12px;font-size:17px}
 </style>
 </head>
 <body>
@@ -337,7 +409,7 @@ const MASTER=3;
 
 /* ---------------- state ---------------- */
 const KEY='momo-learn.v1';
-function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},updatedAt:0}}
+function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},skin:'toy',updatedAt:0}}
 function normalize(o){
   if(o&&o.kids){Object.keys(o.kids).forEach(k=>{const raw=o.kids[k];o.kids[k]=Object.assign(blank(),raw);if(!raw.bambooInit)o.kids[k].bamboo=raw.stars||0});if(!o.kids[o.cur])o.cur=Object.keys(o.kids)[0];return o}
   const k=Object.assign(blank(),o||{});if(!(o&&o.bambooInit))k.bamboo=(o&&o.stars)||0;return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
@@ -966,6 +1038,7 @@ function vGrowth(){
     return `<li><span style="font-size:28px">${t?t.icon:'📘'}</span><span style="flex:1"><b>${t?t.zh+' · ':''}${m?m.zh:''}</b> <span class="zh">${LANGS[r.lang]?LANGS[r.lang].flag+' '+LANGS[r.lang].zh:''}</span></span>
     <span>${r.score==null?'📖 学完':r.score+'/'+r.total}</span><span class="zh" style="font-size:14px">${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}</span></li>`}).join('')}</ul>`:'<p class="zh" style="margin:0">还没有记录，去玩第一个游戏吧！</p>'}</div>`}
 
+const SKINS=[['toy','🧱','积木'],['crayon','🖍️','蜡笔'],['pixel','👾','像素'],['ink','🖌️','水墨'],['candy','🍬','糖果'],['neon','🌌','星空霓虹']];
 function vSettings(){
   return bar('settings')+`
   <div class="panel"><h2>家长设置 👨‍👩‍👧</h2>
@@ -977,6 +1050,8 @@ function vSettings(){
     <div class="row" style="margin-bottom:12px"><b>华文帮助</b><button class="btn ${S.showZh?'mint':''}" data-act="zh">${S.showZh?'开 ✓':'关'}</button>
       <b style="margin-left:12px">音效</b><button class="btn ${S.sound?'mint':''}" data-act="snd">${S.sound?'开 ✓':'关'}</button></div>
   </div>
+  <div class="panel"><h2>画风皮肤 🎨</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">换一个喜欢的画风，整个 App 都会变样子</div>
+    <div class="skins">${SKINS.map(([id,e,name])=>`<button class="skin ${S.skin===id?'on':''}" data-skin="${id}" data-act="skin" data-v="${id}" aria-pressed="${S.skin===id}" aria-label="画风 ${name}"><span class="sk-row">${panda(46,'happy')}<span class="sk-b">Aa</span></span><b>${e} ${name}</b></button>`).join('')}</div></div>
   ${voiceSettings()}
   <div class="panel"><h2>学习记录保存</h2>
     <p style="margin:0 0 10px">${cloudOn?'☁️ 学习记录会自动保存在你的 Claude 帐号里，换设备打开同一个链接也能继续。':'💾 学习记录保存在这台设备的浏览器里（换设备不会同步）。'}</p>
@@ -999,6 +1074,7 @@ function voiceSettings(){
 
 function render(){
   const v=view.name;
+  document.documentElement.dataset.skin=SKINS.some(s=>s[0]===S.skin)?S.skin:'toy';
   app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():vSettings();
 }
 
@@ -1083,6 +1159,7 @@ app.addEventListener('click',e=>{
     case 'goal':S.goal=+v;touch();render();break;
     case 'zh':S.showZh=!S.showZh;touch();render();break;
     case 'snd':S.sound=!S.sound;touch();render();break;
+    case 'skin':S.skin=v;touch();render();sGood();break;
     case 'reset':if(confirm('确定要清除全部学习记录吗？星星、贴纸和成长记录都会归零。')&&confirm('真的确定吗？这个动作不能复原。')){const keep={name:S.name,avatar:S.avatar};S=ALL.kids[ALL.cur]=Object.assign(blank(),keep);touch();toast('已清除');go({name:'home'})}break;
   }
 });
