@@ -33,7 +33,8 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 - `MODES` — word game modes: learn, listen, read, spell, dict (听写), sent, match, bubble (+ internal review/boss/math/sci). A question may carry its own `q.lang` (used by 错题本 and 小测 which mix English and BM).
 - `MG` — 10 maths games (incl. clock, story problems), `SG` — 8 science games (incl. soil), `CG` — 3 华文 games (`HZ` character list with pinyin). `GKIND(g)`/`GAME(g)` look a game up across all three; `isMG(mode)` is true for math/sci/cn. Each has `gen(level)` returning `{title, say, html(hint), opts[{v,l}], ans, explain, sayAns}`; they all run on the shared engine (`startMath`, `vMath`, `answer`).
 - `SHOP`, `BGS` — Momo pet items; `STATIONS`, `REGIONS` — adventure map (20 stations incl. 4 bosses); `MISSIONS` — daily real-life tasks; duel = `D`, `startDuel`, `vDuel`. `startMist`/`vMist` (错题本), `startTest`/`vTest` (每周小测), `vPrint` (printable sticker chart, `@media print`), `maybeLetter`/`showLetter` (Momo's weekly letter), `startSay` (speech-recognition check in learn mode).
-- Views are template-string functions (`vHome`, `vTopic`, `vGame`, `vGrowth`, `vPet`, `vMap`, `vAlbum`, `vMissions`, `vDuel`, `vSettings`…) chosen in `render()`.
+- Home (`vHome`) is a big subject picker (`SUBJS`: en, ms, math, sci, cn → `data-act="pick"`) plus a small "更多好玩的" feature grid; `vSubject` shows the chosen subject's topics/games (`curSubj()`), and topic pages go back to it with `data-act="subjpage"`.
+- Views are template-string functions (`vHome`, `vSubject`, `vTopic`, `vGame`, `vGrowth`, `vPet`, `vMap`, `vAlbum`, `vMissions`, `vDuel`, `vSettings`…) chosen in `render()`.
 - All clicks go through one delegated handler: `data-act` + `data-v` → `switch(a)` at the bottom.
 - Speech: Web Speech API via `speak(text, lang, queue)`; Malay falls back to Indonesian if no ms voice.
 
