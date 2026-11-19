@@ -109,6 +109,7 @@ h1,h2,h3{margin:0;line-height:1.15}
 .meter i{display:block;height:100%;background:#2A2F6B;border-radius:99px}
 .topic .cnt{font-size:14px;font-weight:700;margin-top:4px}
 
+.figframe{display:block;width:100%;height:520px;border:0;background:transparent}
 .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
 .mode{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:16px 18px;border-radius:24px}
 .mode .e{font-size:40px}
@@ -686,7 +687,7 @@ const MG={
   gen:L=>{if(L===1||L===3&&Math.random()<0.5){const t=pick(SHAPES2),cols=shuffle(SCOL),tt=L===3?`哪一个形状${t.f}？`:`哪一个是${t.zh}？`;return{title:tt,say:tt,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',ans:t.k,opts:shuffle(SHAPES2).map((x,i)=>({v:x.k,l:shapeSvg(x.k,cols[i])})),explain:`这是<b>${t.zh}</b>：${t.f}`,sayAns:`这是${t.zh}`}}
    const t=pick(SHAPES3),others=shuffle(SHAPES3.filter(x=>x!==t)).slice(0,3),tt=L===3?`哪一个${t.f}？`:`哪一个像${t.zh}？`;return{title:tt,say:tt,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',big:true,ans:t.zh,opts:shuffle([t,...others]).map(x=>({v:x.zh,l:x.e})),explain:`${t.e} 像<b>${t.zh}</b>：${t.f}`,sayAns:`这个像${t.zh}`}}},
 
- clock:{zh:'认识时钟',e:'🕒',hue:'#FFD6A5',d:'现在几点？',l1:'整点（3 点）',l2:'整点和半点（3 点半）',l3:'15 分、半点、45 分',how:'短针（时针）指着几，就是几点。长针（分针）指着 12 是「整点」，指着 6 是「半」。困难关：长针指着 3 是 15 分，指着 9 是 45 分。',
+ clock:{zh:'认识时钟',e:'🕒',fig:'clock',hue:'#FFD6A5',d:'现在几点？',l1:'整点（3 点）',l2:'整点和半点（3 点半）',l3:'15 分、半点、45 分',how:'短针（时针）指着几，就是几点。长针（分针）指着 12 是「整点」，指着 6 是「半」。困难关：长针指着 3 是 15 分，指着 9 是 45 分。',
   gen:L=>{const h=rnd(1,12),m=L===1?0:L===2?(Math.random()<0.6?30:0):pick([0,15,30,45,15,45]),lb=(x,mm)=>x+' 点'+(mm===30?'半':mm?' '+mm+' 分':''),ans=lb(h,m);const n=x=>(x+11)%12+1;
    const cand=L===1?[n(h+1),n(h-1),n(h+3),n(h+6)].map(x=>lb(x,0)):L===2?[lb(h,30-m),lb(n(h+1),m),lb(n(h-1),30-m),lb(n(h+1),30-m),lb(n(h+6),m)]:[lb(h,(m+15)%60),lb(h,(m+30)%60),lb(h,(m+45)%60),lb(n(h+1),m),lb(n(h-1),m)];
    const opts=shuffle([ans,...shuffle([...new Set(cand)].filter(x=>x!==ans)).slice(0,3)]).map(v=>({v,l:v})),mp={0:'12，是「整点」',15:'3，是「15 分」',30:'6，是「半」',45:'9，是「45 分」'}[m];
@@ -725,7 +726,10 @@ function mathCards(){return Object.entries(MG).map(([k,g])=>{const r=S.math[k]||
 function vMTopic(){const g=GAME(view.game);
   return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="home">⬅ 返回</button></div>
   <div class="modes"><button class="btn mode" data-act="mplay" data-v="1"><span class="e">🌱</span><b>${LVN[1]}</b><span>${g.l1}</span></button><button class="btn mode" data-act="mplay" data-v="2"><span class="e">⭐</span><b>${LVN[2]}</b><span>${g.l2}</span></button><button class="btn mode" data-act="mplay" data-v="3"><span class="e">🚀</span><b>${LVN[3]}</b><span>${g.l3||'容易和中等混合'} · 10 题 · 没有提示</span></button></div>
-  <div class="panel" style="margin-top:18px"><h2>怎么玩？</h2><p style="margin:0">${g.how}</p></div>`}
+  <div class="panel" style="margin-top:18px"><h2>怎么玩？</h2><p style="margin:0">${g.how}</p></div>
+  ${g.fig?`<div class="panel" style="margin-top:18px"><h2>🔍 看看里面</h2><iframe class="figframe" src="fig/${g.fig}.html" title="${g.zh}：立体图" loading="lazy"></iframe></div>`:''}`}
+// fig/*.html posts its card height so the iframe fits without scrollbars
+addEventListener('message',e=>{const d=e.data;if(!d||!d.momoFig||!d.h)return;document.querySelectorAll('.figframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=d.h+'px'})});
 function mathPanel(){const rows=Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>数学 🔢</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">黄色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
@@ -778,12 +782,12 @@ const SG={
  animal:{zh:'动物的身体',e:'🐾',hue:'#FFB98F',d:'翅膀、鳍、壳、角……',l1:'翅膀、鳍、壳、角',l2:'羽毛、鳞片、喙',how:'不同的动物有不同的身体部分，帮助它们飞、游泳或保护自己。',
   gen:L=>{const F=pick(L===1?FEAT1:FEAT2),yes=pick(F.y),nos=shuffle(F.n).slice(0,3);
    return{title:`哪一个动物有${F.f}？`,say:`哪一个动物有${F.f}？`,html:h=>h?`<div class="hintbox">💡 ${F.w}</div>`:'',big:true,ans:yes,opts:shuffle([yes,...nos]).map(e=>({v:e,l:lab(e,ANM[e])})),explain:`${ANM[yes]}有${F.f}：${F.w}。`,sayAns:`${ANM[yes]}有${F.f}`}}},
- plant:{zh:'植物',e:'🌻',hue:'#C9E89A',d:'根、茎、叶、花',l1:'植物的部分',l2:'生物需要什么？',how:'认识植物的根、茎、叶、花，还有植物、动物和人需要什么才能活下去。',
+ plant:{zh:'植物',e:'🌻',fig:'plant',hue:'#C9E89A',d:'根、茎、叶、花',l1:'植物的部分',l2:'生物需要什么？',how:'认识植物的根、茎、叶、花，还有植物、动物和人需要什么才能活下去。',
   gen:L=>{if(L===1){const part=pick(Object.keys(PARTS)),p=PARTS[part];
     return{title:'红圈里是植物的哪一部分？',say:'红圈里是植物的哪一部分？',html:h=>plantSvg(part,h&&false)+(h?`<div class="hintbox">💡 这个部分会${p[1]}</div>`:''),ans:part,opts:shuffle(Object.keys(PARTS)).map(k=>({v:k,l:PARTS[k][0]})),explain:`这是<b>${p[0]}</b>：${p[1]}。`,sayAns:`这是${p[0]}`}}
    const n=pick(NEEDS),need=pick(n[2]),bad=shuffle(NOTNEED).slice(0,3);
    return{title:`${n[1]}需要哪一个才能活下去？`,say:`${n[1]}需要哪一个才能活下去？`,html:h=>`<div class="se">${n[0]}</div>`+(h?'<div class="hintbox">💡 没有它就活不下去哦</div>':''),ans:need,opts:shuffle([need,...bad]).map(x=>({v:x,l:x})),explain:`${n[1]}需要${n[2].join('、')}才能活下去。`,sayAns:`${n[1]}需要${need.split(' ')[1]}`}}},
- magnet:{zh:'磁铁',e:'🧲',hue:'#FFB3B3',d:'什么会被吸住？',l1:'会被磁铁吸住吗？',l2:'两块磁铁靠近会怎样？',how:'磁铁会吸住铁做的东西。两块磁铁：不一样的一端（N 和 S）会吸在一起，一样的一端会互相推开。',
+ magnet:{zh:'磁铁',e:'🧲',fig:'magnet',hue:'#FFB3B3',d:'什么会被吸住？',l1:'会被磁铁吸住吗？',l2:'两块磁铁靠近会怎样？',how:'磁铁会吸住铁做的东西。两块磁铁：不一样的一端（N 和 S）会吸在一起，一样的一端会互相推开。',
   gen:L=>{if(L===1){const y=pick(MAGY),ns=shuffle(MAGN).slice(0,3);
     return{title:'哪一个会被磁铁吸住？🧲',say:'哪一个会被磁铁吸住？',html:h=>h?'<div class="hintbox">💡 磁铁会吸住铁做的东西</div>':'',big:true,ans:y[1],opts:shuffle([y,...ns]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${y[1]}是铁做的，所以会被磁铁吸住。`,sayAns:`${y[1]}会被磁铁吸住`}}
    const P=()=>pick(['N','S']),a=P(),b=a==='N'?'S':'N',c=P(),d=c==='N'?'S':'N',att=b!==c;
@@ -793,7 +797,7 @@ const SG={
     return{title:'哪一个会吸水？💧',say:'哪一个会吸水？',html:h=>h?'<div class="hintbox">💡 想一想：哪一个碰到水会变湿、把水吸进去？</div>':'',big:true,ans:y[1],opts:shuffle([y,...ns]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${y[1]}会把水吸进去，所以会吸水。`,sayAns:`${y[1]}会吸水`}}
    const sc=pick(ABS2),ds=shuffle(ABSPOOL.filter(x=>x[1]!==sc.a[1])).slice(0,3);
    return{title:sc.q,say:sc.q,html:h=>h?'<div class="hintbox">💡 这里需要会吸水的，还是不吸水的东西？</div>':'',big:true,ans:sc.a[1],opts:shuffle([sc.a,...ds]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`用<b>${sc.a[1]}</b>：${sc.w}。`,sayAns:`用${sc.a[1]}`}}},
- soil:{zh:'泥土',e:'🪱',hue:'#D9B99B',d:'泥土里有什么？',l1:'泥土里有什么？',l2:'沙土、黏土、园土',how:'泥土里有水、空气、小石头、枯叶，还住着蚯蚓等小动物。泥土有三种：沙土让水很快流走，黏土会留住水，园土最适合种植物。',
+ soil:{zh:'泥土',e:'🪱',fig:'soil',hue:'#D9B99B',d:'泥土里有什么？',l1:'泥土里有什么？',l2:'沙土、黏土、园土',how:'泥土里有水、空气、小石头、枯叶，还住着蚯蚓等小动物。泥土有三种：沙土让水很快流走，黏土会留住水，园土最适合种植物。',
   gen:L=>{if(L===1){const y=pick(SOILY),ns=shuffle(SOILN).slice(0,3);
     return{title:'哪一个可以在泥土里找到？',say:'哪一个可以在泥土里找到？',html:h=>h?'<div class="hintbox">💡 想一想：挖开花园的泥土，会看到什么？</div>':'',big:true,ans:y[1],opts:shuffle([y,...ns]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${y[0]} <b>${y[1]}</b>：${y[2]}。`,sayAns:`泥土里有${y[1]}`}}
    const sq=pick(SOILQ),t=SOILT[sq.a];
