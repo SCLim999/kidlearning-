@@ -324,7 +324,7 @@ h2{font-size:26px;margin-bottom:12px}
   --bg:#F3EDDF; --dot:#E4D9C2; --surface:#FBF7EE; --ink:#1F1F1F; --muted:#6E655A; --edge:#2B2B2B;
   --sun:#E9C46A; --pink:#E8A9A0; --mint:#A7C9AE; --sky:#4F7F99; --line:#DCD2BD; --good:#3E7D5A; --bad:#B83227; --soft:#F1EADB;
   --bw:2px; --rb:14px 26px 12px 24px; --rp:10px; --shb:0 3px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(2px); --shp:inset 0 0 28px rgba(80,60,20,.09);
-  --paper:radial-gradient(ellipse 60% 40% at 92% 6%,rgba(0,0,0,.10),transparent 70%), radial-gradient(ellipse 50% 35% at 4% 96%,rgba(0,0,0,.08),transparent 70%), radial-gradient(rgba(120,100,60,.08) 1px,transparent 1.5px) 0 0/9px 9px, var(--bg);
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 300' preserveAspectRatio='none'%3E%3Cpath d='M0 300V180C70 150 110 80 180 110C240 140 270 40 350 90C420 130 460 165 530 125C600 85 640 30 715 105C755 145 785 135 800 145V300Z' fill='%23000' fill-opacity='.09'/%3E%3Cpath d='M0 300V235C90 205 150 160 235 195C315 228 375 175 455 205C535 235 615 195 695 220C745 236 780 226 800 232V300Z' fill='%23000' fill-opacity='.15'/%3E%3C/svg%3E") 0 100%/100% 40% no-repeat, radial-gradient(circle at 86% 12%,rgba(184,50,39,.22) 0 34px,transparent 35px), radial-gradient(ellipse 60% 40% at 92% 6%,rgba(0,0,0,.08),transparent 70%), radial-gradient(ellipse 50% 35% at 4% 60%,rgba(0,0,0,.06),transparent 70%), radial-gradient(rgba(120,100,60,.08) 1px,transparent 1.5px) 0 0/9px 9px, var(--bg);
   --font:"Kaiti SC","STKaiti","KaiTi","楷体","Baloo 2",serif;
   color-scheme:light;
 }
@@ -349,6 +349,41 @@ h2{font-size:26px;margin-bottom:12px}
   --paper:radial-gradient(1.5px 1.5px at 20% 30%,#fff,transparent) 0 0/260px 260px, radial-gradient(1px 1px at 70% 15%,#fff,transparent) 0 0/180px 180px, radial-gradient(1.5px 1.5px at 45% 70%,#C9F6FF,transparent) 0 0/220px 220px, radial-gradient(1px 1px at 85% 85%,#FFD1F3,transparent) 0 0/140px 140px, linear-gradient(#0B0B2A,#2B0F4E);
   color-scheme:dark;
 }
+/* 立体 isometric: iso grid paper, solid diagonal extrusion */
+:is(:root,.skin)[data-skin="iso"]{
+  --bg:#EEF2FA; --dot:#D3DCEE; --surface:#FFFFFF; --ink:#26304F; --muted:#66708F; --edge:#26304F;
+  --sun:#FFD45C; --pink:#FF9BB8; --mint:#74DDB0; --sky:#5B8CFF; --line:#D6DEEE; --good:#2BAF6A; --bad:#F0625F; --soft:#F3F6FD;
+  --bw:2px; --rb:8px; --rp:12px;
+  --shb:1px 1px 0 var(--edge),2px 2px 0 var(--edge),3px 3px 0 var(--edge),4px 4px 0 var(--edge),5px 5px 0 var(--edge),6px 6px 0 var(--edge);
+  --shpress:1px 1px 0 var(--edge); --press:translate(5px,5px);
+  --shp:2px 2px 0 var(--dot),4px 4px 0 var(--dot),6px 6px 0 var(--dot),8px 8px 0 var(--dot),10px 10px 0 var(--dot);
+  --paper:repeating-linear-gradient(30deg,transparent 0 27px,var(--dot) 27px 28px), repeating-linear-gradient(150deg,transparent 0 27px,var(--dot) 27px 28px), repeating-linear-gradient(90deg,transparent 0 31.3px,var(--dot) 31.3px 32.3px), var(--bg);
+  color-scheme:light;
+}
+/* 折纸 origami: folded paper, no outlines, crease lines, dog-eared panels */
+:is(:root,.skin)[data-skin="origami"]{
+  --bg:#F4EFE6; --dot:#E6DED0; --surface:#FFFDF9; --ink:#3A3530; --muted:#857B6E; --edge:#CFC5B4;
+  --sun:#FFCF5C; --pink:#FF9DA7; --mint:#8FD5B6; --sky:#5E9AD6; --line:#E8E0D2; --good:#3B9C6E; --bad:#E2675A; --soft:#F7F2EA;
+  --bw:0px; --rb:3px; --rp:4px;
+  --shb:0 1px 1px rgba(60,40,10,.18), 0 7px 10px -5px rgba(60,40,10,.35); --shpress:0 1px 1px rgba(60,40,10,.2); --press:translateY(2px);
+  --shp:0 1px 2px rgba(60,40,10,.12), 0 10px 18px -10px rgba(60,40,10,.3);
+  --paper:linear-gradient(135deg,transparent 49.6%,rgba(90,70,40,.07) 50%,transparent 50.4%) 0 0/140px 140px, linear-gradient(45deg,transparent 49.6%,rgba(255,255,255,.7) 50%,transparent 50.4%) 0 0/140px 140px, var(--bg);
+  color-scheme:light;
+}
+[data-skin="origami"] :is(.btn,.topic,.opt,.item,.mcard,.sk-b){background-image:linear-gradient(135deg,rgba(255,255,255,.38) 0 50%,rgba(60,40,10,.07) 50% 100%)!important}
+[data-skin="origami"] .panel{background-image:linear-gradient(225deg,var(--bg) 0 18px,#E2D7C4 18px 25px,transparent 25px)}
+/* 彩绘玻璃 stained glass: jewel panes in lead came, glass sheen */
+:is(:root,.skin)[data-skin="glass"]{
+  --bg:#FFF6E0; --dot:#E9DFC8; --surface:#FFFBF0; --ink:#1C1A24; --muted:#5B5470; --edge:#1C1A24;
+  --sun:#F5B700; --pink:#E8689A; --mint:#3CC283; --sky:#2F6FDB; --line:#E9DFC8; --good:#1E9E5A; --bad:#D63A3A; --soft:#FFF1D6;
+  --bw:4px; --rb:14px; --rp:20px;
+  --shb:inset 0 0 0 2px rgba(255,255,255,.35), 0 4px 0 var(--edge); --shpress:inset 0 0 0 2px rgba(255,255,255,.35), 0 1px 0 var(--edge); --press:translateY(3px);
+  --shp:inset 0 0 0 3px rgba(255,255,255,.6), inset 0 0 30px rgba(245,183,0,.16);
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg stroke='%231C1A24' stroke-width='4' stroke-linejoin='round' fill-opacity='.38'%3E%3Cpath fill='%23E0457B' d='M0 0H90L60 70L0 50Z'/%3E%3Cpath fill='%23F5B700' d='M90 0H200V60L130 80L60 70Z'/%3E%3Cpath fill='%232F6FDB' d='M0 50L60 70L40 140L0 130Z'/%3E%3Cpath fill='%232BB673' d='M60 70L130 80L150 150L40 140Z'/%3E%3Cpath fill='%238E44AD' d='M130 80L200 60V160L150 150Z'/%3E%3Cpath fill='%23F5B700' d='M0 130L40 140L70 200H0Z'/%3E%3Cpath fill='%23E07A2F' d='M40 140L150 150L130 200H70Z'/%3E%3Cpath fill='%232F6FDB' d='M150 150L200 160V200H130Z'/%3E%3C/g%3E%3C/svg%3E") 0 0/200px 200px, var(--bg);
+  color-scheme:light;
+}
+[data-skin="glass"] :is(.btn,.topic,.opt,.item,.mcard,.sk-b){background-image:linear-gradient(155deg,rgba(255,255,255,.55),rgba(255,255,255,0) 42%,rgba(0,0,0,.12))!important}
+[data-skin="glass"] .bar .who>div:not(.ava){background:var(--surface);border:3px solid var(--edge);border-radius:12px;padding:0 10px}
 [data-skin="ink"] h1,[data-skin="ink"] h2{color:var(--bad)}
 [data-skin="ink"] .topic{filter:saturate(.55) sepia(.12)}
 [data-skin="candy"] .btn.sky,[data-skin="candy"] .tabs .btn.on{color:var(--ink)}
@@ -1038,7 +1073,7 @@ function vGrowth(){
     return `<li><span style="font-size:28px">${t?t.icon:'📘'}</span><span style="flex:1"><b>${t?t.zh+' · ':''}${m?m.zh:''}</b> <span class="zh">${LANGS[r.lang]?LANGS[r.lang].flag+' '+LANGS[r.lang].zh:''}</span></span>
     <span>${r.score==null?'📖 学完':r.score+'/'+r.total}</span><span class="zh" style="font-size:14px">${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}</span></li>`}).join('')}</ul>`:'<p class="zh" style="margin:0">还没有记录，去玩第一个游戏吧！</p>'}</div>`}
 
-const SKINS=[['toy','🧱','积木'],['crayon','🖍️','蜡笔'],['pixel','👾','像素'],['ink','🖌️','水墨'],['candy','🍬','糖果'],['neon','🌌','星空霓虹']];
+const SKINS=[['toy','🧱','积木'],['crayon','🖍️','蜡笔'],['pixel','👾','像素'],['ink','🖌️','水墨'],['candy','🍬','糖果'],['neon','🌌','星空霓虹'],['iso','🧊','立体'],['origami','🦢','折纸'],['glass','⛪','彩绘玻璃']];
 function vSettings(){
   return bar('settings')+`
   <div class="panel"><h2>家长设置 👨‍👩‍👧</h2>
