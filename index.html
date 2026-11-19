@@ -652,63 +652,71 @@ function clockSvg(h,m){const ha=((h%12)+m/60)*30*Math.PI/180,ma=m*6*Math.PI/180;
   <line x1="100" y1="100" x2="${100+46*Math.sin(ha)}" y2="${100-46*Math.cos(ha)}" stroke="#FF6B6B" stroke-width="9" stroke-linecap="round"/>
   <line x1="100" y1="100" x2="${100+70*Math.sin(ma)}" y2="${100-70*Math.cos(ma)}" stroke="#2A2F6B" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#2A2F6B"/></svg>`}
 const MG={
- count:{zh:'数一数',e:'🧮',hue:'#FFE07A',d:'数一数有几个',l1:'1 到 10',l2:'11 到 20',how:'看看图片里有几个东西，选出对的数字。不会的话按「💡 提示」，每个东西上面会出现数字，跟着数就好。',
-  gen:L=>{const n=L===1?rnd(1,10):rnd(11,20),e=pick(OBJ);return{title:'一共有几个？',say:'数一数，一共有几个？',html:h=>objs(n,e,{hint:h,row:L===1?5:10}),ans:n,opts:numOpts(n,1,20),explain:`一个一个数，一共有 <b>${n}</b> 个 ${e}`,sayAns:`一共有${n}个`}}},
- compare:{zh:'比多少',e:'⚖️',hue:'#C9A9FF',d:'哪边多？哪个大？',l1:'看图比多少',l2:'比较 100 以内的数',how:'比一比两边，选出比较多（或比较少）的那一边。挑战关比较两个数字：先看十位，十位一样再看个位。',
+ count:{zh:'数一数',e:'🧮',hue:'#FFE07A',d:'数一数有几个',l1:'1 到 10',l2:'11 到 20',l3:'21 到 30',how:'看看图片里有几个东西，选出对的数字。不会的话按「💡 提示」，每个东西上面会出现数字，跟着数就好。',
+  gen:L=>{const n=L===1?rnd(1,10):L===2?rnd(11,20):rnd(21,30),e=pick(OBJ);return{title:'一共有几个？',say:'数一数，一共有几个？',html:h=>objs(n,e,{hint:h,row:L===1?5:10}),ans:n,opts:numOpts(n,1,30),explain:`一个一个数，一共有 <b>${n}</b> 个 ${e}`,sayAns:`一共有${n}个`}}},
+ compare:{zh:'比多少',e:'⚖️',hue:'#C9A9FF',d:'哪边多？哪个大？',l1:'看图比多少',l2:'比较 100 以内的数',l3:'三个数里找最大 / 最小',how:'比一比两边，选出比较多（或比较少）的那一边。中等关比较两个数字：先看十位，十位一样再看个位。困难关有三个数字。',
   gen:L=>{const more=Math.random()<0.6,word=more?'多':'少';
    if(L===1){let x=rnd(1,10),y=rnd(1,10);while(y===x)y=rnd(1,10);const e=pick(OBJ),ans=(more?x>y:x<y)?'L':'R';
     return{title:`哪一边比较${word}？`,say:`哪一边比较${word}？`,html:()=>'',wide:true,opts:[{v:'L'},{v:'R'}],optsFn:h=>[objs(x,e,{hint:h,row:5}),objs(y,e,{hint:h,row:5})],ans,
      explain:`左边 ${x} 个，右边 ${y} 个。${Math.max(x,y)} 比 ${Math.min(x,y)} 多，所以${ans==='L'?'左边':'右边'}比较${word}。`,sayAns:`${Math.max(x,y)}比${Math.min(x,y)}多`}}
-   let a=rnd(10,99),b=rnd(10,99);while(b===a)b=rnd(10,99);const big=more?'大':'小',ans=more?Math.max(a,b):Math.min(a,b),ta=Math.floor(a/10),tb=Math.floor(b/10);
-   const why=ta!==tb?`先看十位：${a} 有 ${ta} 个十，${b} 有 ${tb} 个十。`:`十位一样（都是 ${ta} 个十），再看个位：${a%10} 和 ${b%10}。`;
-   return{title:`哪一个数比较${big}？`,say:`哪一个数比较${big}？`,html:h=>h?`<div class="hintbox">💡 ${why}</div>`:'',wide:true,opts:shuffle([a,b]).map(v=>({v,l:`<span style="font-size:60px">${v}</span>`})),ans,explain:why+`所以 <b>${ans}</b> 比较${big}。`,sayAns:`${ans}比较${big}`}}},
- add:{zh:'加法',e:'➕',hue:'#93E3BE',d:'合起来一共有几个',l1:'10 以内',l2:'20 以内',how:'把两边的东西合起来，数一数一共有几个。按「💡 提示」会帮你从 1 一直数下去。',
-  gen:L=>{const max=L===1?10:20,a=rnd(1,L===1?9:12),b=rnd(1,Math.min(10,max-a)),s=a+b,e=pick(OBJ);
+   let ns;do{ns=L===3?(t=>[t+rnd(0,9),t+rnd(0,9),rnd(10,99)])(rnd(1,9)*10):[rnd(10,99),rnd(10,99)]}while(new Set(ns).size<ns.length);
+   const [a,b]=ns,big=more?'大':'小',ans=more?Math.max(...ns):Math.min(...ns),ta=Math.floor(a/10),tb=Math.floor(b/10);
+   const why=L===3?`先看十位，十位一样再看个位：${ns.join('、')}。`:ta!==tb?`先看十位：${a} 有 ${ta} 个十，${b} 有 ${tb} 个十。`:`十位一样（都是 ${ta} 个十），再看个位：${a%10} 和 ${b%10}。`;
+   return{title:`哪一个数${L===3?'最':'比较'}${big}？`,say:`哪一个数${L===3?'最':'比较'}${big}？`,html:h=>h?`<div class="hintbox">💡 ${why}</div>`:'',wide:true,opts:shuffle(ns).map(v=>({v,l:`<span style="font-size:60px">${v}</span>`})),ans,explain:why+`所以 <b>${ans}</b> ${L===3?'最':'比较'}${big}。`,sayAns:`${ans}${L===3?'最':'比较'}${big}`}}},
+ add:{zh:'加法',e:'➕',hue:'#93E3BE',d:'合起来一共有几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'把两边的东西合起来，数一数一共有几个。按「💡 提示」会帮你从 1 一直数下去。困难关先算个位，再加上十位。',
+  gen:L=>{if(L===3){const a=rnd(11,40),b=rnd(2,9),s=a+b,o=a%10,tip=`先算个位：${o} + ${b} = ${o+b}，再加 ${a-o}`;
+    return{title:`${a} + ${b} = ?`,say:`${a}加${b}等于几？`,html:h=>h?`<div class="hintbox">💡 ${tip}</div>`:'<div style="font-size:64px">➕</div>',ans:s,opts:numOpts(s,0,60),explain:`${tip}：${a} + ${b} = <b>${s}</b>`,sayAns:`${a}加${b}等于${s}`}}
+   const max=L===1?10:20,a=rnd(1,L===1?9:12),b=rnd(1,Math.min(10,max-a)),s=a+b,e=pick(OBJ);
    return{title:`${a} + ${b} = ?`,say:`${a}加${b}等于几？`,html:h=>`<div class="eq">${objs(a,e,{hint:h,row:5})}<span class="sym">+</span>${objs(b,e,{hint:h,start:a,row:5})}</div>`,ans:s,opts:numOpts(s,0,20),explain:`${a} 个和 ${b} 个合起来，一共 <b>${s}</b> 个：${a} + ${b} = ${s}`,sayAns:`${a}加${b}等于${s}`}}},
- sub:{zh:'减法',e:'➖',hue:'#FFB3B3',d:'拿走以后还剩几个',l1:'10 以内',l2:'20 以内',how:'打 ✕ 的是被拿走的，数一数没打 ✕ 的还剩几个。',
-  gen:L=>{const a=L===1?rnd(2,10):rnd(11,20),b=rnd(1,L===1?a-1:Math.min(10,a-1)),r=a-b,e=pick(OBJ);
+ sub:{zh:'减法',e:'➖',hue:'#FFB3B3',d:'拿走以后还剩几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'打 ✕ 的是被拿走的，数一数没打 ✕ 的还剩几个。困难关个位不够减，就借一个十。',
+  gen:L=>{if(L===3){const a=rnd(21,50),b=rnd(2,9),r=a-b,o=a%10,tip=o>=b?`先算个位：${o} − ${b} = ${o-b}，再加 ${a-o}`:`借一个十：${10+o} − ${b} = ${10+o-b}，再加 ${a-o-10}`;
+    return{title:`${a} − ${b} = ?`,say:`${a}减${b}等于几？`,html:h=>h?`<div class="hintbox">💡 ${tip}</div>`:'<div style="font-size:64px">➖</div>',ans:r,opts:numOpts(r,0,60),explain:`${tip}：${a} − ${b} = <b>${r}</b>`,sayAns:`${a}减${b}等于${r}`}}
+   const a=L===1?rnd(2,10):rnd(11,20),b=rnd(1,L===1?a-1:Math.min(10,a-1)),r=a-b,e=pick(OBJ);
    return{title:`${a} − ${b} = ?`,say:`${a}减${b}等于几？`,html:h=>objs(a,e,{hint:h,cross:b,row:L===1?5:10}),ans:r,opts:numOpts(r,0,20),explain:`${a} 个拿走 ${b} 个（打 ✕ 的），还剩 <b>${r}</b> 个：${a} − ${b} = ${r}`,sayAns:`${a}减${b}等于${r}`}}},
- make10:{zh:'凑十',e:'🔟',hue:'#8FCBFF',d:'还差几个凑成 10',l1:'看十格框',l2:'20 以内找缺的数',how:'十格框装满就是 10。数一数空格有几个，就知道还要几个。',
+ make10:{zh:'凑十',e:'🔟',hue:'#8FCBFF',d:'还差几个凑成 10',l1:'看十格框',l2:'20 以内找缺的数',l3:'50 以内找缺的数',how:'十格框装满就是 10。数一数空格有几个，就知道还要几个。',
   gen:L=>{if(L===1){const k=rnd(1,9),ans=10-k;return{title:'还要几个才是 10？',say:`${k}再加几个是10？`,
      html:h=>`<div class="frame">${Array.from({length:10},(_,i)=>i<k?'<b class="on">🔴</b>':`<b>${h?`<span class="fn">${i-k+1}</span>`:''}</b>`).join('')}</div>`,ans,opts:numOpts(ans,1,9),explain:`已经有 ${k} 个，空格有 ${ans} 个：${k} + <b>${ans}</b> = 10`,sayAns:`${k}加${ans}等于10`}}
-   const c=rnd(11,20),a=rnd(c-10,c-1),ans=c-a;return{title:`${a} + ? = ${c}`,say:`${a}加几等于${c}？`,
+   const c=L===2?rnd(11,20):rnd(21,50),a=rnd(c-10,c-1),ans=c-a;return{title:`${a} + ? = ${c}`,say:`${a}加几等于${c}？`,
      html:h=>h?`<div class="hintbox">💡 从 ${a} 往上数到 ${c}：</div><div>${Array.from({length:ans},(_,i)=>`<span class="nbox sm">${a+i+1}</span>`).join('')}</div><div class="hintbox">数了 ${ans} 下</div>`:'',ans,opts:numOpts(ans,1,10),explain:`从 ${a} 往上数到 ${c}，数了 ${ans} 下：${a} + <b>${ans}</b> = ${c}`,sayAns:`${a}加${ans}等于${c}`}}},
- seq:{zh:'数字接龙',e:'🚂',hue:'#FFC56B',d:'找出空格里的数字',l1:'一个一个数（20 以内）',l2:'2、5、10 个一数（100 以内）',how:'数字火车一节接一节。看看每次加几，就能找出空格里的数字。',
-  gen:L=>{const step=L===1?1:pick([2,5,10]),len=5,maxS=Math.floor((L===1?20:100)/step)-len+1,s0=rnd(0,Math.max(0,maxS))*step;
-   const nums=Array.from({length:len},(_,i)=>s0+i*step),bi=rnd(1,len-1),ans=nums[bi];
-   return{title:'空格里是几？',say:'空格里是几？',html:h=>`<div>${nums.map((n,i)=>`${i?`<span class="step">${h?'+'+step:'→'}</span>`:''}<span class="nbox ${i===bi?'q':''}">${i===bi?'?':n}</span>`).join('')}</div>`,ans,opts:numOpts(ans,0,100,step),explain:`每次加 ${step}：${nums.join('、')}，所以是 <b>${ans}</b>`,sayAns:`空格里是${ans}`}}},
- shape:{zh:'认识形状',e:'🔷',hue:'#A4E2F0',d:'圆形、三角形……',l1:'平面图形',l2:'立体图形',how:'听题目，找出对的形状。按「💡 提示」会告诉你这个形状长什么样。',
-  gen:L=>{if(L===1){const t=pick(SHAPES2),cols=shuffle(SCOL);return{title:`哪一个是${t.zh}？`,say:`哪一个是${t.zh}？`,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',ans:t.k,opts:shuffle(SHAPES2).map((x,i)=>({v:x.k,l:shapeSvg(x.k,cols[i])})),explain:`这是<b>${t.zh}</b>：${t.f}`,sayAns:`这是${t.zh}`}}
-   const t=pick(SHAPES3),others=shuffle(SHAPES3.filter(x=>x!==t)).slice(0,3);return{title:`哪一个像${t.zh}？`,say:`哪一个像${t.zh}？`,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',big:true,ans:t.zh,opts:shuffle([t,...others]).map(x=>({v:x.zh,l:x.e})),explain:`${t.e} 像<b>${t.zh}</b>：${t.f}`,sayAns:`这个像${t.zh}`}}},
+ seq:{zh:'数字接龙',e:'🚂',hue:'#FFC56B',d:'找出空格里的数字',l1:'一个一个数（20 以内）',l2:'2、5、10 个一数（100 以内）',l3:'倒着数（100 以内）',how:'数字火车一节接一节。看看每次加几（或减几），就能找出空格里的数字。',
+  gen:L=>{const step=L===1?1:pick([2,5,10]),back=L===3,len=5,maxS=Math.floor((L===1?20:100)/step)-len+1,s0=rnd(0,Math.max(0,maxS))*step;
+   const nums=Array.from({length:len},(_,i)=>s0+i*step),bi=rnd(back?0:1,len-1);if(back)nums.reverse();const ans=nums[bi],sg=back?'−':'+';
+   return{title:'空格里是几？',say:'空格里是几？',html:h=>`<div>${nums.map((n,i)=>`${i?`<span class="step">${h?sg+step:'→'}</span>`:''}<span class="nbox ${i===bi?'q':''}">${i===bi?'?':n}</span>`).join('')}</div>`,ans,opts:numOpts(ans,0,100,step),explain:`每次${back?'减':'加'} ${step}：${nums.join('、')}，所以是 <b>${ans}</b>`,sayAns:`空格里是${ans}`}}},
+ shape:{zh:'认识形状',e:'🔷',hue:'#A4E2F0',d:'圆形、三角形……',l1:'平面图形',l2:'立体图形',l3:'听特点找形状',how:'听题目，找出对的形状。按「💡 提示」会告诉你这个形状长什么样。困难关不说名字，只说形状的特点。',
+  gen:L=>{if(L===1||L===3&&Math.random()<0.5){const t=pick(SHAPES2),cols=shuffle(SCOL),tt=L===3?`哪一个形状${t.f}？`:`哪一个是${t.zh}？`;return{title:tt,say:tt,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',ans:t.k,opts:shuffle(SHAPES2).map((x,i)=>({v:x.k,l:shapeSvg(x.k,cols[i])})),explain:`这是<b>${t.zh}</b>：${t.f}`,sayAns:`这是${t.zh}`}}
+   const t=pick(SHAPES3),others=shuffle(SHAPES3.filter(x=>x!==t)).slice(0,3),tt=L===3?`哪一个${t.f}？`:`哪一个像${t.zh}？`;return{title:tt,say:tt,html:h=>h?`<div class="hintbox">💡 ${t.zh}：${t.f}</div>`:'',big:true,ans:t.zh,opts:shuffle([t,...others]).map(x=>({v:x.zh,l:x.e})),explain:`${t.e} 像<b>${t.zh}</b>：${t.f}`,sayAns:`这个像${t.zh}`}}},
 
- clock:{zh:'认识时钟',e:'🕒',hue:'#FFD6A5',d:'现在几点？',l1:'整点（3 点）',l2:'整点和半点（3 点半）',how:'短针（时针）指着几，就是几点。长针（分针）指着 12 是「整点」，指着 6 是「半」。',
-  gen:L=>{const h=rnd(1,12),half=L===2&&Math.random()<0.6,lb=(x,hf)=>x+' 点'+(hf?'半':''),ans=lb(h,half);const n=x=>(x+11)%12+1;
-   const cand=L===1?[n(h+1),n(h-1),n(h+3),n(h+6)].map(x=>lb(x,false)):[lb(h,!half),lb(n(h+1),half),lb(n(h-1),!half),lb(n(h+1),!half),lb(n(h+6),half)];
-   const opts=shuffle([ans,...shuffle([...new Set(cand)].filter(x=>x!==ans)).slice(0,3)]).map(v=>({v,l:v}));
-   return{title:'现在是几点？',say:'现在是几点？',html:hn=>clockSvg(h,half?30:0)+(hn?`<div class="hintbox">💡 短针${half?'在 '+h+' 和 '+n(h+1)+' 中间（刚过 '+h+'）':'指着 '+h}，长针指着 ${half?'6，是「半」':'12，是「整点」'}</div>`:''),ans,opts,
-    explain:`短针${half?'刚过 '+h:'指着 '+h}，长针指着 ${half?6:12}，所以是 <b>${ans}</b>。`,sayAns:'现在是'+h+'点'+(half?'半':'')}}},
- story:{zh:'应用题',e:'📖',hue:'#FFCFE3',d:'听故事，算一算',l1:'10 以内',l2:'20 以内',how:'先听故事：东西「合起来、又来了、再给」用加法 +；「吃掉、飞走、拿走」用减法 −。按「💡 提示」会画出图来帮你数。',
-  gen:L=>{const st=pick(STORIES),max=L===1?10:20;let a,b;if(st.op>0){a=rnd(1,max-2);b=rnd(1,Math.min(9,max-a))}else{a=rnd(L===1?3:11,max);b=rnd(1,Math.min(9,a-1))}const ans=st.op>0?a+b:a-b,t=st.t(a,b);
-   return{title:`<span style="font-size:24px;line-height:1.5">${t}</span>`,say:t,html:h=>h?(st.op>0?`<div class="eq">${objs(a,st.e,{row:5})}<span class="sym">+</span>${objs(b,st.e2||st.e,{row:5})}</div>`:objs(a,st.e,{cross:b,row:L===1?5:10}))+`<div class="hintbox">💡 ${st.op>0?'合起来，用加法：'+a+' + '+b:'拿走了，用减法：'+a+' − '+b}</div>`:`<div style="font-size:64px">${st.e}</div>`,ans,opts:numOpts(ans,0,20),
+ clock:{zh:'认识时钟',e:'🕒',hue:'#FFD6A5',d:'现在几点？',l1:'整点（3 点）',l2:'整点和半点（3 点半）',l3:'15 分、半点、45 分',how:'短针（时针）指着几，就是几点。长针（分针）指着 12 是「整点」，指着 6 是「半」。困难关：长针指着 3 是 15 分，指着 9 是 45 分。',
+  gen:L=>{const h=rnd(1,12),m=L===1?0:L===2?(Math.random()<0.6?30:0):pick([0,15,30,45,15,45]),lb=(x,mm)=>x+' 点'+(mm===30?'半':mm?' '+mm+' 分':''),ans=lb(h,m);const n=x=>(x+11)%12+1;
+   const cand=L===1?[n(h+1),n(h-1),n(h+3),n(h+6)].map(x=>lb(x,0)):L===2?[lb(h,30-m),lb(n(h+1),m),lb(n(h-1),30-m),lb(n(h+1),30-m),lb(n(h+6),m)]:[lb(h,(m+15)%60),lb(h,(m+30)%60),lb(h,(m+45)%60),lb(n(h+1),m),lb(n(h-1),m)];
+   const opts=shuffle([ans,...shuffle([...new Set(cand)].filter(x=>x!==ans)).slice(0,3)]).map(v=>({v,l:v})),mp={0:'12，是「整点」',15:'3，是「15 分」',30:'6，是「半」',45:'9，是「45 分」'}[m];
+   return{title:'现在是几点？',say:'现在是几点？',html:hn=>clockSvg(h,m)+(hn?`<div class="hintbox">💡 短针${m?'在 '+h+' 和 '+n(h+1)+' 中间（刚过 '+h+'）':'指着 '+h}，长针指着 ${mp}</div>`:''),ans,opts,
+    explain:`短针${m?'刚过 '+h:'指着 '+h}，长针指着 ${mp}，所以是 <b>${ans}</b>。`,sayAns:'现在是'+h+'点'+(m===30?'半':m?m+'分':'')}}},
+ story:{zh:'应用题',e:'📖',hue:'#FFCFE3',d:'听故事，算一算',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'先听故事：东西「合起来、又来了、再给」用加法 +；「吃掉、飞走、拿走」用减法 −。按「💡 提示」会画出图来帮你数。',
+  gen:L=>{const st=pick(STORIES),max=[0,10,20,50][L];let a,b;if(st.op>0){a=rnd(L===3?11:1,max-(L===3?9:2));b=rnd(L===3?2:1,Math.min(9,max-a))}else{a=rnd([0,3,11,21][L],max);b=rnd(L===3?2:1,Math.min(9,a-1))}const ans=st.op>0?a+b:a-b,t=st.t(a,b);
+   return{title:`<span style="font-size:24px;line-height:1.5">${t}</span>`,say:t,html:h=>h?(L===3?'':st.op>0?`<div class="eq">${objs(a,st.e,{row:5})}<span class="sym">+</span>${objs(b,st.e2||st.e,{row:5})}</div>`:objs(a,st.e,{cross:b,row:L===1?5:10}))+`<div class="hintbox">💡 ${st.op>0?'合起来，用加法：'+a+' + '+b:'拿走了，用减法：'+a+' − '+b}</div>`:`<div style="font-size:64px">${st.e}</div>`,ans,opts:numOpts(ans,0,60),
     explain:`${st.op>0?'合起来用加法':'拿走了用减法'}：${a} ${st.op>0?'+':'−'} ${b} = <b>${ans}</b> ${st.unit}`,sayAns:`${a}${st.op>0?'加':'减'}${b}等于${ans}`}}},
- money:{zh:'认识钱币',e:'💰',hue:'#B8E07A',d:'一共有多少钱',l1:'令吉纸币（RM）',l2:'仙硬币（sen）',how:'把每张钱上的数字加起来，就是一共有多少钱。按「💡 提示」会写出加法算式。',
-  gen:L=>{if(L===1){let ns;do{ns=Array.from({length:rnd(2,3)},()=>pick([1,1,5,10]))}while(sumOf(ns)>20);const s=sumOf(ns);
-    return{title:'一共有多少钱？',say:'一共有多少令吉？',html:h=>`<div>${ns.map(v=>`<span class="note n${v}">RM${v}</span>`).join('')}</div>${h?`<div class="hintbox">💡 ${ns.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,1,30,1,v=>'RM'+v),explain:`${ns.map(v=>'RM'+v).join(' + ')} = <b>RM${s}</b>`,sayAns:`一共${s}令吉`}}
+ money:{zh:'认识钱币',e:'💰',hue:'#B8E07A',d:'一共有多少钱',l1:'令吉纸币（RM）',l2:'仙硬币（sen）',l3:'更多纸币（RM50 以内）',how:'把每张钱上的数字加起来，就是一共有多少钱。按「💡 提示」会写出加法算式。',
+  gen:L=>{if(L!==2){const mx=L===1?20:50;let ns;do{ns=Array.from({length:L===1?rnd(2,3):rnd(3,5)},()=>pick([1,1,5,10]))}while(sumOf(ns)>mx||L===3&&sumOf(ns)<21);const s=sumOf(ns);
+    return{title:'一共有多少钱？',say:'一共有多少令吉？',html:h=>`<div>${ns.map(v=>`<span class="note n${v}">RM${v}</span>`).join('')}</div>${h?`<div class="hintbox">💡 ${ns.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,1,60,1,v=>'RM'+v),explain:`${ns.map(v=>'RM'+v).join(' + ')} = <b>RM${s}</b>`,sayAns:`一共${s}令吉`}}
    let cs;do{cs=Array.from({length:rnd(2,4)},()=>pick([10,20,50]))}while(sumOf(cs)>100);const s=sumOf(cs);
    return{title:'一共有多少钱？',say:'一共有多少仙？',html:h=>`<div>${cs.map(v=>`<span class="coin">${v}<small>sen</small></span>`).join('')}</div>${h?`<div class="hintbox">💡 ${cs.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,10,100,10,v=>v===100?'100 sen<br><small>= RM1</small>':v+' sen'),explain:`${cs.map(v=>v+' sen').join(' + ')} = <b>${s} sen</b>${s===100?'，也就是 RM1':''}`,sayAns:`一共${s}仙`}}},
 };
 const GKIND=g=>MG[g]?'math':SG[g]?'sci':CG[g]?'cn':null, GAME=g=>MG[g]||SG[g]||CG[g];
+const LVN=['','容易','中等','困难'];
+// 困难: games without their own l3 mix 容易 and 中等 questions
+const genL=(g,l)=>l<3||g.l3?g.gen(l):g.gen(rnd(1,2));
 const isMG=m=>m==='math'||m==='sci'||m==='cn';
 function recordMath(g,ok){const kind=GKIND(g);const store=S[kind]||(S[kind]={});const r=store[g]||(store[g]={c:0,w:0});const d=dayRec();if(ok){r.c++;d.correct++;const f={math:'mc',sci:'sc',cn:'cc'}[kind];d[f]=(d[f]||0)+1;addStars(1)}else{r.w++;d.wrong++}touch()}
 function startMath(game,level){if(overLimit()){showRest();return}resetRec();const kind=GKIND(game),g=GAME(game);
   G={topic:kind+':'+game,mode:kind,game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
-     qs:Array.from({length:8},()=>Object.assign(g.gen(level),{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
+     qs:Array.from({length:level===3?10:8},()=>Object.assign(genL(g,level),{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
   go({name:'game'});setTimeout(speakCur,350)}
 function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);const first=!q.missed&&!q.hinted;
   return gameBar()+`<div class="stage">
    <div class="mq">${q.title}</div>
    <div class="mview">${q.html(h)}</div>
-   <div class="row" style="justify-content:center;margin:6px 0"><button class="btn sky" data-act="sayCur">🔊 听题目</button>${q.done||q.hint?'':'<button class="btn" data-act="mhint">💡 提示</button>'}</div>
+   <div class="row" style="justify-content:center;margin:6px 0"><button class="btn sky" data-act="sayCur">🔊 听题目</button>${q.done||q.hint||q.lvl===3?'':'<button class="btn" data-act="mhint">💡 提示</button>'}</div>
    <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
    ${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
   </div>`}
@@ -716,7 +724,7 @@ function mathCards(){return Object.entries(MG).map(([k,g])=>{const r=S.math[k]||
   return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
 function vMTopic(){const g=GAME(view.game);
   return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="home">⬅ 返回</button></div>
-  <div class="modes"><button class="btn mode" data-act="mplay" data-v="1"><span class="e">🌱</span><b>简单</b><span>${g.l1}</span></button><button class="btn mode" data-act="mplay" data-v="2"><span class="e">🚀</span><b>挑战</b><span>${g.l2}</span></button></div>
+  <div class="modes"><button class="btn mode" data-act="mplay" data-v="1"><span class="e">🌱</span><b>${LVN[1]}</b><span>${g.l1}</span></button><button class="btn mode" data-act="mplay" data-v="2"><span class="e">⭐</span><b>${LVN[2]}</b><span>${g.l2}</span></button><button class="btn mode" data-act="mplay" data-v="3"><span class="e">🚀</span><b>${LVN[3]}</b><span>${g.l3||'容易和中等混合'} · 10 题 · 没有提示</span></button></div>
   <div class="panel" style="margin-top:18px"><h2>怎么玩？</h2><p style="margin:0">${g.how}</p></div>`}
 function mathPanel(){const rows=Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
@@ -811,7 +819,7 @@ const CG={
  tingzi:{zh:'听音选字',e:'👂',hue:'#C9E7FF',d:'听一听，选出对的字',l1:'24 个常用字',l2:'全部 41 个字',how:'按「🔊 听题目」，听 Momo 念的是哪一个字，再选出来。按「💡 提示」会出现图片。',
   gen:L=>{const z=pick(hzPool(L));return{title:'听一听，是哪一个字？',say:`${z[3]}的${z[0]}`,html:h=>h?`<div class="hintbox">💡 ${z[2]} ${z[1]}</div>`:'<div style="font-size:72px">👂</div>',big:true,ans:z[0],opts:hzOpts(z,hzPool(L)),
    explain:`Momo 念的是「<b>${z[0]}</b>」（${z[1]}），${z[3]}的${z[0]} ${z[2]}。`,sayAns:`${z[3]}的${z[0]}`}}},
- pinyin:{zh:'拼音',e:'🔤',hue:'#E3D4FF',d:'这个字怎么拼？',l1:'选对的拼音',l2:'选对的声调',how:'看字，选出它的拼音。挑战关要分辨四个声调：一声 ˉ 平平的，二声 ˊ 往上，三声 ˇ 先下后上，四声 ˋ 往下。',
+ pinyin:{zh:'拼音',e:'🔤',hue:'#E3D4FF',d:'这个字怎么拼？',l1:'选对的拼音',l2:'选对的声调',how:'看字，选出它的拼音。中等关要分辨四个声调：一声 ˉ 平平的，二声 ˊ 往上，三声 ˇ 先下后上，四声 ˋ 往下。',
   gen:L=>{const z=pick(HZ);let ps;if(L===2&&toneVars(z[1]).length===4)ps=toneVars(z[1]);else{const seen=new Set([z[1]]);ps=[z[1],...shuffle(HZ).map(x=>x[1]).filter(p=>!seen.has(p)&&seen.add(p)).slice(0,3)]}
    return{title:'这个字的拼音是哪一个？',say:'这个字的拼音是哪一个？',html:h=>`<div class="hz" style="font-size:110px;line-height:1.1">${z[0]}</div>`+(h?`<div class="hintbox">💡 ${z[2]} ${z[3]}${L===2?'　一声 ˉ 平，二声 ˊ 上，三声 ˇ 拐弯，四声 ˋ 下':''}</div>`:''),ans:z[1],opts:shuffle(ps).map(p=>({v:p,l:`<span style="font-size:40px">${p}</span>`})),
    explain:`「${z[0]}」的拼音是 <b>${z[1]}</b>，${z[3]}的${z[0]}。`,sayAns:`${z[0]}，${z[3]}的${z[0]}`}}}
@@ -1112,7 +1120,7 @@ function mistClear(q){const M=S.mist;if(q.m==='math'){const k=q.g+':'+(q.lvl||1)
 function mistWords(){return Object.entries(S.mist.w).sort((a,b)=>b[1]-a[1]).map(([k])=>{const [lang,t,...r]=k.split(':');const w=WMAP[t+':'+r.join(':')];return w&&(w[lang])?{k,lang,w}:null}).filter(Boolean)}
 function mistGames(){return Object.entries(S.mist.m).map(([k,n])=>{const [g,l]=k.split(':');return GAME(g)?{k,g,l:+l,n,gm:GAME(g)}:null}).filter(Boolean).sort((a,b)=>b.n-a.n)}
 function wordQ(w,lang,m){const pool=T(w.t).words.filter(x=>x[lang]);return {w,lang,m:m||pick(['listen','read']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}}
-function mathQ(g,l){return Object.assign(GAME(g).gen(l),{m:'math',g,lvl:l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})}
+function mathQ(g,l){return Object.assign(genL(GAME(g),l),{m:'math',g,lvl:l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})}
 function startMist(){if(overLimit()){showRest();return}const ws=mistWords().slice(0,6),gs=mistGames();const qs=ws.map(x=>wordQ(x.w,x.lang));
   let k=0;while(gs.length&&qs.length<10&&k<20){const x=gs[k%gs.length];qs.push(mathQ(x.g,x.l));k++;if(k>=gs.reduce((a,y)=>a+y.n,0))break}
   if(!qs.length){toast('错题本是空的，真厉害！🎉');return}
@@ -1122,7 +1130,7 @@ function vMist(){const ws=mistWords(),gs=mistGames();
   return bar('home')+`<div class="panel row"><span style="font-size:56px">📒</span><div style="flex:1"><h1 style="font-size:30px">错题本</h1><div class="zh">答错过的题都记在这里。重做的时候第一次就答对，就会从错题本里删掉。</div></div><button class="btn" data-act="home">⬅ 返回</button></div>
   ${ws.length||gs.length?`<div class="panel row" style="justify-content:center"><button class="btn sun big" data-act="mistplay">✏️ 重做错题</button></div>`:`<div class="panel row" style="justify-content:center">${pandaDressed(90,'happy')}<b style="font-size:22px">错题本是空的，真厉害！🎉</b></div>`}
   ${ws.length?`<div class="panel"><h2>单词（${ws.length}）</h2><div class="chips">${ws.map(x=>`<button class="chip" data-act="sayL" data-l="${x.lang}" data-v="${esc(x.w[x.lang])}">${LANGS[x.lang].flag} ${esc(x.w.e)} ${esc(x.w[x.lang])} <span class="zh">${esc(x.w.zh)}</span></button>`).join('')}</div></div>`:''}
-  ${gs.length?`<div class="panel"><h2>数学 · 科学 · 华文</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">重做时会出同一类型的新题目</div><div class="mlist">${gs.map(x=>`<button class="chip" data-act="mistgame" data-v="${x.k}">${x.gm.e} ${x.gm.zh} · ${x.l===1?'简单':'挑战'} <span class="zh">错 ${x.n} 次</span></button>`).join('')}</div></div>`:''}`}
+  ${gs.length?`<div class="panel"><h2>数学 · 科学 · 华文</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">重做时会出同一类型的新题目</div><div class="mlist">${gs.map(x=>`<button class="chip" data-act="mistgame" data-v="${x.k}">${x.gm.e} ${x.gm.zh} · ${LVN[x.l]||LVN[1]} <span class="zh">错 ${x.n} 次</span></button>`).join('')}</div></div>`:''}`}
 
 /* ---------- 每周小测 weekly test ---------- */
 function startTest(){if(overLimit()){showRest();return}const qs=[];
