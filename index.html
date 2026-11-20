@@ -117,6 +117,10 @@ h1,h2,h3{margin:0;line-height:1.15}
 .more h2{font-size:20px}.more .feat{min-height:96px}.more .feat .fe{font-size:32px}
 .subhead{color:#2A2F6B}.subhead .se2{font-size:72px;line-height:1}
 @media (max-width:560px){.hello .ring{display:none}.subjs{grid-template-columns:repeat(2,1fr)}.subj:last-child:nth-child(odd){grid-column:1/-1}.subj{min-height:150px}.subj .se2{font-size:50px}.subj b{font-size:26px}}
+.blks{display:flex;gap:18px;justify-content:center;align-items:flex-end;flex-wrap:wrap;margin:6px 0}.blks span{display:flex;flex-wrap:wrap;gap:4px;max-width:220px;align-items:flex-end}
+.blk{display:inline-block;border:2px solid #2A2F6B;border-radius:3px}
+.col{margin:6px auto;font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;border-collapse:collapse}.col td{width:34px;text-align:center;padding:0 2px}.col tr.ln td{border-top:4px solid var(--edge)}
+.grp{display:inline-block;border:3px dashed var(--line);border-radius:16px;padding:4px 6px;margin:3px}
 .ghead{grid-column:1/-1;margin:6px 0 -4px;font-size:22px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
 .topic{
@@ -674,6 +678,26 @@ function clockSvg(h,m){const ha=((h%12)+m/60)*30*Math.PI/180,ma=m*6*Math.PI/180;
   return `<svg viewBox="0 0 200 200" width="210" height="210" role="img" aria-label="时钟"><circle cx="100" cy="100" r="92" fill="#fff" stroke="#2A2F6B" stroke-width="6"/>${nums}
   <line x1="100" y1="100" x2="${100+46*Math.sin(ha)}" y2="${100-46*Math.cos(ha)}" stroke="#FF6B6B" stroke-width="9" stroke-linecap="round"/>
   <line x1="100" y1="100" x2="${100+70*Math.sin(ma)}" y2="${100-70*Math.cos(ma)}" stroke="#2A2F6B" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="#2A2F6B"/></svg>`}
+/* ---- 数学 二年级 (Year 2) helpers ---- */
+function nearOpts(ans,min,max,steps,fmt){fmt=fmt||(v=>String(v));const set=new Set([ans]);for(const d of shuffle(steps))for(const sg of shuffle([1,-1])){const x=ans+sg*d;if(set.size<4&&x>=min&&x<=max)set.add(x)}
+  let k=1;while(set.size<4){if(ans+k<=max)set.add(ans+k);else set.add(ans-k);k++}return shuffle([...set]).map(v=>({v,l:fmt(v)}))}
+const dg=n=>[Math.floor(n/100),Math.floor(n/10)%10,n%10];
+function blocks(n){const [h,t,o]=dg(n);const b=(k,c,l,w,ht)=>Array.from({length:k},()=>`<i class="blk" style="width:${w}px;height:${ht}px;background:${c}" title="${l}"></i>`).join('');
+  return `<div class="blks"><span>${b(h,'var(--sky)','百',50,50)}</span><span>${b(t,'var(--mint)','十',14,50)}</span><span>${b(o,'var(--sun)','一',16,16)}</span></div><div class="zh" style="font-size:15px">🟦 大方块 = 100　🟩 长条 = 10　🟨 小方块 = 1</div>`}
+function colCalc(a,b,op,ans){const w=String(Math.max(a,b,ans||0)).length,pad=v=>String(v).padStart(w,' ').split('').map(c=>`<td>${c===' '?'':c}</td>`).join('');
+  return `<table class="col"><tr><td></td>${pad(a)}</tr><tr><td>${op}</td>${pad(b)}</tr><tr class="ln"><td></td>${ans==null?'<td></td>'.repeat(w):pad(ans)}</tr></table>`}
+function fracSvg(n,k,shape){const c='var(--pink)',st='stroke="#2A2F6B" stroke-width="3"';let g='';
+  if(shape==='circle'){for(let i=0;i<n;i++){const a0=i*2*Math.PI/n-Math.PI/2,a1=(i+1)*2*Math.PI/n-Math.PI/2;g+=`<path d="M60 60 L${60+50*Math.cos(a0)} ${60+50*Math.sin(a0)} A50 50 0 ${n===1?1:0} 1 ${60+50*Math.cos(a1)} ${60+50*Math.sin(a1)} Z" fill="${i<k?c:'#fff'}" ${st}/>`}}
+  else for(let i=0;i<n;i++)g+=`<rect x="${10+i*100/n}" y="25" width="${100/n}" height="70" fill="${i<k?c:'#fff'}" ${st}/>`;
+  return `<svg viewBox="0 0 120 120" width="150" height="150" role="img" aria-label="${n} 份里涂了 ${k} 份">${g}</svg>`}
+const FR={'1/2':['½','二分之一'],'1/4':['¼','四分之一'],'3/4':['¾','四分之三'],'1/3':['⅓','三分之一'],'1':['1','一个整体']};
+function rulerSvg(len){const px=26;let t='';for(let i=0;i<=15;i++)t+=`<line x1="${12+i*px}" y1="70" x2="${12+i*px}" y2="${i%5?82:88}" stroke="#2A2F6B" stroke-width="2"/><text x="${12+i*px}" y="104" font-size="13" text-anchor="middle" fill="#2A2F6B">${i}</text>`;
+  return `<svg viewBox="0 0 420 112" width="100%" style="max-width:460px" role="img" aria-label="尺"><rect x="12" y="34" width="${len*px}" height="22" rx="6" fill="#FFD23F" stroke="#2A2F6B" stroke-width="2"/><polygon points="${12+len*px},34 ${12+len*px+16},45 ${12+len*px},56" fill="#FFB98F" stroke="#2A2F6B" stroke-width="2"/><rect x="6" y="66" width="404" height="42" rx="6" fill="#FFF7D6" stroke="#2A2F6B" stroke-width="2"/>${t}</svg>`}
+const UNITS={len:['厘米 cm','米 m'],mass:['克 g','公斤 kg'],vol:['毫升 ml','公升 l']};
+const UNITQ=[['✏️','一支铅笔的长度','len',0],['📏','一把尺的长度','len',0],['🦷','一颗牙齿的长度','len',0],['🚪','一扇门的高度','len',1],['🏫','课室的长度','len',1],['🏊','游泳池的长度','len',1],
+ ['🍎','一个苹果的重量','mass',0],['✏️','一支铅笔的重量','mass',0],['🍉','一个大西瓜的重量','mass',1],['🧑','爸爸的体重','mass',1],['🍚','一大包米的重量','mass',1],
+ ['🥄','一汤匙药水','vol',0],['🧃','一小盒果汁（很小盒）','vol',0],['🪣','一桶水','vol',1],['🛁','浴缸里的水','vol',1]];
+const PEOPLE=['🧒','👧','👦','🧑'];
 const MG={
  count:{zh:'数一数',e:'🧮',hue:'#FFE07A',d:'数一数有几个',l1:'1 到 10',l2:'11 到 20',l3:'21 到 30',how:'看看图片里有几个东西，选出对的数字。不会的话按「💡 提示」，每个东西上面会出现数字，跟着数就好。',
   gen:L=>{const n=L===1?rnd(1,10):L===2?rnd(11,20):rnd(21,30),e=pick(OBJ);return{title:'一共有几个？',say:'数一数，一共有几个？',html:h=>objs(n,e,{hint:h,row:L===1?5:10}),ans:n,opts:numOpts(n,1,30),explain:`一个一个数，一共有 <b>${n}</b> 个 ${e}`,sayAns:`一共有${n}个`}}},
@@ -724,6 +748,49 @@ const MG={
     return{title:'一共有多少钱？',say:'一共有多少令吉？',html:h=>`<div>${ns.map(v=>`<span class="note n${v}">RM${v}</span>`).join('')}</div>${h?`<div class="hintbox">💡 ${ns.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,1,60,1,v=>'RM'+v),explain:`${ns.map(v=>'RM'+v).join(' + ')} = <b>RM${s}</b>`,sayAns:`一共${s}令吉`}}
    let cs;do{cs=Array.from({length:rnd(2,4)},()=>pick([10,20,50]))}while(sumOf(cs)>100);const s=sumOf(cs);
    return{title:'一共有多少钱？',say:'一共有多少仙？',html:h=>`<div>${cs.map(v=>`<span class="coin">${v}<small>sen</small></span>`).join('')}</div>${h?`<div class="hintbox">💡 ${cs.join(' + ')} = ?</div>`:''}`,ans:s,opts:numOpts(s,10,100,10,v=>v===100?'100 sen<br><small>= RM1</small>':v+' sen'),explain:`${cs.map(v=>v+' sen').join(' + ')} = <b>${s} sen</b>${s===100?'，也就是 RM1':''}`,sayAns:`一共${s}仙`}}},
+ place3:{yr:2,zh:'1000 以内的数',e:'💯',hue:'#B5DCFF',d:'百位、十位、个位',l1:'数一数方块',l2:'这个数字代表多少',how:'一个数可以分成百位、十位、个位。🟦 大方块是 100，🟩 长条是 10，🟨 小方块是 1。345 = 3 个百 + 4 个十 + 5 个一。',
+  gen:L=>{if(L===1){const n=rnd(1,9)*100+rnd(0,9)*10+rnd(0,9),[h,t,o]=dg(n);const sw=[h*100+o*10+t,t*100+h*10+o,n+10,n-10,n+100,n-100].filter(x=>x>=100&&x<=999&&x!==n);
+     const opts=shuffle([n,...shuffle([...new Set(sw)]).slice(0,3)]).map(v=>({v,l:String(v)}));
+     return{title:'这些方块一共是多少？',say:'这些方块一共是多少？',html:hn=>blocks(n)+(hn?`<div class="hintbox">💡 ${h} 个百 + ${t} 个十 + ${o} 个一 = ${h*100} + ${t*10} + ${o}</div>`:''),ans:n,opts,
+      explain:`${h} 个百、${t} 个十、${o} 个一：${h*100} + ${t*10} + ${o} = <b>${n}</b>`,sayAns:`一共是${n}`}}
+   let n,ds;do{n=rnd(102,987);ds=dg(n)}while(new Set(ds).size<3||ds.includes(0));const pos=rnd(0,2),d=ds[pos],val=d*[100,10,1][pos],nm=['百位','十位','个位'][pos];
+   const hl=String(n).split('').map((c,i)=>i===pos?`<b style="color:var(--bad)">${c}</b>`:c).join('');
+   return{title:`${n} 里的红色 ${d} 代表多少？`,say:`${n}里的${d}，代表多少？`,html:hn=>`<div style="font-size:72px;font-weight:800;letter-spacing:6px">${hl}</div>`+(hn?`<div class="hintbox">💡 从右边数：个位、十位、百位。${d} 在${nm}</div>`:''),ans:val,
+    opts:shuffle([d*100,d*10,d,d*100+d]).map(v=>({v,l:String(v)})),explain:`${d} 在<b>${nm}</b>，代表 <b>${val}</b>。`,sayAns:`${d}在${nm}，代表${val}`}}},
+ addsub3:{yr:2,zh:'加减法 1000 以内',e:'🧮',hue:'#93E3BE',d:'用直式算一算',l1:'不用进位 / 退位',l2:'要进位 / 退位',how:'把数字对齐：个位对个位、十位对十位。从个位开始算。加法满十要「进一」到前一位；减法不够减要向前一位「借一」。',
+  gen:L=>{const add=Math.random()<0.5;let a,b;
+   if(L===1){if(add){const x=dg(rnd(100,899));const y=x.map((v,i)=>rnd(i?0:1,Math.min(9-v,i?9:8)));a=x[0]*100+x[1]*10+x[2];b=y[0]*100+y[1]*10+y[2]}
+     else{const x=dg(rnd(200,999));const y=x.map((v,i)=>rnd(0,i?v:Math.max(0,v-1)));a=x[0]*100+x[1]*10+x[2];b=y[0]*100+y[1]*10+y[2];if(b<10)b+=10*Math.min(1,x[1])}}
+   else{do{a=rnd(100,899);b=rnd(10,add?999-a:a-1)}while(add?((a%10)+(b%10)<10&&(Math.floor(a/10)%10)+(Math.floor(b/10)%10)<10):((a%10)>=(b%10)&&(Math.floor(a/10)%10)>=(Math.floor(b/10)%10)))}
+   const ans=add?a+b:a-b,op=add?'+':'−';
+   return{title:`${a} ${op} ${b} = ?`,say:`${a}${add?'加':'减'}${b}等于多少？`,html:h=>colCalc(a,b,op,null)+(h?`<div class="hintbox">💡 从个位开始${add?'加：满十就进一到十位':'减：不够减就向十位借一'}。个位：${a%10} ${op} ${b%10}</div>`:''),ans,
+    opts:nearOpts(ans,0,1000,[1,10,100,9]),explain:colCalc(a,b,op,ans)+`${a} ${op} ${b} = <b>${ans}</b>`,sayAns:`${a}${add?'加':'减'}${b}等于${ans}`}}},
+ mul:{yr:2,zh:'乘法',e:'✖️',hue:'#FFC56B',d:'几组，每组几个',l1:'看图：几组几个',l2:'乘法表 2、3、4、5、10',how:'乘法就是很多个一样的数加起来。3 组，每组 4 个：4 + 4 + 4 = 12，写成 3 × 4 = 12。',
+  gen:L=>{if(L===1){const g=rnd(2,5),k=rnd(2,5),e=pick(OBJ),ans=g*k;
+     return{title:`${g} 组，每组 ${k} 个，一共几个？`,say:`${g}组，每组${k}个，一共有几个？`,html:h=>`<div class="eq">${Array.from({length:g},()=>`<span class="grp">${objs(k,e)}</span>`).join('')}</div>`+(h?`<div class="hintbox">💡 ${Array(g).fill(k).join(' + ')} = ? 也可以写成 ${g} × ${k}</div>`:''),ans,
+      opts:nearOpts(ans,1,50,[1,2,k]),explain:`${Array(g).fill(k).join(' + ')} = <b>${ans}</b>，就是 ${g} × ${k} = ${ans}`,sayAns:`${g}乘${k}等于${ans}`}}
+   const k=pick([2,3,4,5,10]),m=rnd(1,10),ans=k*m;
+   return{title:`${m} × ${k} = ?`,say:`${m}乘${k}等于多少？`,html:h=>h?`<div class="hintbox">💡 ${k} 个 ${k} 个数：${Array.from({length:m},(_,i)=>k*(i+1)).map((v,i)=>i===m-1?'?':v).join('、')}</div>`:'',ans,
+    opts:nearOpts(ans,0,100,[k,1,2]),explain:`${m} 个 ${k}：${Array.from({length:m},(_,i)=>k*(i+1)).join('、')}，所以 ${m} × ${k} = <b>${ans}</b>`,sayAns:`${m}乘${k}等于${ans}`}}},
+ div:{yr:2,zh:'除法',e:'➗',hue:'#FFB3B3',d:'平分给大家',l1:'看图：平分',l2:'除法 ÷ 2、3、4、5、10',how:'除法就是平分：每个人分到一样多。12 个分给 3 个人，每人 4 个，写成 12 ÷ 3 = 4。想乘法也可以：3 × ? = 12。',
+  gen:L=>{if(L===1){const pp=rnd(2,4),each=rnd(1,5),tot=pp*each,e=pick(['🍬','🍪','🍓','⭐','🎈']);
+     return{title:`${tot} 个${e}平分给 ${pp} 个人，每人几个？`,say:`${tot}个，平分给${pp}个人，每人分到几个？`,html:h=>(h?`<div class="eq">${Array.from({length:pp},(_,i)=>`<span class="grp">${PEOPLE[i]} ${objs(each,e)}</span>`).join('')}</div><div class="hintbox">💡 一个一个轮流分，每人分到一样多</div>`:`<div>${objs(tot,e,{row:6})}</div><div style="font-size:44px">${PEOPLE.slice(0,pp).join(' ')}</div>`),ans:each,
+      opts:nearOpts(each,1,12,[1,2]),explain:`${tot} ÷ ${pp} = <b>${each}</b>，每人分到 ${each} 个`,sayAns:`${tot}除以${pp}等于${each}`}}
+   const k=pick([2,3,4,5,10]),q=rnd(1,10),a=k*q;
+   return{title:`${a} ÷ ${k} = ?`,say:`${a}除以${k}等于多少？`,html:h=>h?`<div class="hintbox">💡 想乘法：${k} × ? = ${a}</div>`:'',ans:q,opts:nearOpts(q,1,10,[1,2]),explain:`因为 ${k} × ${q} = ${a}，所以 ${a} ÷ ${k} = <b>${q}</b>`,sayAns:`${a}除以${k}等于${q}`}}},
+ frac:{yr:2,zh:'分数',e:'🍕',hue:'#FFD1D1',d:'二分之一、四分之一',l1:'涂色的是多少？',l2:'一半、四分之一是几个？',how:'把一个东西分成一样大的几份，其中的一份就是分数。分成 2 份，1 份是二分之一 ½；分成 4 份，1 份是四分之一 ¼，3 份是四分之三 ¾。',
+  gen:L=>{if(L===1){const c=pick([['1/2',2,1],['1/4',4,1],['3/4',4,3],['1',2,2],['1/3',3,1]]),shape=pick(['circle','rect']);const keys=shuffle(Object.keys(FR).filter(k=>k!==c[0])).slice(0,3);
+     return{title:'涂了颜色的部分是多少？',say:'涂了颜色的部分是多少？',html:h=>fracSvg(c[1],c[2],shape)+(h?`<div class="hintbox">💡 分成了 ${c[1]} 份一样大的，涂了 ${c[2]} 份</div>`:''),big:true,ans:c[0],opts:shuffle([c[0],...keys]).map(k=>({v:k,l:lab(FR[k][0],FR[k][1])})),
+      explain:`分成 ${c[1]} 份一样大的，涂了 ${c[2]} 份，就是 <b>${FR[c[0]][1]} ${FR[c[0]][0]}</b>`,sayAns:FR[c[0]][1]}}
+   const half=Math.random()<0.5,d=half?2:4,n=d*rnd(1,5),ans=n/d,e=pick(OBJ),nm=half?'二分之一 ½':'四分之一 ¼';
+   return{title:`${n} 个${e}的${nm}是几个？`,say:`${n}个的${half?'二分之一':'四分之一'}是几个？`,html:h=>h?`<div class="eq">${Array.from({length:d},()=>`<span class="grp">${objs(ans,e)}</span>`).join('')}</div><div class="hintbox">💡 平分成 ${d} 份，一份有几个？</div>`:`<div>${objs(n,e,{row:10})}</div>`,ans,
+    opts:nearOpts(ans,1,20,[1,2,ans]),explain:`${n} 平分成 ${d} 份，一份是 <b>${ans}</b> 个：${n} ÷ ${d} = ${ans}`,sayAns:`${n}个的${half?'二分之一':'四分之一'}是${ans}个`}}},
+ measure:{yr:2,zh:'长度与重量',e:'📏',hue:'#A4E2F0',d:'厘米、米、克、公斤',l1:'用什么单位？',l2:'用尺量一量',how:'短的东西用厘米（cm），长的用米（m）；轻的东西用克（g），重的用公斤（kg）；少的水用毫升（ml），多的水用公升（l）。用尺量东西要从 0 开始。',
+  gen:L=>{if(L===1){const it=pick(UNITQ),ans=UNITS[it[2]][it[3]],other=Object.keys(UNITS).filter(k=>k!==it[2]).map(k=>pick(UNITS[k]));
+     return{title:`${it[1]}，用哪一个单位比较好？`,say:`${it[1]}，用哪一个单位比较好？`,html:h=>`<div style="font-size:80px;line-height:1.1">${it[0]}</div>`+(h?`<div class="hintbox">💡 ${it[2]==='len'?'是长度：短的用厘米，长的用米':it[2]==='mass'?'是重量：轻的用克，重的用公斤':'是水的多少：少的用毫升，多的用公升'}</div>`:''),ans,
+      opts:shuffle([...UNITS[it[2]],...other]).map(v=>({v,l:v})),explain:`${it[1]}${it[3]?'比较大，':'比较小，'}用 <b>${ans}</b>`,sayAns:`用${ans.split(' ')[0]}`}}
+   const len=rnd(3,14),e=pick(['铅笔','蜡笔','钥匙']);
+   return{title:`这支${e}有几厘米长？`,say:`这支${e}有几厘米长？`,html:h=>rulerSvg(len)+(h?'<div class="hintbox">💡 从 0 开始，看尖尖的那一头对着几</div>':''),ans:len,opts:nearOpts(len,1,15,[1,2]).map(o=>({v:o.v,l:o.v+' cm'})),explain:`从 0 量到 ${len}，所以是 <b>${len} 厘米</b>`,sayAns:`${len}厘米`}}}
 };
 const GKIND=g=>MG[g]?'math':SG[g]?'sci':CG[g]?'cn':null, GAME=g=>MG[g]||SG[g]||CG[g];
 const LVN=['','容易','中等','困难'];
@@ -743,8 +810,8 @@ function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.op
    <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
    ${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
   </div>`}
-function mathCards(){return Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
+function mathCards(){const all=Object.entries(MG),card=([k,g])=>{const r=S.math[k]||{c:0,w:0};
+  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`};return `<h2 class="ghead">📗 一年级</h2>`+all.filter(([,g])=>!g.yr).map(card).join('')+`<h2 class="ghead">📘 二年级</h2>`+all.filter(([,g])=>g.yr===2).map(card).join('')}
 function vMTopic(){const g=GAME(view.game);
   return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="subjpage">⬅ 返回</button></div>
   <div class="modes"><button class="btn mode" data-act="mplay" data-v="1"><span class="e">🌱</span><b>${LVN[1]}</b><span>${g.l1}</span></button><button class="btn mode" data-act="mplay" data-v="2"><span class="e">⭐</span><b>${LVN[2]}</b><span>${g.l2}</span></button><button class="btn mode" data-act="mplay" data-v="3"><span class="e">🚀</span><b>${LVN[3]}</b><span>${g.l3||'容易和中等混合'} · 10 题 · 没有提示</span></button></div>
@@ -753,7 +820,7 @@ function vMTopic(){const g=GAME(view.game);
 // fig/*.html posts its card height so the iframe fits without scrollbars
 addEventListener('message',e=>{const d=e.data;if(!d||!d.momoFig||!d.h)return;document.querySelectorAll('.figframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=d.h+'px'})});
 function mathPanel(){const rows=Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
-  return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
+  return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>数学 🔢</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">黄色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
 
 /* ---------------- 科学 Science ---------------- */
@@ -1068,7 +1135,7 @@ function vKids(){
   return bar('')+`<div class="panel"><h2>谁要学习？</h2><div class="kids">${Object.entries(ALL.kids).map(([id,k])=>`<button class="btn kid ${id===ALL.cur?'sun':''}" data-act="pickkid" data-v="${id}"><span class="ke">${esc(k.avatar)}</span><b>${esc(k.name||'?')}</b><span>⭐ ${k.stars}</span></button>`).join('')}
     <button class="btn kid" data-act="addkid"><span class="ke">➕</span><b>添加孩子</b><span class="zh">兄弟姐妹各有自己的记录</span></button></div></div>`}
 
-const SUBJS=[{k:'en',e:'🔤',zh:'英文',d:'English',hue:'var(--s-en)'},{k:'ms',e:'🇲🇾',zh:'国文',d:'Bahasa Melayu',hue:'var(--s-ms)'},{k:'math',e:'🔢',zh:'数学',d:'数一数 · 加减',hue:'var(--s-math)'},{k:'sci',e:'🔬',zh:'科学',d:'一年级 · 二年级',hue:'var(--s-sci)'},{k:'cn',e:'🀄',zh:'华文',d:'识字 · 拼音',hue:'var(--s-cn)'}];
+const SUBJS=[{k:'en',e:'🔤',zh:'英文',d:'English',hue:'var(--s-en)'},{k:'ms',e:'🇲🇾',zh:'国文',d:'Bahasa Melayu',hue:'var(--s-ms)'},{k:'math',e:'🔢',zh:'数学',d:'一年级 · 二年级',hue:'var(--s-math)'},{k:'sci',e:'🔬',zh:'科学',d:'一年级 · 二年级',hue:'var(--s-sci)'},{k:'cn',e:'🀄',zh:'华文',d:'识字 · 拼音',hue:'var(--s-cn)'}];
 const curSubj=()=>S.subj==='lang'?S.lang:S.subj;
 function subjProg(k){if(k==='en'||k==='ms')return '学会 '+mastered(k)+' 个词';const st=S[k]||{};const c=Object.values(st).reduce((a,r)=>a+(r.c||0),0);return c?'答对 '+c+' 题':'还没玩过'}
 function vHome(){
@@ -1220,7 +1287,7 @@ function vMist(){const ws=mistWords(),gs=mistGames();
 function startTest(){if(overLimit()){showRest();return}const qs=[];
   const tried=l=>BASE.filter(t=>t.words.some(w=>{const r=wstat(l,w);return r.c+r.w>0}));
   ['en','ms'].forEach(l=>{const ts=tried(l).length?tried(l):BASE;for(let k=0;k<2;k++){const t=pick(ts);qs.push(wordQ(pick(t.words),l))}});
-  const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);pk(MG,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));shuffle(Object.keys(SG).filter(k=>!SG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));pk(CG,2).forEach(g=>qs.push(mathQ(g,1)));
+  const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);shuffle(Object.keys(MG).filter(k=>!MG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));shuffle(Object.keys(SG).filter(k=>!SG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));pk(CG,2).forEach(g=>qs.push(mathQ(g,1)));
   resetRec();G={topic:'test',mode:'test',lang:S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs)};
   go({name:'game'});setTimeout(()=>{const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
 function vTest(){const ts=S.tests||[],wk=weekKeys(0),thisWk=ts.filter(t=>wk.includes(t.d));const best=thisWk.reduce((a,t)=>Math.max(a,t.s),-1);
