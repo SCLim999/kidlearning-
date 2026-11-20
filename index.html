@@ -102,6 +102,18 @@ h1,h2,h3{margin:0;line-height:1.15}
 .subj .se2{font-size:64px;line-height:1.1}.subj b{font-size:32px;line-height:1.2}.subj .sd{font-size:15px;font-weight:600;opacity:.8}.subj .sp{margin-top:6px;font-size:14px;font-weight:700;background:rgba(255,255,255,.65);border-radius:999px;padding:2px 10px}
 .subj .last{position:absolute;top:-12px;right:10px;background:var(--surface);color:var(--ink);border:3px solid var(--edge);border-radius:999px;padding:0 10px;font-size:14px;font-weight:800}
 .mstar{display:none}@media (max-width:560px){.mstar{display:inline}}
+.abar{display:grid;grid-template-columns:minmax(86px,auto) 1fr auto;align-items:center;gap:10px;margin:6px 0;font-weight:700}
+.abar .tr{height:16px;background:var(--soft);border-radius:4px;overflow:hidden}.abar .tr i{display:block;height:100%;border-radius:0 4px 4px 0;min-width:2px}
+.abar .v{white-space:nowrap;min-width:64px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}.abar small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.vbars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:22px;border-bottom:2px solid var(--line)}
+.vbars .vb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative}
+.vbars .vb i{display:block;width:70%;max-width:46px;background:var(--sky);border-radius:4px 4px 0 0;min-height:2px}
+.vbars .vb b{font-size:13px;color:var(--ink);margin-bottom:2px}.vlabels{display:flex;gap:10px}.vlabels span{flex:1;text-align:center;font-size:13px;color:var(--muted)}
+.ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.ins>div{border:3px solid var(--edge);border-radius:18px;padding:12px 14px;background:var(--surface)}.ins h3{margin:0 0 6px;font-size:18px}.ins ul{margin:0;padding-left:18px}.ins li{margin:3px 0}
+.kidtabs{display:flex;gap:8px;flex-wrap:wrap}
+.admhead{flex-wrap:wrap}.admhead .t{flex:1 1 220px}
+@media (max-width:560px){.adm .stats{grid-template-columns:repeat(2,1fr);gap:10px}.adm .stat .n{font-size:26px}.admhead>span{display:none}}
 .more h2{font-size:20px}.more .feat{min-height:96px}.more .feat .fe{font-size:32px}
 .subhead{color:#2A2F6B}.subhead .se2{font-size:72px;line-height:1}
 @media (max-width:560px){.hello .ring{display:none}.subjs{grid-template-columns:repeat(2,1fr)}.subj:last-child:nth-child(odd){grid-column:1/-1}.subj{min-height:150px}.subj .se2{font-size:50px}.subj b{font-size:26px}}
@@ -509,7 +521,7 @@ function fixKid(k){const b=blank();
   k.stars=Math.max(0,num(k.stars));k.bamboo=Math.max(0,num(k.bamboo));k.updatedAt=num(k.updatedAt);k.skin=str(k.skin,20);k.letterWk=DATE_RE.test(k.letterWk)?k.letterWk:'';
   k.days=cleanMap(k.days,d=>{d=obj(d);const r={};['stars','correct','wrong','mins','secs','rec','mc','sc','cc','extra','say'].forEach(f=>{if(d[f]!=null)r[f]=num(d[f])});r.stars=r.stars||0;r.correct=r.correct||0;r.wrong=r.wrong||0;r.mins=r.mins||0;return r},DATE_RE);
   k.words=cleanMap(k.words,cw,WKEY_RE);['math','sci','cn'].forEach(f=>{k[f]=cleanMap(k[f],cw,ID_RE)});
-  k.sessions=(Array.isArray(k.sessions)?k.sessions:[]).filter(x=>x&&typeof x==='object').slice(-60).map(x=>({t:num(x.t),topic:str(x.topic,60),mode:str(x.mode,20),lang:str(x.lang,4),score:x.score==null?null:num(x.score),total:num(x.total)}));
+  k.sessions=(Array.isArray(k.sessions)?k.sessions:[]).filter(x=>x&&typeof x==='object').slice(-300).map(x=>{const r={t:num(x.t),topic:str(x.topic,60),mode:str(x.mode,20),lang:str(x.lang,4),score:x.score==null?null:num(x.score),total:num(x.total)};if(x.sec!=null)r.sec=num(x.sec);return r});
   k.tests=(Array.isArray(k.tests)?k.tests:[]).filter(x=>x&&DATE_RE.test(x.d)).slice(-30).map(x=>({d:x.d,s:num(x.s),n:num(x.n,10)}));
   const m=obj(k.mist);k.mist={w:cleanMap(m.w,v=>num(v),WKEY_RE),m:cleanMap(m.m,v=>num(v),/^[A-Za-z0-9_]{1,30}:[12]$/)};
   k.adv={done:cleanMap(obj(k.adv).done,v=>v?true:undefined,/^\d{1,3}$/)};
@@ -938,7 +950,7 @@ function startDuel(){if(overLimit()){showRest();return}const opps=duelOpps(),sel
   D={p:[[S.avatar,S.name],opps[sel]],sub,opp:sel,i:0,sc:[0,0],qs:makeDuelQs(sub),lock:[false,false],done:false,winner:null,over:false};go({name:'duelplay'});setTimeout(duelSay,300)}
 function duelSay(){const q=D&&D.qs[D.i];if(q&&q.say)speak(q.say,'zh')}
 function duelNext(){if(!D||view.name!=='duelplay')return;D.i++;
-  if(D.i>=D.qs.length){D.over=true;const won=D.sc[0]>D.sc[1];D.earned=3+(won?2:0);addStars(D.earned);dayRec().mins+=2;touch();render();sGood();setTimeout(()=>burst(document.querySelector('.endstar'),'🎉'),200);return}
+  if(D.i>=D.qs.length){D.over=true;const won=D.sc[0]>D.sc[1];D.earned=3+(won?2:0);addStars(D.earned);dayRec().mins+=2;S.sessions.push({t:Date.now(),topic:'duel',mode:'duel',lang:D.sub||'',score:D.sc[0],total:D.qs.length});S.sessions=S.sessions.slice(-300);touch();render();sGood();setTimeout(()=>burst(document.querySelector('.endstar'),'🎉'),200);return}
   D.done=false;D.lock=[false,false];D.winner=null;render();duelSay()}
 function vDuel(){if(D.over){const a=D.sc[0],b=D.sc[1];const title=a===b?'平手！两个都很棒 🤝':(a>b?esc(D.p[0][1]):esc(D.p[1][1]))+' 赢了！🏆';
     return `<div class="panel setup">${pandaDressed(120,'happy','dance')}<h1 style="font-size:34px">${title}</h1><p style="font-size:30px;font-weight:800;margin:6px 0">${D.p[0][0]} ${a} : ${b} ${D.p[1][0]}</p><div class="endstar" style="font-size:30px;font-weight:800">⭐ ${esc(S.name)} +${D.earned}</div>
@@ -1176,6 +1188,72 @@ function showLetter(){letterShown=true;const o=document.createElement('div');o.c
   o.innerHTML=`<div class="panel setup letter"><h1 style="font-size:30px">📮 Momo 的信</h1><div style="text-align:center">${pandaDressed(90,'happy')}</div><div>${esc(t)}</div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn sky big" data-l="say">🔊 念给我听</button><button class="btn sun big" data-l="ok">谢谢 Momo ❤️</button></div></div>`;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(!b)return;if(b.dataset.l==='say')speak(t.replace(/[⭐🎋🐼📮]/gu,''),'zh');else{try{speechSynthesis.cancel()}catch(x){}o.remove();render()}});document.body.appendChild(o)}
 
+/* ---------- 家长后台 parent dashboard (PIN only) ---------- */
+const SNAME={en:'🔤 英文',ms:'🇲🇾 国文',math:'🔢 数学',sci:'🔬 科学',cn:'🀄 华文',map:'🗺️ 冒险地图',mist:'📒 错题本',test:'📝 小测',duel:'⚔️ 对战',other:'其他'};
+const SUBCOL={en:'var(--s-en)',ms:'var(--s-ms)',math:'var(--s-math)',sci:'var(--s-sci)',cn:'var(--s-cn)'};
+function sessSubj(r){const t=r.topic||'';if(/^(math|sci|cn):/.test(t))return t.split(':')[0];if(t.startsWith('boss:'))return 'map';if(t==='mist'||t==='test'||t==='duel')return t;if(r.lang==='en'||r.lang==='ms')return r.lang;return 'other'}
+const pct=(c,t)=>t?Math.round(c*100/t):null;
+function kidWeek(k,off){const ks=weekKeys(off);let stars=0,mins=0,c=0,w=0,days=0;ks.forEach(d=>{const r=k.days[d];if(!r)return;if(r.stars>0||r.secs>0)days++;stars+=r.stars||0;mins+=r.secs?Math.round(r.secs/60):(r.mins||0);c+=r.correct||0;w+=r.wrong||0});return{ks,stars,mins,acc:pct(c,c+w),days}}
+function adminStats(k){const A={};
+  const dv=Object.values(k.days);A.days=dv.filter(d=>d.stars>0||d.secs>0).length;A.mins=dv.reduce((a,d)=>a+(d.secs?Math.round(d.secs/60):(d.mins||0)),0);
+  const tc=dv.reduce((a,d)=>a+(d.correct||0),0),tw=dv.reduce((a,d)=>a+(d.wrong||0),0);A.acc=pct(tc,tc+tw);A.answers=tc+tw;
+  const last=k.sessions.reduce((a,r)=>Math.max(a,r.t),0);A.last=last?new Date(last):null;
+  // per subject accuracy
+  A.subj=['en','ms','math','sci','cn'].map(s=>{let c=0,w=0,tried=0,mast=0;
+    if(s==='en'||s==='ms')Object.entries(k.words).forEach(([key,r])=>{if(key.startsWith(s+':')){c+=r.c;w+=r.w;if(r.c+r.w)tried++;if(r.c>=MASTER)mast++}});
+    else Object.values(k[s]||{}).forEach(r=>{c+=r.c;w+=r.w});return{s,c,w,n:c+w,acc:pct(c,c+w),tried,mast}});
+  // items for strengths / weaknesses: word topics (per language) and each game
+  const items=[];const tp={};Object.entries(k.words).forEach(([key,r])=>{const [l,t]=key.split(':');const id=l+':'+t;(tp[id]=tp[id]||{l,t,c:0,w:0});tp[id].c+=r.c;tp[id].w+=r.w});
+  Object.values(tp).forEach(x=>{const t=T(x.t);if(t)items.push({name:SNAME[x.l]+' · '+t.zh,c:x.c,w:x.w})});
+  ['math','sci','cn'].forEach(s=>Object.entries(k[s]||{}).forEach(([g,r])=>{const gm=GAME(g);if(gm)items.push({name:SNAME[s]+' · '+gm.zh,c:r.c,w:r.w})}));
+  items.forEach(x=>{x.n=x.c+x.w;x.acc=pct(x.c,x.n)});const enough=items.filter(x=>x.n>=6);
+  A.strong=enough.filter(x=>x.acc>=80).sort((a,b)=>b.acc-a.acc||b.n-a.n).slice(0,4);A.weak=enough.filter(x=>x.acc<80).sort((a,b)=>a.acc-b.acc).slice(0,4);
+  // interests: what the child chooses to play, and when
+  const ss=k.sessions;A.plays=ss.length;const by={};ss.forEach(r=>{const s=sessSubj(r);by[s]=by[s]||{n:0,sec:0};by[s].n++;by[s].sec+=r.sec||0});
+  A.bySubj=Object.entries(by).map(([s,v])=>({s,n:v.n,sec:v.sec})).sort((a,b)=>b.n-a.n);
+  const mc={};ss.forEach(r=>{const m=MODES[r.mode];if(m&&!['math','sci','review','boss'].includes(r.mode)){mc[r.mode]=(mc[r.mode]||0)+1}else if(/^(math|sci|cn):/.test(r.topic)){const g=GAME(r.topic.split(':')[1]);if(g){const key='g:'+r.topic.split(':')[1];mc[key]=(mc[key]||0)+1}}});
+  A.fav=Object.entries(mc).map(([k2,n])=>{const g=k2.startsWith('g:')&&GAME(k2.slice(2));return{name:g?g.e+' '+g.zh:MODES[k2].e+' '+MODES[k2].zh,n}}).sort((a,b)=>b.n-a.n).slice(0,5);
+  const hb=[['🌅 早上','5–12 点',5,12],['☀️ 下午','12–18 点',12,18],['🌙 晚上','18–22 点',18,22],['🦉 很晚','22 点以后',22,29]];
+  A.hours=hb.map(([n,d,a,b])=>({n,d,c:ss.filter(r=>{let h=new Date(r.t).getHours();if(h<5)h+=24;return h>=a&&h<b}).length}));
+  A.weeks=[5,4,3,2,1,0].map(o=>kidWeek(k,o));
+  A.hard=Object.entries(k.words).filter(([,r])=>r.w>0&&r.c<MASTER).sort((a,b)=>(b[1].w-b[1].c)-(a[1].w-a[1].c)).slice(0,10).map(([key,r])=>{const [l,t,...e]=key.split(':');const w=WMAP[t+':'+e.join(':')];return w&&w[l]?{l,w,r}:null}).filter(Boolean);
+  A.tests=(k.tests||[]).slice(-6);A.mist=Object.keys(k.mist.w).length+Object.values(k.mist.m).reduce((a,n)=>a+n,0);
+  A.mastered=['en','ms'].map(l=>Object.entries(k.words).filter(([key,r])=>key.startsWith(l+':')&&r.c>=MASTER).length);
+  return A}
+function adminSummary(k,A){const top=A.bySubj.filter(x=>SUBCOL[x.s])[0],tot=A.bySubj.reduce((a,x)=>a+x.n,0),hr=A.hours.slice().sort((a,b)=>b.c-a.c)[0];
+  const lines=[];
+  if(A.strong.length)lines.push('💪 强项：'+A.strong.slice(0,3).map(x=>x.name.replace(/^\S+ /,'')+'（'+x.acc+'%）').join('、'));
+  if(A.weak.length)lines.push('🧩 需要帮忙：'+A.weak.slice(0,3).map(x=>x.name.replace(/^\S+ /,'')+'（'+x.acc+'%）').join('、'));
+  if(top&&tot>=3)lines.push('❤️ 最常选：'+SNAME[top.s].replace(/^\S+ /,'')+'（'+Math.round(top.n*100/tot)+'% 的游戏）'+(A.fav[0]?'，最常玩「'+A.fav[0].name.replace(/^\S+ /,'')+'」':''));
+  if(hr&&hr.c)lines.push('🕒 常在'+hr.n.replace(/^\S+ /,'')+'学习');
+  return lines}
+function abar(label,sub,val,max,txt,col){const w=max?Math.max(0,Math.min(100,val*100/max)):0;return `<div class="abar" title="${esc(label)}：${esc(txt)}"><div>${label}${sub?`<small>${sub}</small>`:''}</div><div class="tr"><i style="width:${w}%;background:${col||'var(--sky)'}"></i></div><div class="v">${txt}</div></div>`}
+function vAdmin(){const ids=Object.keys(ALL.kids),id=ALL.kids[view.kid]?view.kid:ALL.cur,k=ALL.kids[id],A=adminStats(k),sum=adminSummary(k,A);
+  const maxPlay=Math.max(1,...A.bySubj.map(x=>x.n)),maxMin=Math.max(1,...A.weeks.map(w=>w.mins)),maxH=Math.max(1,...A.hours.map(h=>h.c));
+  const tile=(n,l)=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  return bar('settings')+`<div class="adm"><div class="panel row admhead"><span style="font-size:52px">📊</span><div class="t"><h1 style="font-size:30px">家长后台</h1><div class="zh">只有输入家长密码才能看。资料只保存在这台设备上。</div></div><button class="btn" data-act="copyadmin" data-v="${esc(id)}">📋 复制摘要</button><button class="btn" data-act="settings">⬅ 返回</button></div>
+  ${ids.length>1?`<div class="panel kidtabs">${ids.map(i=>`<button class="btn ${i===id?'sun':''}" data-act="adminkid" data-v="${esc(i)}">${esc(ALL.kids[i].avatar)} ${esc(ALL.kids[i].name||'?')}</button>`).join('')}</div>`:''}
+  <div class="panel"><h2>${esc(k.avatar)} ${esc(k.name)} 的总览</h2><div class="stats">
+    ${tile(A.days,'📅 学习天数')}${tile(A.mins,'⏱️ 总共分钟')}${tile('⭐ '+k.stars,'星星')}${tile(A.acc==null?'–':A.acc+'%','🎯 第一次就答对')}${tile(A.mastered[0]+' / '+A.mastered[1],'🏅 学会的英文 / 国文词')}${tile(A.last?fmtK(dk(A.last)):'–','🕒 最近一次')}</div></div>
+  <div class="panel"><h2>重点发现 🔍</h2>${sum.length?`<div class="ins"><div><h3>💪 强项</h3>${A.strong.length?`<ul>${A.strong.map(x=>`<li>${esc(x.name)} — <b>${x.acc}%</b> <span class="zh">（${x.n} 题）</span></li>`).join('')}</ul>`:'<p class="zh" style="margin:0">再多玩一点就看得出来</p>'}</div>
+    <div><h3>🧩 需要帮忙</h3>${A.weak.length?`<ul>${A.weak.map(x=>`<li>${esc(x.name)} — <b>${x.acc}%</b> <span class="zh">（${x.n} 题）</span></li>`).join('')}</ul>`:'<p class="zh" style="margin:0">目前没有明显的弱项 👍</p>'}</div>
+    <div><h3>❤️ 兴趣</h3><ul>${A.bySubj.filter(x=>SUBCOL[x.s]).slice(0,2).map(x=>`<li>最常选 ${SNAME[x.s]}（${x.n} 次）</li>`).join('')}${A.fav.slice(0,2).map(x=>`<li>喜欢玩 ${esc(x.name)}（${x.n} 次）</li>`).join('')}</ul></div></div>
+    <p class="zh" style="font-size:14px;margin:10px 0 0">强项 / 需要帮忙：至少做过 6 题的主题或游戏，按「第一次就答对」的比例排列。</p>`:'<p class="zh" style="margin:0">还没有足够的资料。孩子多玩几次以后，这里会显示强项、弱项和兴趣。</p>'}</div>
+  <div class="panel"><h2>各科正确率 🎯</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">第一次就答对的比例（右边是答了几题）</div>
+    ${A.subj.map(x=>abar(SNAME[x.s],x.s==='en'||x.s==='ms'?'试过 '+x.tried+' 个词 · 学会 '+x.mast:'',x.acc||0,100,x.n?x.acc+'% · '+x.n+' 题':'还没玩',SUBCOL[x.s])).join('')}</div>
+  <div class="panel"><h2>兴趣：最常选的 ❤️</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">最近 ${A.plays} 次游戏里，每样玩了几次</div>
+    ${A.bySubj.length?A.bySubj.map(x=>abar(SNAME[x.s]||x.s,x.sec?'约 '+Math.max(1,Math.round(x.sec/60))+' 分钟':'',x.n,maxPlay,x.n+' 次',SUBCOL[x.s]||'var(--sky)')).join(''):'<p class="zh" style="margin:0">还没有记录</p>'}
+    ${A.fav.length?`<h3 style="margin:14px 0 6px">最喜欢的玩法</h3><div class="chips">${A.fav.map(x=>`<span class="chip">${esc(x.name)} · ${x.n} 次</span>`).join('')}</div>`:''}</div>
+  <div class="panel"><h2>每周学习时间 📈</h2><div class="zh" style="font-size:14px;margin:-6px 0 6px">最近 6 周，每周学了几分钟</div>
+    <div class="vbars" role="img" aria-label="最近 6 周每周学习分钟">${A.weeks.map(w=>`<div class="vb" title="${fmtK(w.ks[0])} 那周：${w.mins} 分钟，${w.stars} 颗星，${w.days} 天${w.acc!=null?'，正确率 '+w.acc+'%':''}"><b>${w.mins}</b><i style="height:${w.mins*100/maxMin}%"></i></div>`).join('')}</div>
+    <div class="vlabels">${A.weeks.map((w,i)=>`<span>${i===5?'本周':fmtK(w.ks[0])}</span>`).join('')}</div>
+    <table class="ptable" style="margin-top:12px;font-size:15px"><thead><tr><th>周</th><th>天数</th><th>分钟</th><th>星星</th><th>正确率</th></tr></thead><tbody>${A.weeks.map((w,i)=>`<tr><td>${i===5?'本周':fmtK(w.ks[0])}</td><td>${w.days}</td><td>${w.mins}</td><td>${w.stars}</td><td>${w.acc==null?'–':w.acc+'%'}</td></tr>`).join('')}</tbody></table></div>
+  <div class="panel"><h2>通常什么时候学习 🕒</h2>${A.hours.map(h=>abar(h.n,h.d,h.c,maxH,h.c+' 次')).join('')}</div>
+  <div class="panel"><h2>最难的词 🧱</h2>${A.hard.length?`<div class="chips">${A.hard.map(x=>`<span class="chip">${LANGS[x.l].flag} ${esc(x.w.e)} ${esc(x.w[x.l])} <span class="zh">${esc(x.w.zh)} · 错 ${x.r.w} 对 ${x.r.c}</span></span>`).join('')}</div>`:'<p class="zh" style="margin:0">没有特别难的词 👍</p>'}
+    <p class="zh" style="font-size:14px;margin:10px 0 0">📒 错题本里还有 ${A.mist} 题。${A.tests.length?'最近小测：'+A.tests.map(t=>t.s+'/'+t.n).join('、'):'还没做过每周小测。'}</p></div></div>`}
+function adminText(id){const k=ALL.kids[id]||S,A=adminStats(k);return `📊 ${k.name} 的学习摘要（${fmtK(dk())}）\n学习天数：${A.days} 天，共 ${A.mins} 分钟，⭐ ${k.stars}\n第一次就答对：${A.acc==null?'–':A.acc+'%'}\n学会的词：英文 ${A.mastered[0]}、国文 ${A.mastered[1]}\n`+adminSummary(k,A).join('\n')+`\n各科正确率：`+A.subj.filter(x=>x.n).map(x=>SNAME[x.s].replace(/^\S+ /,'')+' '+x.acc+'%').join('、')}
+function openAdmin(){if(!ALL.pin){if(!confirm('家长后台只有家长能看。请先设定一个 4 位数的家长密码。'))return;setPin();if(!ALL.pin)return;go({name:'admin',kid:ALL.cur});return}needPin(()=>go({name:'admin',kid:ALL.cur}))}
+
 /* ---------- 家长密码 parent PIN ---------- */
 let pinUntil=0;
 function needPin(cb){if(!ALL.pin||Date.now()<pinUntil)return cb();const a=prompt('请输入家长密码（4 位数字）');if(a===null)return;
@@ -1213,8 +1291,8 @@ function endGame(){
   dayRec().mins+=mins;
   let pass=null;if(G.station!=null){pass=G.mode==='learn'||G.mode==='match'||G.score>=Math.ceil(G.qs.length*0.75);if(pass){const first=!adv().done[G.station];adv().done[G.station]=true;if(STATIONS[G.station].k==='boss'&&first)addStars(5)}}
   if(G.mode==='test'){S.tests.push({d:dk(),s:G.score,n:G.qs.length});S.tests=S.tests.slice(-30)}
-  S.sessions.push({t:Date.now(),topic:G.topic,mode:G.mode,lang:G.lang,score:G.mode==='learn'?null:G.score,total:G.qs.length});
-  S.sessions=S.sessions.slice(-60);touch();
+  S.sessions.push({t:Date.now(),topic:G.topic,mode:G.mode,lang:G.lang,score:G.mode==='learn'?null:G.score,total:G.qs.length,sec:Math.round((Date.now()-G.start)/1000)});
+  S.sessions=S.sessions.slice(-300);touch();
   const earned=S.stars-G.starsBefore;const newSt=STICKERS.filter(s=>s.n>G.starsBefore&&s.n<=S.stars);
   go({name:'end',earned,newSt,mode:G.mode,score:G.score,total:G.qs.length,best:G.best||0,moves:G.moves||0,station:G.station,pass,newCards:cardCount()-(G.cardsBefore||0)});
   setTimeout(()=>{sGood();burst(document.querySelector('.endstar'),'🌟')},200);
@@ -1314,6 +1392,7 @@ function vGrowth(){
 const SKINS=[['toy','🧱','积木'],['crayon','🖍️','蜡笔'],['pixel','👾','像素'],['ink','🖌️','水墨'],['candy','🍬','糖果'],['neon','🌌','星空霓虹'],['iso','🧊','立体'],['origami','🦢','折纸'],['glass','⛪','彩绘玻璃']];
 function vSettings(){
   return bar('settings')+`
+  <div class="panel row" style="background:var(--s-en);color:#2A2F6B"><span style="font-size:44px">📊</span><div style="flex:1"><h2 style="margin:0">家长后台</h2><div style="font-size:15px">看所有孩子的学习进度、强项、弱项和兴趣（要输入家长密码）</div></div><button class="btn sun big" data-act="admin">打开 ▶</button></div>
   <div class="panel"><h2>家长设置 👨‍👩‍👧</h2>
     <div class="row" style="margin-bottom:14px"><b>孩子的名字</b><input id="nm2" maxlength="16" value="${esc(S.name)}" style="flex:1;min-width:160px;font-size:20px;border:3px solid var(--edge);border-radius:14px;padding:8px 12px;background:var(--surface);user-select:text;-webkit-user-select:text"><button class="btn mint" data-act="rename">保存</button></div>
     <div style="font-weight:700">头像</div>
@@ -1398,7 +1477,7 @@ function render(){
   syncCustom();
   const v=view.name;
   document.documentElement.dataset.skin=SKINS.some(s=>s[0]===S.skin)?S.skin:'toy';
-  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='subject'?vSubject():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():v==='custom'?vCustom():v==='mist'?vMist():v==='test'?vTest():v==='print'?vPrint():vSettings();
+  app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='subject'?vSubject():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():v==='custom'?vCustom():v==='mist'?vMist():v==='test'?vTest():v==='print'?vPrint():v==='admin'?vAdmin():vSettings();
   if(v==='home')setTimeout(maybeLetter,500);
 }
 
@@ -1466,6 +1545,9 @@ app.addEventListener('click',e=>{
     case 'doprint':window.print();break;
     case 'letter':showLetter();break;
     case 'pinset':setPin();break;
+    case 'admin':openAdmin();break;
+    case 'adminkid':needPin(()=>go({name:'admin',kid:v}));break;
+    case 'copyadmin':{const t=adminText(v);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('摘要已复制 📋'),()=>toast('复制不了，请手动截图'));break}
     case 'pinoff':if(confirm('要取消家长密码吗？')){delete ALL.pin;touch();toast('已取消密码');render()}break;
     case 'saycheck':startSay();break;
     case 'import':document.getElementById('imp').click();break;
