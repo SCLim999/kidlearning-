@@ -117,6 +117,7 @@ h1,h2,h3{margin:0;line-height:1.15}
 .more h2{font-size:20px}.more .feat{min-height:96px}.more .feat .fe{font-size:32px}
 .subhead{color:#2A2F6B}.subhead .se2{font-size:72px;line-height:1}
 @media (max-width:560px){.hello .ring{display:none}.subjs{grid-template-columns:repeat(2,1fr)}.subj:last-child:nth-child(odd){grid-column:1/-1}.subj{min-height:150px}.subj .se2{font-size:50px}.subj b{font-size:26px}}
+.ghead{grid-column:1/-1;margin:6px 0 -4px;font-size:22px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
 .topic{
   border:var(--bw) solid var(--edge);border-radius:var(--rp);padding:16px 14px 14px;text-align:left;cursor:pointer;
@@ -791,6 +792,39 @@ const SOILY=[['💧','水','泥土里有水，植物的根会吸水'],['💨','�
 const SOILN=[['🧸','玩具熊'],['📱','手机'],['🍦','冰淇淋'],['📺','电视'],['🎈','气球'],['👟','新鞋子']];
 const SOILT={sand:['🏖️','沙土'],clay:['🏺','黏土'],garden:['🪴','园土']};
 const SOILQ=[{q:'哪一种泥土最适合种花和种菜？',a:'garden',w:'园土里有很多烂掉的枯叶，养分多，植物长得好'},{q:'倒水下去，水最快流走的是哪一种泥土？',a:'sand',w:'沙土的沙粒大，中间空隙多，水很快就流下去'},{q:'哪一种泥土最能留住水，摸起来黏黏的？',a:'clay',w:'黏土的颗粒很细，水不容易流走'},{q:'哪一种泥土可以用来捏陶土公仔？',a:'clay',w:'黏土黏黏的，可以捏成各种形状'},{q:'海边沙滩上的是哪一种泥土？',a:'sand',w:'沙滩上都是沙粒，就是沙土'},{q:'哪一种泥土颜色比较深，里面有很多枯叶？',a:'garden',w:'园土有很多烂掉的枯叶，所以颜色比较深'}];
+/* ---- 科学 二年级 (Year 2): growth of humans, animals, plants; light ---- */
+function qPick(it){return{title:it.q,say:it.q,html:h=>(it.big?`<div style="font-size:80px;line-height:1.1">${it.big}</div>`:'')+(h?`<div class="hintbox">💡 ${it.h}</div>`:''),big:true,ans:it.a[1],
+  opts:shuffle([it.a,...it.n]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${it.a[0]} <b>${it.a[1]}</b>：${it.w}。`,sayAns:it.a[1]+'。'+it.w}}
+function qNext(st,name,hint){const i=rnd(0,st.length-2),c=st[i],a=st[i+1];const others=shuffle(st.filter(x=>x!==c&&x!==a)).slice(0,3);
+  const chain=st.map((x,j)=>j===i+1?'？':x[1]).join(' → ');
+  return{title:`${c[0]} ${c[1]}，下一个是什么？`,say:`${name}：${c[1]}，下一个是什么？`,html:h=>`<div style="font-size:80px;line-height:1.1">${c[0]}</div>`+(h?`<div class="hintbox">💡 ${hint}：${chain}</div>`:''),big:true,ans:a[1],
+   opts:shuffle([a,...others]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${name}：${st.map(x=>x[1]).join(' → ')}。${c[1]}的下一个是<b>${a[1]}</b>。`,sayAns:`${c[1]}的下一个是${a[1]}`}}
+const HUMAN=[['👶','婴儿'],['🧒','小孩'],['🧑','少年'],['👨','大人'],['🧓','老人']];
+const GROW2=[
+ {q:'我们长大的时候，身体会有什么改变？',a:['📏','长高、变重'],n:[['⬇️','变矮'],['🪶','变轻'],['🚫','一直不变']],h:'想一想：你现在和婴儿的时候比，哪里不一样？',w:'人长大的时候会长高，体重也会增加'},
+ {q:'哪一样帮助我们健康长大？',a:['🥦','吃有营养的食物'],n:[['🍬','吃很多糖果'],['📱','整天玩手机'],['🌙','很晚才睡觉']],h:'身体需要好的食物才有力量',w:'有营养的食物给身体力量，帮助我们长大'},
+ {q:'哪一样也能帮助我们长高、长壮？',a:['🏃','多运动'],n:[['🛋️','整天躺着'],['🥤','喝很多汽水'],['🎮','一直玩游戏']],h:'要让身体动一动哦',w:'运动让骨头和肌肉更强壮'},
+ {q:'小时候穿的鞋子，现在为什么穿不下了？',a:['🧒','因为我长大了'],n:[['👟','鞋子自己变小了'],['🌧️','因为下雨'],['🧽','鞋子被洗过']],h:'是鞋子变了，还是你变了？',w:'我们的脚会跟着身体一起长大'},
+ {q:'婴儿和你比，有什么不一样？',a:['👶','婴儿比较小、比较轻'],n:[['🦷','婴儿的牙齿比较多'],['📏','婴儿比较高'],['🏋️','婴儿比较重']],h:'婴儿要大人抱，因为他们很……',w:'我们小时候也是婴儿，后来慢慢长大'},
+ {q:'睡觉对长大有帮助吗？',a:['😴','有，睡得够才长得好'],n:[['🙅','一点帮助也没有'],['🌙','睡得越少越好'],['📺','看电视比睡觉好']],h:'身体在睡觉的时候休息和长大',w:'睡得够，身体才有时间休息和长大'}];
+const BABY=[['🥚','蛋','🐥','小鸡'],['🐥','小鸡','🐔','鸡'],['🐛','毛毛虫','🦋','蝴蝶'],['🐶','小狗','🐕','大狗'],['🐱','小猫','🐈','大猫']];
+const CYCLES=[{n:'蝴蝶的一生',st:[['🥚','卵'],['🐛','毛毛虫'],['🟫','蛹'],['🦋','蝴蝶']]},{n:'青蛙的一生',st:[['🥚','卵'],['〰️','蝌蚪'],['🐸','小青蛙'],['🐸','青蛙']]},{n:'鸡的一生',st:[['🥚','蛋'],['🐥','小鸡'],['🐔','鸡']]}];
+const ANIM2=[{q:'哪一种动物小时候和长大以后长得很不一样？',a:['🦋','蝴蝶'],n:[['🐶','狗'],['🐱','猫'],['🐘','大象']],h:'有一种动物小时候是毛毛虫哦',w:'蝴蝶小时候是毛毛虫，长大以后才有翅膀'},
+ {q:'哪一种动物小时候和长大以后长得很不一样？',a:['🐸','青蛙'],n:[['🐄','牛'],['🐰','兔子'],['🐒','猴子']],h:'有一种动物小时候住在水里，有尾巴没有脚',w:'青蛙小时候是蝌蚪，有尾巴，住在水里'}];
+const SEED=[['🌰','种子'],['🌱','发芽'],['🌿','幼苗'],['🌻','长大的植物']];
+const PLANT2=[
+ {q:'种子要发芽，需要哪一样？',a:['💧','水'],n:[['🧂','盐'],['🍬','糖'],['📺','电视']],h:'种子发芽需要水、空气和适合的温度',w:'种子要有水、空气和适合的温度才会发芽'},
+ {q:'种子要发芽，还需要哪一样？',a:['💨','空气'],n:[['🧸','玩具'],['🍦','冰淇淋'],['🎵','音乐']],h:'我们要呼吸，种子也需要……',w:'种子要有水、空气和适合的温度才会发芽'},
+ {q:'种子发芽的时候，不一定需要哪一样？',a:['☀️','阳光'],n:[['💧','水'],['💨','空气'],['🌡️','适合的温度']],h:'种子埋在泥土里，看得到太阳吗？',w:'种子在黑暗的泥土里也会发芽；发芽以后，小苗才需要阳光'},
+ {q:'小苗要长大，需要哪一样？',a:['☀️','阳光'],n:[['🍬','糖果'],['🧸','玩具'],['📱','手机']],h:'植物用阳光来制造食物',w:'植物需要阳光、水和空气，才能制造食物，慢慢长大'},
+ {q:'植物长大的时候，会有什么改变？',a:['📏','长高，叶子变多'],n:[['⬇️','变矮'],['🍂','叶子越来越少'],['🚫','一直不变']],h:'想一想小苗和大树有什么不一样',w:'植物会长高，叶子越来越多'}];
+const LIGHTY=[['☀️','太阳'],['💡','亮着的电灯'],['🔦','打开的手电筒'],['🕯️','点着的蜡烛']];
+const LIGHTN=[['🌙','月亮'],['🪞','镜子'],['📘','书'],['🪨','石头'],['🥄','汤匙']];
+const LIGHT2=[
+ {q:'影子是怎样形成的？',a:['✋','光被东西挡住了'],n:[['💧','水洒在地上'],['🌬️','风吹过来'],['🎨','用笔画出来']],h:'用手挡住手电筒的光，墙上出现了什么？',w:'光走直线，被东西挡住的地方照不到光，就变成影子'},
+ {q:'哪一样东西可以让光穿过去？',a:['🪟','透明的玻璃窗'],n:[['🧱','砖墙'],['📘','书'],['🪵','木板']],h:'哪一样东西是透明的，可以看到另一边？',w:'玻璃是透明的，光可以穿过去'},
+ {q:'哪一样东西会挡住光，做出很黑的影子？',a:['🪵','木板'],n:[['🪟','透明玻璃'],['🥛','透明的玻璃杯'],['💧','清水']],h:'不透明的东西，光穿不过去',w:'木板不透明，光穿不过，所以影子很黑'},
+ {q:'晚上关了灯，为什么看不见东西？',a:['🌑','因为没有光'],n:[['👀','眼睛坏了'],['😴','东西睡觉了'],['🔇','因为太安静']],h:'我们要靠什么才看得见东西？',w:'要有光照到东西，再进入我们的眼睛，我们才看得见'}];
 const SG={
  living:{zh:'生物与非生物',e:'🌱',hue:'#93E3BE',d:'会长大的是生物',l1:'容易分辨',l2:'有点难哦',how:'生物会呼吸、会长大，需要食物、水和空气。看看图片里的东西是不是这样。',
   gen:L=>{const it=pick(L===1?LIVE1:LIVE2),ans=it[2];const why=L===1?(ans?it[1]+'会呼吸、会长大，需要食物和水':it[1]+'不会呼吸、不会长大'):it[3];
@@ -823,6 +857,19 @@ const SG={
     return{title:'哪一个可以在泥土里找到？',say:'哪一个可以在泥土里找到？',html:h=>h?'<div class="hintbox">💡 想一想：挖开花园的泥土，会看到什么？</div>':'',big:true,ans:y[1],opts:shuffle([y,...ns]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${y[0]} <b>${y[1]}</b>：${y[2]}。`,sayAns:`泥土里有${y[1]}`}}
    const sq=pick(SOILQ),t=SOILT[sq.a];
    return{title:sq.q,say:sq.q,html:h=>h?'<div class="hintbox">💡 沙土：沙粒大，水流得快；黏土：黏黏的，留住水；园土：黑黑的，有枯叶，养分多</div>':'',big:true,ans:sq.a,opts:shuffle(Object.keys(SOILT)).map(k=>({v:k,l:lab(SOILT[k][0],SOILT[k][1])})),explain:`是<b>${t[1]}</b>：${sq.w}。`,sayAns:`是${t[1]}`}}},
+
+ grow:{yr:2,zh:'人类的成长',e:'👶',hue:'#FFD6E0',d:'我们会慢慢长大',l1:'人生的阶段',l2:'怎样健康长大',how:'人会从婴儿慢慢长大，变成小孩、少年、大人、老人。长大的时候会长高、变重。吃有营养的食物、多运动、睡得够，才能健康长大。',
+  gen:L=>L===1?qNext(HUMAN,'人长大的顺序','人长大的顺序'):qPick(pick(GROW2))},
+ agrow:{yr:2,zh:'动物的成长',e:'🐣',hue:'#FFE9A8',d:'小动物长大变成什么？',l1:'长大以后变成什么',l2:'动物的一生',how:'小动物会慢慢长大。有些动物小时候和爸爸妈妈长得很像（像小狗），有些很不一样（像毛毛虫变成蝴蝶、蝌蚪变成青蛙）。',
+  gen:L=>{if(L===1){const b=pick(BABY),others=shuffle(BABY.filter(x=>x[3]!==b[3]&&x[3]!==b[1])).slice(0,3);
+     return{title:`${b[1]}长大以后变成什么？`,say:`${b[1]}长大以后变成什么？`,html:h=>`<div style="font-size:80px;line-height:1.1">${b[0]}</div>`+(h?`<div class="hintbox">💡 ${b[1]}会慢慢长大，变成……</div>`:''),big:true,ans:b[3],
+      opts:shuffle([[b[2],b[3]],...others.map(x=>[x[2],x[3]])]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${b[0]} ${b[1]}长大以后变成 ${b[2]} <b>${b[3]}</b>。`,sayAns:`${b[1]}长大以后变成${b[3]}`}}
+   if(Math.random()<0.7){const c=pick(CYCLES);return qNext(c.st,c.n,c.n)}return qPick(pick(ANIM2))}},
+ pgrow:{yr:2,zh:'植物的成长',e:'🌱',hue:'#C9E89A',d:'种子怎样长大？',l1:'种子长大的顺序',l2:'种子发芽需要什么',how:'种子有了水、空气和适合的温度就会发芽，慢慢长成幼苗和大植物。小苗长大还需要阳光。',
+  gen:L=>L===1?qNext(SEED,'种子长大的顺序','种子长大的顺序'):qPick(pick(PLANT2))},
+ light:{yr:2,zh:'光与影子',e:'🔦',hue:'#FFF3B0',d:'光从哪里来？影子怎样来？',l1:'哪些东西会发光',l2:'影子和透明',how:'太阳、电灯、蜡烛会自己发光，叫做光源。月亮和镜子自己不会发光。光被不透明的东西挡住，就会出现影子；透明的东西让光穿过去。',
+  gen:L=>{if(L===1){const y=pick(LIGHTY),ns=shuffle(LIGHTN).slice(0,3);
+     return qPick({q:'哪一个会自己发光？',a:y,n:ns,h:'月亮自己不会发光，它是反射太阳的光',w:'它会自己发光，叫做「光源」'})}return qPick(pick(LIGHT2))}},
  rules:{zh:'科学室规则',e:'🧪',hue:'#C9A9FF',d:'怎样做才安全？',l1:'基本规则',l2:'更多安全规则',how:'在科学室里要守规矩，才能安全地做实验。想一想这样做对不对。',
   gen:L=>{const it=pick(L===1?RULE1:RULE2),ok=it[2];
    return{title:'这样做对吗？',say:`${it[1]}，这样做对吗？`,html:h=>bigItem(it[0],it[1])+(h?'<div class="hintbox">💡 想一想：这样做安全吗？</div>':''),wide:true,ans:ok,opts:[{v:1,l:lab('👍','对')},{v:0,l:lab('👎','不对')}],explain:ok?`${it[1]}，这样做是<b>对的</b>，很安全！`:`${it[1]}很危险，<b>不可以</b>这样做！`,sayAns:ok?'这样做是对的':'这样做不对'}}},
@@ -854,10 +901,12 @@ function cnCards(){return Object.entries(CG).map(([k,g])=>{const r=(S.cn||{})[k]
 function cnPanel(){const st=S.cn||{};const rows=Object.entries(CG).map(([k,g])=>{const r=st[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--pink)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>华文 🀄</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">粉红条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
-function sciCards(){return Object.entries(SG).map(([k,g])=>{const r=(S.sci||{})[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
+function sciCard([k,g]){const r=(S.sci||{})[k]||{c:0,w:0};
+  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}
+function sciCards(){const all=Object.entries(SG),y1=all.filter(([,g])=>!g.yr),y2=all.filter(([,g])=>g.yr===2);
+  return `<h2 class="ghead">📗 一年级</h2>`+y1.map(sciCard).join('')+`<h2 class="ghead">📘 二年级</h2>`+y2.map(sciCard).join('')}
 function sciPanel(){const st=S.sci||{};const rows=Object.entries(SG).map(([k,g])=>{const r=st[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
-  return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--mint)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
+  return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--mint)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>科学 🔬</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">绿色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
 
 /* ---------------- Momo 的家 (pet) ---------------- */
@@ -1019,7 +1068,7 @@ function vKids(){
   return bar('')+`<div class="panel"><h2>谁要学习？</h2><div class="kids">${Object.entries(ALL.kids).map(([id,k])=>`<button class="btn kid ${id===ALL.cur?'sun':''}" data-act="pickkid" data-v="${id}"><span class="ke">${esc(k.avatar)}</span><b>${esc(k.name||'?')}</b><span>⭐ ${k.stars}</span></button>`).join('')}
     <button class="btn kid" data-act="addkid"><span class="ke">➕</span><b>添加孩子</b><span class="zh">兄弟姐妹各有自己的记录</span></button></div></div>`}
 
-const SUBJS=[{k:'en',e:'🔤',zh:'英文',d:'English',hue:'var(--s-en)'},{k:'ms',e:'🇲🇾',zh:'国文',d:'Bahasa Melayu',hue:'var(--s-ms)'},{k:'math',e:'🔢',zh:'数学',d:'数一数 · 加减',hue:'var(--s-math)'},{k:'sci',e:'🔬',zh:'科学',d:'动物 · 植物 · 磁铁',hue:'var(--s-sci)'},{k:'cn',e:'🀄',zh:'华文',d:'识字 · 拼音',hue:'var(--s-cn)'}];
+const SUBJS=[{k:'en',e:'🔤',zh:'英文',d:'English',hue:'var(--s-en)'},{k:'ms',e:'🇲🇾',zh:'国文',d:'Bahasa Melayu',hue:'var(--s-ms)'},{k:'math',e:'🔢',zh:'数学',d:'数一数 · 加减',hue:'var(--s-math)'},{k:'sci',e:'🔬',zh:'科学',d:'一年级 · 二年级',hue:'var(--s-sci)'},{k:'cn',e:'🀄',zh:'华文',d:'识字 · 拼音',hue:'var(--s-cn)'}];
 const curSubj=()=>S.subj==='lang'?S.lang:S.subj;
 function subjProg(k){if(k==='en'||k==='ms')return '学会 '+mastered(k)+' 个词';const st=S[k]||{};const c=Object.values(st).reduce((a,r)=>a+(r.c||0),0);return c?'答对 '+c+' 题':'还没玩过'}
 function vHome(){
@@ -1171,7 +1220,7 @@ function vMist(){const ws=mistWords(),gs=mistGames();
 function startTest(){if(overLimit()){showRest();return}const qs=[];
   const tried=l=>BASE.filter(t=>t.words.some(w=>{const r=wstat(l,w);return r.c+r.w>0}));
   ['en','ms'].forEach(l=>{const ts=tried(l).length?tried(l):BASE;for(let k=0;k<2;k++){const t=pick(ts);qs.push(wordQ(pick(t.words),l))}});
-  const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);pk(MG,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));pk(SG,2).forEach(g=>qs.push(mathQ(g,1)));pk(CG,2).forEach(g=>qs.push(mathQ(g,1)));
+  const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);pk(MG,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));shuffle(Object.keys(SG).filter(k=>!SG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));pk(CG,2).forEach(g=>qs.push(mathQ(g,1)));
   resetRec();G={topic:'test',mode:'test',lang:S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs)};
   go({name:'game'});setTimeout(()=>{const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
 function vTest(){const ts=S.tests||[],wk=weekKeys(0),thisWk=ts.filter(t=>wk.includes(t.d));const best=thisWk.reduce((a,t)=>Math.max(a,t.s),-1);
