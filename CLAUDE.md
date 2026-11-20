@@ -8,6 +8,7 @@ hosted on GitHub Pages: https://sclim999.github.io/kidlearning-/
 - `manifest.webmanifest`, `icon-192.png`, `icon-512.png` — Add-to-Home-Screen support.
 - `sw.js` — service worker for offline use (network first, cache fallback); registered only on https/localhost. Bump `CACHE` if the cached file list changes.
 - `README.md` — Chinese overview for parents.
+- `fig/<name>.html` — interactive isometric "anatomy" figures (clock, magnet, plant, soil) shown in an iframe under 「🔍 看看里面」 on a game's page when the game has `fig:'<name>'`. Each is generated: edit `fig/src/<name>.mjs`, then run `node fig/src/<name>.mjs` from the repo root (soil also takes `--audit`). `fig/src/page.mjs` is the shared page writer (theme follows `prefers-color-scheme`, posts its height to the app as `{momoFig,h}`); `fig/src/kit/` is a copy of the anatomy skill's kit. Add new figures to the `CORE` list in `sw.js`.
 
 ## Audience and style
 - Child is SJKC Year 1. UI text is Chinese (华文). English and Malay are the target languages; Malay is called 国文 in the UI.
@@ -32,6 +33,7 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 - Backup: `exportData()` downloads `momo-backup-YYYY-MM-DD.json` (`{app:'momo-learn',data:ALL}`); `importData()` replaces `ALL` after a confirm.
 - `MODES` — word game modes: learn, listen, read, spell, dict (听写), sent, match, bubble (+ internal review/boss/math/sci). A question may carry its own `q.lang` (used by 错题本 and 小测 which mix English and BM).
 - `MG` — 10 maths games (incl. clock, story problems), `SG` — 8 science games (incl. soil), `CG` — 3 华文 games (`HZ` character list with pinyin). `GKIND(g)`/`GAME(g)` look a game up across all three; `isMG(mode)` is true for math/sci/cn. Each has `gen(level)` returning `{title, say, html(hint), opts[{v,l}], ans, explain, sayAns}`; they all run on the shared engine (`startMath`, `vMath`, `answer`).
+  Levels (`LVN`): 1 容易, 2 中等, 3 困难. 困难 = 10 questions, no 💡 button; a game with its own `l3` label has real level-3 content in `gen(3)`, the others get a mix of level 1 and 2 via `genL()`.
 - `SHOP`, `BGS` — Momo pet items; `STATIONS`, `REGIONS` — adventure map (20 stations incl. 4 bosses); `MISSIONS` — daily real-life tasks; duel = `D`, `startDuel`, `vDuel`. `startMist`/`vMist` (错题本), `startTest`/`vTest` (每周小测), `vPrint` (printable sticker chart, `@media print`), `maybeLetter`/`showLetter` (Momo's weekly letter), `startSay` (speech-recognition check in learn mode).
 - Home (`vHome`) is a big subject picker (`SUBJS`: en, ms, math, sci, cn → `data-act="pick"`) plus a small "更多好玩的" feature grid; `vSubject` shows the chosen subject's topics/games (`curSubj()`), and topic pages go back to it with `data-act="subjpage"`.
 - Parent dashboard 家长后台 (`vAdmin`, opened via `openAdmin()` from settings; always PIN-protected, asks to set a PIN first): per-kid totals, subject accuracy, strengths/weaknesses (`adminStats`, items with ≥6 answers), interests from `sessions` (subject share, favourite modes, time of day), 6-week trend, hardest words; `adminText` copies a summary. Sessions keep the last 300 entries with `sec` duration; duels are recorded too.
@@ -40,7 +42,7 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 - Speech: Web Speech API via `speak(text, lang, queue)`; Malay falls back to Indonesian if no ms voice.
 
 ## Conventions
-- Keep it a single self-contained file; no external requests besides Google Fonts.
+- Keep the app a single self-contained file (the generated `fig/*.html` pages are the only extra pages); no external requests besides Google Fonts.
 - Every new game must record progress (`recordWord` / `recordMath`) and work with the combo, stars, cards and time-limit hooks (`overLimit()` at game start).
 - Give every question a hint (`💡`) and a short child-friendly explanation after answering.
 - Test with Playwright (headless Chromium): play each mode to the end and check `pageerror` is empty. Headless Chromium has a native `SpeechRecognition` that never answers: mock both `SpeechRecognition` and `webkitSpeechRecognition` to test 说说看.
