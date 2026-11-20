@@ -16,7 +16,7 @@
 :root{
   --bg:#DDF0FF; --dot:#C3E2FB; --surface:#FFFFFF; --ink:#2A2F6B; --muted:#6B70A8; --edge:#2A2F6B;
   --sun:#FFD23F; --pink:#FF8FB1; --mint:#6FD6A8; --sky:#5AB8FF; --line:#C9E2F7;
-  --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF; --custom:#FFE9A8; --s-en:#9FD3FF; --s-ms:#FFB3C7; --s-math:#FFE07A; --s-sci:#9BE3C0; --s-cn:#FFC29B;
+  --good:#2FB36E; --bad:#FF6B6B; --soft:#F2F8FF; --custom:#FFE9A8; --s-en:#9FD3FF; --s-ms:#FFB3C7; --s-math:#FFE07A; --s-sci:#9BE3C0; --s-cn:#FFC29B; --hib:#E3263B; --hib-deep:#9E1028; --hib-vein:#B5122E; --stamen:#FFD23F;
   /* skin shape tokens: border width, button/panel radius, shadows, press motion, page paper, font */
   --bw:3px; --rb:18px; --rp:28px; --shb:0 5px 0 var(--edge); --shpress:0 1px 0 var(--edge); --press:translateY(4px); --shp:none;
   --paper:radial-gradient(var(--dot) 2px, transparent 2.5px) 0 0/28px 28px, var(--bg);
@@ -96,6 +96,14 @@ h1,h2,h3{margin:0;line-height:1.15}
 .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .spacer{flex:1}
 
+.flower{display:block;width:min(100%,540px);margin:0 auto 14px;overflow:visible}
+.petal{cursor:pointer;outline:none}
+.petal .pb{transition:transform .15s ease,filter .15s;transform-origin:200px 200px}
+.petal:hover .pb,.petal:focus-visible .pb{transform:scale(1.05);filter:brightness(1.08)}
+.petal:active .pb{transform:scale(.97)}
+.petal:focus-visible .pb path:first-child{stroke:var(--sun);stroke-width:7}
+.petal text{pointer-events:none}
+@media (prefers-reduced-motion: reduce){.petal .pb{transition:none}.petal:hover .pb,.petal:active .pb{transform:none}}
 .subjs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:18px}
 .subj{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:16px 10px;border:var(--bw) solid var(--edge);border-radius:var(--rp);box-shadow:var(--shb);color:#2A2F6B;cursor:pointer;font-family:inherit;transition:transform .08s,box-shadow .08s}
 .subj:active{transform:var(--press);box-shadow:var(--shpress)}
@@ -1169,6 +1177,20 @@ function vKids(){
 const SUBJS=[{k:'en',e:'🔤',zh:'英文',d:'English',hue:'var(--s-en)'},{k:'ms',e:'🇲🇾',zh:'国文',d:'Bahasa Melayu',hue:'var(--s-ms)'},{k:'math',e:'🔢',zh:'数学',d:'一年级 · 二年级',hue:'var(--s-math)'},{k:'sci',e:'🔬',zh:'科学',d:'一年级 · 二年级',hue:'var(--s-sci)'},{k:'cn',e:'🀄',zh:'华文',d:'一年级 · 二年级',hue:'var(--s-cn)'}];
 const curSubj=()=>S.subj==='lang'?S.lang:S.subj;
 function subjProg(k){if(k==='en'||k==='ms')return '学会 '+mastered(k)+' 个词';const st=S[k]||{};const c=Object.values(st).reduce((a,r)=>a+(r.c||0),0);return c?'答对 '+c+' 题':'还没玩过'}
+/* 大红花 home picker: five hibiscus petals = five subjects, Momo in the middle */
+function flower(last){const P='M200 200 C150 172 98 118 112 66 C122 30 160 14 186 34 C193 26 207 26 214 34 C240 14 278 30 288 66 C302 118 250 172 200 200 Z';
+  const petals=SUBJS.map((x,i)=>{const a=i*72;
+    return `<g class="petal" role="button" tabindex="0" data-act="pick" data-v="${x.k}" aria-label="学${x.zh}"><g transform="rotate(${a} 200 200)"><g class="pb">
+      <path d="${P}" fill="url(#hibg)" stroke="var(--hib-deep)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M200 196 L200 70 M200 170 L168 90 M200 170 L232 90" stroke="var(--hib-vein)" stroke-width="2" fill="none" opacity=".45" stroke-linecap="round"/>
+      <g transform="rotate(${-a} 200 104)"><text x="200" y="98" text-anchor="middle" font-size="36">${x.e}</text><text x="200" y="134" text-anchor="middle" font-size="27" font-weight="800" fill="#fff" stroke="var(--hib-deep)" stroke-width="4" paint-order="stroke">${x.zh}</text>
+      ${x.k===last&&S.sessions.length?`<g><rect x="168" y="142" width="64" height="22" rx="11" fill="#fff" stroke="var(--hib-deep)" stroke-width="2"/><text x="200" y="158" text-anchor="middle" font-size="13" font-weight="800" fill="#9E1028">上次学的</text></g>`:''}</g>
+    </g></g></g>`}).join('');
+  const dots=Array.from({length:10},(_,i)=>{const a=i*36*Math.PI/180;return `<circle cx="${200+52*Math.cos(a)}" cy="${200+52*Math.sin(a)}" r="5" fill="var(--stamen)" stroke="var(--hib-deep)" stroke-width="1.5"/>`}).join('');
+  return `<svg class="flower" viewBox="-14 -6 428 412" role="group" aria-label="大红花：选一个科目">
+    <defs><radialGradient id="hibg" cx="200" cy="200" r="175" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="var(--hib-deep)"/><stop offset=".35" stop-color="var(--hib)"/><stop offset="1" stop-color="#F2475A"/></radialGradient></defs>
+    ${petals}<circle cx="200" cy="200" r="58" fill="var(--hib-deep)"/>${dots}
+    <g class="petal" role="button" tabindex="0" data-act="pet" aria-label="去 Momo 的家"><circle cx="200" cy="200" r="44" fill="#fff" stroke="var(--hib-deep)" stroke-width="3"/><g transform="translate(160 158)">${panda(80)}</g></g></svg>`}
 function vHome(){
   const d=S.days[dk()]||{stars:0};const g=S.goal;const pct=Math.min(1,d.stars/g);const C=2*Math.PI*40;
   const st=streak();const last=curSubj();
@@ -1179,7 +1201,8 @@ function vHome(){
       <circle cx="48" cy="48" r="40" fill="none" stroke="var(--sun)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/></svg><b>${d.stars}/${g}</b></div></div>
   ${`<p class="zh" style="text-align:center;margin:-6px 0 14px"><span class="mstar">⭐ 今天 ${d.stars} / ${g}　</span>${st>0?'🔥 连续学习 '+st+' 天':''}${S.limit?'　⏱️ 今天 '+Math.round(todaySecs()/60)+' / '+(S.limit+((S.days[dk()]||{}).extra||0))+' 分钟':''}</p>`}
   <h2 style="font-size:28px;margin:4px 0 12px;text-align:center">今天学什么？👇</h2>
-  <div class="subjs">${SUBJS.map(x=>`<button class="subj" style="background:${x.hue}" data-act="pick" data-v="${x.k}" aria-label="学${x.zh}">${x.k===last&&S.sessions.length?'<span class="last">上次学的</span>':''}<span class="se2">${x.e}</span><b>${x.zh}</b><span class="sd">${x.d}</span><span class="sp">${subjProg(x.k)}</span></button>`).join('')}</div>
+  ${flower(last)}
+  <p class="zh" style="text-align:center;margin:-6px 0 16px">点一片花瓣开始学习 🌺</p>
   <div class="panel more"><h2>更多好玩的 🎈</h2><div class="feats" style="margin:0">${[['map','🗺️','冒险地图',Math.min(advNext(),STATIONS.length)+' / '+STATIONS.length+' 站'],['album','📚','卡片册',cardCount()+' 张卡片'],['missions','🏠','生活任务','今天 '+missionState().done.length+' / 3'],['duel','⚔️','亲子对战','两人一起玩'],['mist','📒','错题本',(mistWords().length+mistGames().length)?(mistWords().length+mistGames().reduce((a,x)=>a+x.n,0))+' 题要重做':'没有错题 🎉'],['test','📝','每周小测',(()=>{const wk=weekKeys(0),t=(S.tests||[]).filter(x=>wk.includes(x.d));return t.length?'本周 '+Math.max(...t.map(x=>x.s))+' / 10':'本周还没测'})()]].map(([a,e,t,x])=>`<button class="btn feat" data-act="${a}"><span class="fe">${e}</span><b>${t}</b><span class="fs">${x}</span></button>`).join('')}</div></div>`}
 function vSubject(){const x=SUBJS.find(y=>y.k===curSubj())||SUBJS[0];
   return bar('home')+`
@@ -1759,7 +1782,8 @@ app.addEventListener('click',e=>{
   }
 });
 app.addEventListener('change',e=>{const t=e.target;if(t.id==='imp'){importData(t.files&&t.files[0]);t.value='';return}if(t.classList&&t.classList.contains('vsel')){VP[t.dataset.l]=t.value;saveVP();speak({en:'Hello!',ms:'Selamat pagi!',zh:'你好！'}[t.dataset.l],t.dataset.l)}});
-app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nm'){app.querySelector('[data-act="start"]').click()}});
+app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nm'){app.querySelector('[data-act="start"]').click();return}
+  const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'&&t.dataset&&t.dataset.act&&t.tagName.toLowerCase()==='g'){e.preventDefault();t.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
 
 render();
 setTimeout(initCloud,0);
