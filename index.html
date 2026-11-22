@@ -129,6 +129,7 @@ h1,h2,h3{margin:0;line-height:1.15}
 .blk{display:inline-block;border:2px solid #2A2F6B;border-radius:3px}
 .col{margin:6px auto;font-size:40px;font-weight:800;font-variant-numeric:tabular-nums;border-collapse:collapse}.col td{width:34px;text-align:center;padding:0 2px}.col tr.ln td{border-top:4px solid var(--edge)}
 .grp{display:inline-block;border:3px dashed var(--line);border-radius:16px;padding:4px 6px;margin:3px}
+.wemoji{font-size:120px;line-height:1.1;margin:4px 0}
 .wbig{display:flex;justify-content:center;margin:4px 0}
 .wbig svg{width:min(260px,70vw);height:auto;border-radius:10px;box-shadow:0 4px 0 var(--edge);border:3px solid var(--edge)}
 .wflag{display:block;width:100%;height:auto}.wfo{display:block;width:84px;margin:0 auto 4px}.wfo svg{border-radius:6px;border:2px solid var(--edge)}
@@ -482,6 +483,10 @@ const TOPICS=[
  {id:'actions',yr:2,zh:'我喜欢做',en:'Free time',ms:'Masa lapang',tag:'',icon:'🚴',hue:'#93E3BE',sent:{en:w=>'I like to '+w.en+'.',ms:w=>'Saya suka '+w.ms+'.',zh:w=>'我喜欢'+w.zh+'。'},w:[['🏃','run','berlari','跑步'],['🏊','swim','berenang','游泳'],['📖','read','membaca','看书'],['🎤','sing','menyanyi','唱歌'],['💃','dance','menari','跳舞'],['🎨','draw','melukis','画画'],['🚴','ride a bike','menunggang basikal','骑脚车'],['⚽','play football','bermain bola sepak','踢足球']]},
  {id:'town',yr:2,zh:'地方',en:'Places',ms:'Tempat',tag:'',icon:'🏙️',hue:'#C9A9FF',sent:{en:w=>'I go to the '+w.en+'.',ms:w=>'Saya pergi ke '+w.ms+'.',zh:w=>'我去'+w.zh+'。'},w:[['🏫','school','sekolah','学校'],['🏥','hospital','hospital','医院'],['🏪','shop','kedai','商店'],['🏞️','park','taman','公园'],['🛒','market','pasar','巴刹'],['🚓','police station','balai polis','警察局'],['🏤','post office','pejabat pos','邮政局'],['🕌','mosque','masjid','回教堂']]},
  {id:'jobs',yr:2,zh:'职业',en:'Jobs',ms:'Pekerjaan',tag:'',icon:'🧑‍🚒',hue:'#FFB98F',sent:{en:w=>'I want to be '+art(w.en)+w.en+'.',ms:w=>'Saya mahu menjadi '+w.ms+'.',zh:w=>'我想当'+w.zh+'。'},w:[['🧑‍🏫','teacher','guru','老师'],['🧑‍⚕️','doctor','doktor','医生'],['👮','police officer','polis','警察'],['🧑‍🌾','farmer','petani','农夫'],['🧑‍🍳','cook','tukang masak','厨师'],['🧑‍🚒','firefighter','ahli bomba','消防员'],['🧑‍✈️','pilot','juruterbang','飞机师'],['🧑‍🔧','mechanic','mekanik','技工']]},
+ /* ---- 图解词典 (trilingual picture dictionary pages: Tema 4 Sekolah Saya p.34–35, Tema 8 Hotel p.84, Tema 10 Sukan p.90) ---- */
+ {id:'sports',book:1,zh:'运动',en:'Sports',ms:'Sukan',tag:'词典 55',icon:'🏅',hue:'#FFD6A5',sent:{en:w=>'I like '+w.en+'.',ms:w=>'Saya suka '+w.ms+'.',zh:w=>'我喜欢'+w.zh+'。'},w:[['🏹','archery','memanah','射箭'],['🎳','bowling','boling','保龄球'],['🥊','boxing','tinju','拳击'],['⛳','golf','golf','高尔夫球'],['🏀','basketball','bola keranjang','篮球'],['🏸','badminton','badminton','羽毛球'],['🤸','gymnastics','gimnastik','体操'],['','sepak takraw','sepak takraw','藤球'],['🏏','cricket','kriket','板球'],['🚴','cycling','lumba basikal','自行车赛'],['','netball','bola jaring','无挡板篮球'],['','shot put','lontar peluru','推铅球'],['⚽','football','bola sepak','足球'],['🏃','running event','lumba lari','赛跑'],['🏉','rugby','ragbi','橄榄球'],['⚾','baseball','besbol','棒球']]},
+ {id:'sportgear',book:1,zh:'体育用品',en:'Sports equipment',ms:'Alatan sukan',tag:'词典 20–21',icon:'🏸',hue:'#C9E89A',sent:{en:w=>'This is '+art(w.en)+w.en+'.',ms:w=>'Ini '+w.ms+'.',zh:w=>'这是'+w.zh+'。'},w:[['','cone','kon','圆锥柱'],['','table tennis table','meja pingpong','乒乓桌'],['','bench','bangku','长凳'],['','scoreboard','papan mata','记分牌'],['','badminton net','jaring badminton','羽毛球网'],['','high jump mat','tilam lompat tinggi','跳高垫'],['🧺','basket','bakul','篮子'],['🏐','volleyball','bola tampar','排球'],['🏑','hockey stick','kayu hoki','曲棍球棒'],['🏸','shuttlecock','bulu tangkis','羽毛球'],['🏓','table tennis bat','raket pingpong','乒乓球拍'],['','skipping rope','tali skip','跳绳'],['','rattan hoop','gelung rotan','藤圈'],['','takraw ball','bola takraw','藤球'],['','bunting','panji-panji','彩旗'],['','rubber ball','bola getah','橡皮球']]},
+ {id:'hotel',book:1,zh:'旅馆',en:'Hotel',ms:'Hotel',tag:'词典 52',icon:'🏨',hue:'#B5DCFF',sent:{en:w=>'This is the '+w.en+'.',ms:w=>'Ini '+w.ms+'.',zh:w=>'这是'+w.zh+'。'},w:[['🗑️','dustbin','tong sampah','垃圾桶'],['','baggage trolley','troli bagasi','行李车'],['','porter','porter','行李员'],['🧳','luggage','bagasi','行李'],['','magazine','majalah','杂志'],['','guest','penginap hotel','旅客'],['🛗','lift','lif','电梯'],['','lift button','butang lif','电梯按钮'],['🛎️','reception desk','meja menyambut tetamu','服务台'],['🔑','room key','kunci bilik','房间钥匙'],['🖼️','picture','gambar','画'],['🛏️','room','bilik','房间'],['🛋️','sofa','sofa','沙发'],['🪴','potted plant','pokok pasu','盆栽'],['🪜','staircase','tangga','楼梯'],['💡','pendant lamp','lampu gantung','吊灯'],['💁','receptionist','penyambut tetamu','接待员']]},
 ];
 TOPICS.forEach(t=>t.words=t.w.map(a=>({e:a[0],en:a[1],ms:a[2],zh:a[3],t:t.id})));
 const WMAP={};TOPICS.forEach(t=>t.words.forEach(w=>WMAP[t.id+':'+w.en]=w));
@@ -818,9 +823,21 @@ const LVN=['','容易','中等','困难'];
 const genL=(g,l)=>l<3||g.l3?g.gen(l):g.gen(rnd(1,2));
 const isMG=m=>m==='math'||m==='sci'||m==='cn'||m==='world';
 function recordMath(g,ok){const kind=GKIND(g);const store=S[kind]||(S[kind]={});const r=store[g]||(store[g]={c:0,w:0});const d=dayRec();if(ok){r.c++;d.correct++;const f={math:'mc',sci:'sc',cn:'cc',world:'wc'}[kind];d[f]=(d[f]||0)+1;addStars(1)}else{r.w++;d.wrong++}touch()}
+/* no repeated questions: each slot takes the least-recently-seen of up to 60 candidates
+   (this round's picks count as most recent), so a round has no repeats when the bank is big enough,
+   repeats in small banks are spread out, and the next round avoids what was just asked. History kept in memory. */
+const sigTxt=h=>String(h||'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu,'');
+const qSig=q=>{if(q._sig)return q._sig;let v='';try{v=sigTxt(q.html(false))+'|'+(q.optsFn?q.optsFn(false):q.opts.map(o=>o.l==null?o.v:o.l)).map(sigTxt).sort().join('~')}catch(e){}
+  return q._sig=String(q.say||q.title||'')+'|'+String(q.ans)+'|'+v};
+const RECENT={};
+function genSet(gm,level,n,key){const out=[],hist=(RECENT[key]||[]).slice();
+  for(let i=0;i<n;i++){let best=null,bs=-2;
+    for(let t=0;t<60;t++){const q=genL(gm,level),k=hist.indexOf(qSig(q)),sc=k<0?1e9:k;if(sc>bs){best=q;bs=sc;if(sc===1e9)break}}
+    out.push(best);hist.unshift(qSig(best))}
+  RECENT[key]=hist.slice(0,80);return out}
 function startMath(game,level){if(overLimit()){showRest();return}resetRec();const kind=GKIND(game),g=GAME(game);
   G={topic:kind+':'+game,mode:kind,game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
-     qs:Array.from({length:level===3?10:8},()=>Object.assign(genL(g,level),{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
+     qs:genSet(g,level,level===3?10:8,game+':'+level).map(q=>Object.assign(q,{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
   go({name:'game'});setTimeout(speakCur,350)}
 function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);const first=!q.missed&&!q.hinted;
   return gameBar()+`<div class="stage">
@@ -873,19 +890,19 @@ const ABY=[['🧽','海绵'],['🧻','纸巾'],['🧦','棉袜子'],['👕','棉
 const ABN=[['🥄','铁汤匙'],['🥤','塑料杯'],['☂️','雨伞'],['🍽️','盘子'],['🪙','硬币'],['🔑','钥匙']];
 const ABS2=[{q:'牛奶打翻了，用什么擦干桌子？',a:['🧽','海绵'],w:'海绵会吸水，可以把牛奶吸干'},{q:'下雨天出门，用什么挡雨？',a:['☂️','雨伞'],w:'雨伞不吸水，雨水会流走，不会弄湿我们'},{q:'下雨天穿哪一双鞋比较好？',a:['👢','雨靴'],w:'雨靴是胶做的，不吸水，脚不会湿'},{q:'流鼻涕了，用什么擦？',a:['🧻','纸巾'],w:'纸巾软软的，很会吸水'},{q:'装水来喝，用哪一个？',a:['🥤','塑料杯'],w:'塑料杯不吸水，水不会渗出来'}];
 const ABSPOOL=[['🧽','海绵'],['🧻','纸巾'],['🧦','棉袜子'],['☂️','雨伞'],['👢','雨靴'],['🥤','塑料杯'],['📄','纸'],['🧸','布娃娃']];
-const RULE1=[['🚶','排好队走进科学室',1],['🏃','在科学室里跑来跑去',0],['🍔','在科学室里吃东西',0],['🙋','有问题先举手问老师',1],['🧹','离开前把桌子收拾干净',1],['🧪','偷偷把药水放进嘴里尝',0]];
-const RULE2=[['🧼','做完实验要洗手',1],['🔥','自己拿火柴来玩',0],['🩹','受伤了马上告诉老师',1],['🤚','老师还没允许就去碰仪器',0],['🗑️','把垃圾丢进垃圾桶',1],['💦','把水泼到同学身上',0],['👂','仔细听老师的指示',1]];
+const RULE1=[['🚶','排好队走进科学室',1],['🏃','在科学室里跑来跑去',0],['🍔','在科学室里吃东西',0],['🙋','有问题先举手问老师',1],['🧹','离开前把桌子收拾干净',1],['🧪','偷偷把药水放进嘴里尝',0],['📢','在科学室里大声吵闹',0],['👂','安静听老师讲解',1]];
+const RULE2=[['🧼','做完实验要洗手',1],['🔥','自己拿火柴来玩',0],['🩹','受伤了马上告诉老师',1],['🤚','老师还没允许就去碰仪器',0],['🗑️','把垃圾丢进垃圾桶',1],['💦','把水泼到同学身上',0],['👂','仔细听老师的指示',1],['📋','照着老师说的步骤做实验',1],['👃','把鼻子凑近去闻不认识的药水',0]];
 const SOILY=[['💧','水','泥土里有水，植物的根会吸水'],['💨','空气','泥土的小空隙里有空气'],['🪨','小石头','泥土里常常有小石头'],['🍂','枯叶','枯叶烂掉以后变成泥土的养分'],['🪱','蚯蚓','蚯蚓住在泥土里，帮泥土松土'],['🐜','蚂蚁','很多蚂蚁在泥土里做窝']];
 const SOILN=[['🧸','玩具熊'],['📱','手机'],['🍦','冰淇淋'],['📺','电视'],['🎈','气球'],['👟','新鞋子']];
 const SOILT={sand:['🏖️','沙土'],clay:['🏺','黏土'],garden:['🪴','园土']};
-const SOILQ=[{q:'哪一种泥土最适合种花和种菜？',a:'garden',w:'园土里有很多烂掉的枯叶，养分多，植物长得好'},{q:'倒水下去，水最快流走的是哪一种泥土？',a:'sand',w:'沙土的沙粒大，中间空隙多，水很快就流下去'},{q:'哪一种泥土最能留住水，摸起来黏黏的？',a:'clay',w:'黏土的颗粒很细，水不容易流走'},{q:'哪一种泥土可以用来捏陶土公仔？',a:'clay',w:'黏土黏黏的，可以捏成各种形状'},{q:'海边沙滩上的是哪一种泥土？',a:'sand',w:'沙滩上都是沙粒，就是沙土'},{q:'哪一种泥土颜色比较深，里面有很多枯叶？',a:'garden',w:'园土有很多烂掉的枯叶，所以颜色比较深'}];
+const SOILQ=[{q:'哪一种泥土最适合种花和种菜？',a:'garden',w:'园土里有很多烂掉的枯叶，养分多，植物长得好'},{q:'倒水下去，水最快流走的是哪一种泥土？',a:'sand',w:'沙土的沙粒大，中间空隙多，水很快就流下去'},{q:'哪一种泥土最能留住水，摸起来黏黏的？',a:'clay',w:'黏土的颗粒很细，水不容易流走'},{q:'哪一种泥土可以用来捏陶土公仔？',a:'clay',w:'黏土黏黏的，可以捏成各种形状'},{q:'海边沙滩上的是哪一种泥土？',a:'sand',w:'沙滩上都是沙粒，就是沙土'},{q:'蚯蚓喜欢住在哪一种泥土里？',a:'garden',w:'园土湿湿的，有很多烂掉的枯叶，是蚯蚓的食物'},{q:'哪一种泥土摸起来粗粗的、沙沙的？',a:'sand',w:'沙土的颗粒比较大，摸起来粗粗的'},{q:'哪一种泥土颜色比较深，里面有很多枯叶？',a:'garden',w:'园土有很多烂掉的枯叶，所以颜色比较深'}];
 /* ---- 科学 二年级 (Year 2): growth of humans, animals, plants; light ---- */
 function qPick(it){return{title:it.q,say:it.q,html:h=>(it.big?`<div style="font-size:80px;line-height:1.1">${it.big}</div>`:'')+(h?`<div class="hintbox">💡 ${it.h}</div>`:''),big:true,ans:it.a[1],
   opts:shuffle([it.a,...it.n]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${it.a[0]} <b>${it.a[1]}</b>：${it.w}。`,sayAns:it.a[1]+'。'+it.w}}
-function qNext(st,name,hint){const i=rnd(0,st.length-2),c=st[i],a=st[i+1];const others=shuffle(st.filter(x=>x!==c&&x!==a)).slice(0,3);
-  const chain=st.map((x,j)=>j===i+1?'？':x[1]).join(' → ');
-  return{title:`${c[0]} ${c[1]}，下一个是什么？`,say:`${name}：${c[1]}，下一个是什么？`,html:h=>`<div style="font-size:80px;line-height:1.1">${c[0]}</div>`+(h?`<div class="hintbox">💡 ${hint}：${chain}</div>`:''),big:true,ans:a[1],
-   opts:shuffle([a,...others]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${name}：${st.map(x=>x[1]).join(' → ')}。${c[1]}的下一个是<b>${a[1]}</b>。`,sayAns:`${c[1]}的下一个是${a[1]}`}}
+function qNext(st,name,hint){const back=Math.random()<0.5,i=back?rnd(1,st.length-1):rnd(0,st.length-2),c=st[i],a=st[back?i-1:i+1];const others=shuffle(st.filter(x=>x!==c&&x!==a)).slice(0,3);
+  const word=back?'前面':'下一个',chain=st.map((x,j)=>x===a?'？':x[1]).join(' → ');
+  return{title:`${c[0]} ${c[1]}，${word}是什么？`,say:`${name}：${c[1]}，${word}是什么？`,html:h=>`<div style="font-size:80px;line-height:1.1">${c[0]}</div>`+(h?`<div class="hintbox">💡 ${hint}：${chain}</div>`:''),big:true,ans:a[1],
+   opts:shuffle([a,...others]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${name}：${st.map(x=>x[1]).join(' → ')}。${c[1]}的${word}是<b>${a[1]}</b>。`,sayAns:`${c[1]}的${word}是${a[1]}`}}
 const HUMAN=[['👶','婴儿'],['🧒','小孩'],['🧑','少年'],['👨','大人'],['🧓','老人']];
 const GROW2=[
  {q:'我们长大的时候，身体会有什么改变？',a:['📏','长高、变重'],n:[['⬇️','变矮'],['🪶','变轻'],['🚫','一直不变']],h:'想一想：你现在和婴儿的时候比，哪里不一样？',w:'人长大的时候会长高，体重也会增加'},
@@ -893,6 +910,9 @@ const GROW2=[
  {q:'哪一样也能帮助我们长高、长壮？',a:['🏃','多运动'],n:[['🛋️','整天躺着'],['🥤','喝很多汽水'],['🎮','一直玩游戏']],h:'要让身体动一动哦',w:'运动让骨头和肌肉更强壮'},
  {q:'小时候穿的鞋子，现在为什么穿不下了？',a:['🧒','因为我长大了'],n:[['👟','鞋子自己变小了'],['🌧️','因为下雨'],['🧽','鞋子被洗过']],h:'是鞋子变了，还是你变了？',w:'我们的脚会跟着身体一起长大'},
  {q:'婴儿和你比，有什么不一样？',a:['👶','婴儿比较小、比较轻'],n:[['🦷','婴儿的牙齿比较多'],['📏','婴儿比较高'],['🏋️','婴儿比较重']],h:'婴儿要大人抱，因为他们很……',w:'我们小时候也是婴儿，后来慢慢长大'},
+ {q:'哪一样习惯会让牙齿健康？',a:['🪥','每天刷牙'],n:[['🍭','睡前吃糖'],['🥤','常常喝汽水'],['🚫','不刷牙']],h:'牙齿也要好好照顾',w:'每天刷牙，牙齿才会健康、坚固'},
+ {q:'我们长大以后，哪一样会跟着变大？',a:['🦶','我们的脚'],n:[['🧸','玩具熊'],['📕','课本'],['🪑','椅子']],h:'是身体的一部分哦',w:'我们的身体，包括手和脚，都会慢慢长大'},
+ {q:'谁已经长大了，所以比较高？',a:['👨','爸爸'],n:[['👶','婴儿'],['🧒','小孩'],['🐱','小猫']],h:'大人比小孩高',w:'大人已经长大了，所以比小孩和婴儿高'},
  {q:'睡觉对长大有帮助吗？',a:['😴','有，睡得够才长得好'],n:[['🙅','一点帮助也没有'],['🌙','睡得越少越好'],['📺','看电视比睡觉好']],h:'身体在睡觉的时候休息和长大',w:'睡得够，身体才有时间休息和长大'}];
 const BABY=[['🥚','蛋','🐥','小鸡'],['🐥','小鸡','🐔','鸡'],['🐛','毛毛虫','🦋','蝴蝶'],['🐶','小狗','🐕','大狗'],['🐱','小猫','🐈','大猫']];
 const CYCLES=[{n:'蝴蝶的一生',st:[['🥚','卵'],['🐛','毛毛虫'],['🟫','蛹'],['🦋','蝴蝶']]},{n:'青蛙的一生',st:[['🥚','卵'],['〰️','蝌蚪'],['🐸','小青蛙'],['🐸','青蛙']]},{n:'鸡的一生',st:[['🥚','蛋'],['🐥','小鸡'],['🐔','鸡']]}];
@@ -904,6 +924,8 @@ const PLANT2=[
  {q:'种子要发芽，还需要哪一样？',a:['💨','空气'],n:[['🧸','玩具'],['🍦','冰淇淋'],['🎵','音乐']],h:'我们要呼吸，种子也需要……',w:'种子要有水、空气和适合的温度才会发芽'},
  {q:'种子发芽的时候，不一定需要哪一样？',a:['☀️','阳光'],n:[['💧','水'],['💨','空气'],['🌡️','适合的温度']],h:'种子埋在泥土里，看得到太阳吗？',w:'种子在黑暗的泥土里也会发芽；发芽以后，小苗才需要阳光'},
  {q:'小苗要长大，需要哪一样？',a:['☀️','阳光'],n:[['🍬','糖果'],['🧸','玩具'],['📱','手机']],h:'植物用阳光来制造食物',w:'植物需要阳光、水和空气，才能制造食物，慢慢长大'},
+ {q:'把种子放进冰箱里，会怎样？',a:['🥶','太冷了，不容易发芽'],n:[['🌱','很快就发芽'],['🌻','马上开花'],['🍎','长出果子']],h:'种子发芽需要适合的温度',w:'冰箱太冷，温度不适合，种子不容易发芽'},
+ {q:'种子发芽时，最先长出来的通常是什么？',a:['〰️','根'],n:[['🌸','花'],['🍎','果子'],['🍂','枯叶']],h:'它要先往下抓住泥土、吸水',w:'种子发芽时，通常先长出根，往下吸水，再长出芽'},
  {q:'植物长大的时候，会有什么改变？',a:['📏','长高，叶子变多'],n:[['⬇️','变矮'],['🍂','叶子越来越少'],['🚫','一直不变']],h:'想一想小苗和大树有什么不一样',w:'植物会长高，叶子越来越多'}];
 const LIGHTY=[['☀️','太阳'],['💡','亮着的电灯'],['🔦','打开的手电筒'],['🕯️','点着的蜡烛']];
 const LIGHTN=[['🌙','月亮'],['🪞','镜子'],['📘','书'],['🪨','石头'],['🥄','汤匙']];
@@ -911,6 +933,9 @@ const LIGHT2=[
  {q:'影子是怎样形成的？',a:['✋','光被东西挡住了'],n:[['💧','水洒在地上'],['🌬️','风吹过来'],['🎨','用笔画出来']],h:'用手挡住手电筒的光，墙上出现了什么？',w:'光走直线，被东西挡住的地方照不到光，就变成影子'},
  {q:'哪一样东西可以让光穿过去？',a:['🪟','透明的玻璃窗'],n:[['🧱','砖墙'],['📘','书'],['🪵','木板']],h:'哪一样东西是透明的，可以看到另一边？',w:'玻璃是透明的，光可以穿过去'},
  {q:'哪一样东西会挡住光，做出很黑的影子？',a:['🪵','木板'],n:[['🪟','透明玻璃'],['🥛','透明的玻璃杯'],['💧','清水']],h:'不透明的东西，光穿不过去',w:'木板不透明，光穿不过，所以影子很黑'},
+ {q:'中午和傍晚，哪一个时候你的影子比较短？',a:['🕛','中午'],n:[['🌇','傍晚'],['🌅','清早']],h:'太阳越高，影子越……',w:'中午太阳差不多在头顶上，所以影子最短'},
+ {q:'影子的形状和东西像不像？',a:['✅','很像'],n:[['❌','一点也不像'],['🔺','都是三角形'],['⚪','都是圆形']],h:'看看你自己的影子',w:'影子的形状和挡住光的东西很像'},
+ {q:'怎样让墙上的影子变大？',a:['🔦','把东西靠近手电筒'],n:[['🌙','关掉手电筒'],['🧽','把东西洗干净'],['🎨','把东西涂上颜色']],h:'东西离光越近……',w:'东西越靠近光，挡住的光越多，影子就越大'},
  {q:'晚上关了灯，为什么看不见东西？',a:['🌑','因为没有光'],n:[['👀','眼睛坏了'],['😴','东西睡觉了'],['🔇','因为太安静']],h:'我们要靠什么才看得见东西？',w:'要有光照到东西，再进入我们的眼睛，我们才看得见'}];
 const SG={
  living:{zh:'生物与非生物',e:'🌱',hue:'#93E3BE',d:'会长大的是生物',l1:'容易分辨',l2:'有点难哦',how:'生物会呼吸、会长大，需要食物、水和空气。看看图片里的东西是不是这样。',
@@ -1530,6 +1555,18 @@ const latin=t=>/^[\u0000-\u024F\s'/.-]+$/.test(t||'');
 const hiShow=c=>latin(c.hi)?c.hi.split(' / ')[0]:latin(c.hiR)?c.hiR:c.hiR;
 const HI_UNIQ=WC.filter(c=>c.hi&&WC.filter(x=>x.hi&&hiShow(x).toLowerCase()===hiShow(c).toLowerCase()).length===1);
 const wFact=c=>c.f&&c.f[0]?c.f[0][0]+' '+c.f[0][1]:'';
+/* 全世界国旗 (from the 'Understanding of the World Flag' poster): emoji flags, shown only where the device draws flag emoji (Windows does not) */
+const WF_RAW={as:'cn:中国:China af:阿富汗:Afghanistan ae:阿联酋:United Arab Emirates om:阿曼:Oman az:阿塞拜疆:Azerbaijan ps:巴勒斯坦:Palestine kp:朝鲜:North Korea tl:东帝汶:Timor-Leste bh:巴林:Bahrain bt:不丹:Bhutan pk:巴基斯坦:Pakistan ge:格鲁吉亚:Georgia kr:韩国:South Korea lb:黎巴嫩:Lebanon kg:吉尔吉斯斯坦:Kyrgyzstan sa:沙特阿拉伯:Saudi Arabia kh:柬埔寨:Cambodia la:老挝:Laos kw:科威特:Kuwait ph:菲律宾:Philippines kz:哈萨克斯坦:Kazakhstan my:马来西亚:Malaysia mn:蒙古:Mongolia uz:乌兹别克斯坦:Uzbekistan iq:伊拉克:Iraq mm:缅甸:Myanmar sy:叙利亚:Syria jp:日本:Japan th:泰国:Thailand cy:塞浦路斯:Cyprus tr:土耳其:Türkiye mv:马尔代夫:Maldives tm:土库曼斯坦:Turkmenistan sg:新加坡:Singapore bn:文莱:Brunei lk:斯里兰卡:Sri Lanka tj:塔吉克斯坦:Tajikistan am:亚美尼亚:Armenia jo:约旦:Jordan qa:卡塔尔:Qatar np:尼泊尔:Nepal ir:伊朗:Iran ye:也门:Yemen il:以色列:Israel bd:孟加拉国:Bangladesh in:印度:India id:印度尼西亚:Indonesia vn:越南:Vietnam',
+ eu:'bg:保加利亚:Bulgaria ie:爱尔兰:Ireland by:白俄罗斯:Belarus ba:波黑:Bosnia and Herzegovina me:黑山:Montenegro lv:拉脱维亚:Latvia fi:芬兰:Finland hr:克罗地亚:Croatia ch:瑞士:Switzerland at:奥地利:Austria de:德国:Germany al:阿尔巴尼亚:Albania ee:爱沙尼亚:Estonia ad:安道尔:Andorra is:冰岛:Iceland pl:波兰:Poland li:列支敦士登:Liechtenstein se:瑞典:Sweden mk:北马其顿:North Macedonia md:摩尔多瓦:Moldova si:斯洛文尼亚:Slovenia hu:匈牙利:Hungary gb:英国:United Kingdom lu:卢森堡:Luxembourg nl:荷兰:Netherlands lt:立陶宛:Lithuania cz:捷克:Czechia it:意大利:Italy fr:法国:France mt:马耳他:Malta sk:斯洛伐克:Slovakia pt:葡萄牙:Portugal rs:塞尔维亚:Serbia sm:圣马力诺:San Marino ua:乌克兰:Ukraine es:西班牙:Spain dk:丹麦:Denmark gr:希腊:Greece ru:俄罗斯:Russia no:挪威:Norway ro:罗马尼亚:Romania be:比利时:Belgium mc:摩纳哥:Monaco va:梵蒂冈:Vatican City',
+ af:'et:埃塞俄比亚:Ethiopia er:厄立特里亚:Eritrea ss:南苏丹:South Sudan lr:利比里亚:Liberia gw:几内亚比绍:Guinea-Bissau zw:津巴布韦:Zimbabwe ly:利比亚:Libya cv:佛得角:Cape Verde bf:布基纳法索:Burkina Faso bj:贝宁:Benin gq:赤道几内亚:Equatorial Guinea gm:冈比亚:Gambia sd:苏丹:Sudan ke:肯尼亚:Kenya ls:莱索托:Lesotho dj:吉布提:Djibouti gn:几内亚:Guinea gh:加纳:Ghana tz:坦桑尼亚:Tanzania mu:毛里求斯:Mauritius ao:安哥拉:Angola cg:刚果（布）:Congo cd:刚果（金）:DR Congo eg:埃及:Egypt cm:喀麦隆:Cameroon bw:博茨瓦纳:Botswana ci:科特迪瓦:Côte d’Ivoire ng:尼日利亚:Nigeria mr:毛里塔尼亚:Mauritania dz:阿尔及利亚:Algeria mw:马拉维:Malawi ml:马里:Mali ma:摩洛哥:Morocco mz:莫桑比克:Mozambique na:纳米比亚:Namibia mg:马达加斯加:Madagascar sl:塞拉利昂:Sierra Leone sn:塞内加尔:Senegal sz:斯威士兰:Eswatini so:索马里:Somalia za:南非:South Africa sc:塞舌尔:Seychelles cf:中非:Central African Republic tn:突尼斯:Tunisia tg:多哥:Togo td:乍得:Chad ne:尼日尔:Niger zm:赞比亚:Zambia ga:加蓬:Gabon rw:卢旺达:Rwanda ug:乌干达:Uganda bi:布隆迪:Burundi km:科摩罗:Comoros st:圣多美和普林西比:São Tomé and Príncipe',
+ oc:'au:澳大利亚:Australia nu:纽埃:Niue ki:基里巴斯:Kiribati ck:库克群岛:Cook Islands vu:瓦努阿图:Vanuatu fm:密克罗尼西亚:Micronesia nr:瑙鲁:Nauru pg:巴布亚新几内亚:Papua New Guinea pw:帕劳:Palau ws:萨摩亚:Samoa mh:马绍尔群岛:Marshall Islands sb:所罗门群岛:Solomon Islands to:汤加:Tonga fj:斐济:Fiji tv:图瓦卢:Tuvalu nz:新西兰:New Zealand',
+ na:'us:美国:United States dm:多米尼克:Dominica mx:墨西哥:Mexico ni:尼加拉瓜:Nicaragua do:多米尼加:Dominican Republic pa:巴拿马:Panama ca:加拿大:Canada cu:古巴:Cuba ag:安提瓜和巴布达:Antigua and Barbuda gd:格林纳达:Grenada sv:萨尔瓦多:El Salvador jm:牙买加:Jamaica vc:圣文森特和格林纳丁斯:Saint Vincent and the Grenadines gt:危地马拉:Guatemala tt:特立尼达和多巴哥:Trinidad and Tobago ht:海地:Haiti kn:圣基茨和尼维斯:Saint Kitts and Nevis bz:伯利兹:Belize bb:巴巴多斯:Barbados cr:哥斯达黎加:Costa Rica bs:巴哈马:Bahamas hn:洪都拉斯:Honduras lc:圣卢西亚:Saint Lucia',
+ sa:'br:巴西:Brazil ar:阿根廷:Argentina cl:智利:Chile pe:秘鲁:Peru co:哥伦比亚:Colombia ve:委内瑞拉:Venezuela ec:厄瓜多尔:Ecuador bo:玻利维亚:Bolivia py:巴拉圭:Paraguay uy:乌拉圭:Uruguay gy:圭亚那:Guyana sr:苏里南:Suriname'};
+const WF=[];Object.entries(WF_RAW).forEach(([c,str])=>str.split(/ (?=[a-z]{2}:)/).forEach(x=>{const [id,zh,...en]=x.split(':');WF.push({id,zh,en:en.join(':'),c})}));
+const WF_SAME=[['id','mc'],['td','ro'],['nl','lu'],['ie','ci'],['ml','sn'],['co','ec'],['au','nz'],['no','is'],['ve','ec'],['si','sk','ru']];
+const flagEmoji=id=>String.fromCodePoint(...id.toUpperCase().split('').map(ch=>0x1F1E6+ch.charCodeAt(0)-65));
+let FLAGOK=null;function flagEmojiOK(){if(FLAGOK!==null)return FLAGOK;try{const c=document.createElement('canvas').getContext('2d');c.font='32px sans-serif';const a=c.measureText(flagEmoji('my')).width,b=c.measureText(String.fromCodePoint(0x1F1F2)).width;FLAGOK=a<b*1.6}catch(e){FLAGOK=false}return FLAGOK}
+function wfOpts(f,pool){const bad=new Set([f.id]);WF_SAME.forEach(g=>{if(g.includes(f.id))g.forEach(x=>bad.add(x))});const o=[f];for(const x of shuffle(pool)){if(o.length>=4)break;if(bad.has(x.id))continue;o.push(x);WF_SAME.forEach(g=>{if(g.includes(x.id))g.forEach(y=>bad.add(y))});bad.add(x.id)}return shuffle(o)}
 const WG={
  wflag:{zh:'国旗',e:'🚩',hue:'#FFD6D6',d:'这是哪一国的国旗？',l1:'亚洲 15 国',l2:'全世界 52 国',how:'看国旗的颜色和图案，选出是哪一个国家。按「💡 提示」会告诉你这个国家在哪一洲，还有一个小知识。',
   gen:L=>{const c=pick(wPool(L));return{title:'这是哪一个国家的国旗？',say:'这是哪一个国家的国旗？',html:h=>`<div class="wbig">${wFlag(c)}</div>`+(h?`<div class="hintbox">💡 它在${WCONT[c.c]}。${esc(wFact(c))}</div>`:''),big:true,ans:c.id,
@@ -1553,9 +1590,13 @@ const WG={
   gen:L=>{const famous=['cn','jp','my','sg','th','in','gb','fr','de','it','eg','ke','za','us','ca','mx','br','ar','au','nz'],pool=L===1?WC.filter(c=>famous.includes(c.id)):WC,c=pick(pool);
    const cs=shuffle([c.c,...shuffle(Object.keys(WCONT).filter(k=>k!==c.c)).slice(0,3)]);
    return{title:`${esc(c.zh)}在哪一个洲？`,say:`${c.zh}在哪一个洲？`,html:h=>`<div class="wbig">${wFlag(c)}</div>`+(h?`<div class="hintbox">💡 ${esc(wFact(c))}</div>`:''),big:true,ans:c.c,
-    opts:cs.map(k=>({v:k,l:`<span style="font-size:30px">${WCONT[k]}</span>`})),explain:`${esc(c.zh)}在 <b>${WCONT[c.c]}</b>，首都是${esc(c.capZh)}。`,sayAns:`${c.zh}在${WCONT[c.c]}`}}}
+    opts:cs.map(k=>({v:k,l:`<span style="font-size:30px">${WCONT[k]}</span>`})),explain:`${esc(c.zh)}在 <b>${WCONT[c.c]}</b>，首都是${esc(c.capZh)}。`,sayAns:`${c.zh}在${WCONT[c.c]}`}}},
+ wflag2:{zh:'全世界国旗',e:'🎌',hue:'#FFE0E0',d:'挂图上的近 200 面国旗',needEmoji:true,l1:'亚洲',l2:'欧洲、美洲、大洋洲',l3:'非洲和全世界',how:'和挂图一样，按大洲来认国旗。有些国旗长得很像（像印度尼西亚和摩纳哥），这些不会放在同一题里。',
+  gen:L=>{const pool=L===1?WF.filter(f=>f.c==='as'):L===2?WF.filter(f=>['eu','na','sa','oc'].includes(f.c)):Math.random()<0.5?WF.filter(f=>f.c==='af'):WF,f=pick(pool),same=WF.filter(x=>x.c===f.c);
+   return{title:'这是哪一个国家的国旗？',say:'这是哪一个国家的国旗？',html:h=>`<div class="wemoji">${flagEmoji(f.id)}</div>`+(h?`<div class="hintbox">💡 它在${WCONT[f.c]}，名字第一个字是「${esc(f.zh[0])}」</div>`:''),big:true,ans:f.id,
+    opts:wfOpts(f,same.length>=6?same:WF).map(x=>({v:x.id,l:`<span style="font-size:24px">${esc(x.zh)}</span><small>${esc(x.en)}</small>`})),explain:`${flagEmoji(f.id)} 是 <b>${esc(f.zh)}</b>（${esc(f.en)}）的国旗，它在${WCONT[f.c]}。`,sayAns:`这是${f.zh}的国旗`}}}
 };
-function worldCards(){return Object.entries(WG).map(([k,g])=>{const r=(S.world||{})[k]||{c:0,w:0};
+function worldCards(){return Object.entries(WG).filter(([,g])=>!g.needEmoji||flagEmojiOK()).map(([k,g])=>{const r=(S.world||{})[k]||{c:0,w:0};
   return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
 function sciCard([k,g]){const r=(S.sci||{})[k]||{c:0,w:0};
   return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}
@@ -1627,7 +1668,7 @@ function startStation(idx){if(overLimit()){showRest();return}const st=STATIONS[i
   if(G)G.station=idx}
 function startBoss(idx){const st=STATIONS[idx];const qs=[];
   st.words.forEach(tid=>{const pool=T(tid).words;shuffle(pool).slice(0,2).forEach(w=>qs.push({w,m:pick(['read','listen']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}))});
-  st.games.forEach(g=>{const gm=MG[g]||SG[g];for(let k=0;k<2;k++)qs.push(Object.assign(gm.gen(1),{m:'math',g,lvl:1,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))});
+  st.games.forEach(g=>{const gm=MG[g]||SG[g];genSet(gm,1,2,g+':1').forEach(q0=>qs.push(Object.assign(q0,{m:'math',g,lvl:1,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})))});
   resetRec();G={topic:'boss:'+idx,mode:'boss',lang:st.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs),station:idx};
   go({name:'game'});setTimeout(()=>{if(!G||!G.qs[G.i])return;const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
 function vMap(){const nx=advNext();let html='',lastR=-1;
@@ -1662,9 +1703,9 @@ function vDuelSetup(){const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length
   <div class="panel"><h2>谁来挑战 ${esc(S.name)}？</h2><div class="chips" style="margin-bottom:16px">${opps.map((o,i)=>`<button class="chip ${i===sel?'onc':''}" data-act="dopp" data-v="${i}"><span style="font-size:26px">${o[0]}</span> ${esc(o[1])}</button>`).join('')}</div>
   <h2>比什么？</h2><div class="seg">${[['en','🇬🇧 英文'],['ms','🇲🇾 国文'],['math','🔢 数学']].map(([k,l])=>`<button class="${sub===k?'on':''}" data-act="dsub" data-v="${k}">${l}</button>`).join('')}</div>
   <div style="margin-top:18px"><button class="btn sun big" data-act="dstart">开始对战 ⚔️</button></div></div>`}
-function makeDuelQs(sub){const qs=[];for(let n=0;n<10;n++){
-  if(sub==='math'){const q0=MG[pick(['count','add','sub'])].gen(1);qs.push({top:`<div class="mq">${q0.title}</div><div class="mview">${q0.html(false)}</div>`,opts:q0.opts,ans:q0.ans,say:q0.say,ansText:q0.sayAns,ansLang:'zh'})}
-  else{const t=pick(BASE),w=pick(t.words);qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${pic(w)}</div>${w.e?zh(w.zh):''}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
+function makeDuelQs(sub){const qs=[],used=new Set();for(let n=0,tries=0;n<10&&tries<200;tries++){
+  if(sub==='math'){const q0=MG[pick(['count','add','sub'])].gen(1);const dk2=sigTxt(q0.title+q0.html(false))+'|'+q0.ans;if(used.has(dk2))continue;used.add(dk2);n++;qs.push({top:`<div class="mq">${q0.title}</div><div class="mview">${q0.html(false)}</div>`,opts:q0.opts,ans:q0.ans,say:q0.say,ansText:q0.sayAns,ansLang:'zh'})}
+  else{const t=pick(BASE),w=pick(t.words);if(used.has(w.en))continue;used.add(w.en);n++;qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${pic(w)}</div>${w.e?zh(w.zh):''}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
   return qs}
 function startDuel(){if(overLimit()){showRest();return}const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
   D={p:[[S.avatar,S.name],opps[sel]],sub,opp:sel,i:0,sc:[0,0],qs:makeDuelQs(sub),lock:[false,false],done:false,winner:null,over:false};go({name:'duelplay'});setTimeout(duelSay,300)}
@@ -1767,7 +1808,7 @@ function vSubject(){const x=SUBJS.find(y=>y.k===curSubj())||SUBJS[0];
     return `<button class="topic" style="background:${t.hue}" data-act="topic" data-v="${t.id}">
       <div class="ic">${esc(t.icon)}</div><h3>${esc(t.zh)}</h3><div class="t2">${esc(t[L()])}</div>${t.yr===2?'<span class="tag">二年级</span>':''}${t.tag&&L()==='en'?`<span class="tag">${t.tag.replace('Super Minds 1 · ','📗 课本 ')}</span>`:''}
       <div class="meter"><i style="width:${m*100/n}%"></i></div><div class="cnt">${m===n?'🏅 全部学会！':'学会 '+m+' / '+n}</div></button>`};const ts=TOPICS.filter(t=>!t.only||t.only===L());
-    return `<h2 class="ghead">📗 一年级</h2>`+ts.filter(t=>!t.yr&&!t.custom).map(tc).join('')+`<h2 class="ghead">📘 二年级</h2>`+ts.filter(t=>t.yr===2).map(tc).join('')+`<h2 class="ghead">📝 学校词表</h2>`+ts.filter(t=>t.custom).map(tc).join('')})()+`<button class="topic add" data-act="cl" data-v="${(S.custom||[]).length?'':'new'}"><div class="ic">📝</div><h3>学校词表</h3><div class="t2">家长输入本周要学的词</div><div class="cnt">➕ 新增 / 编辑</div></button>`}</div>`}
+    return `<h2 class="ghead">📗 一年级</h2>`+ts.filter(t=>!t.yr&&!t.custom&&!t.book).map(tc).join('')+`<h2 class="ghead">📘 二年级</h2>`+ts.filter(t=>t.yr===2).map(tc).join('')+`<h2 class="ghead">📙 图解词典</h2>`+ts.filter(t=>t.book).map(tc).join('')+`<h2 class="ghead">📝 学校词表</h2>`+ts.filter(t=>t.custom).map(tc).join('')})()+`<button class="topic add" data-act="cl" data-v="${(S.custom||[]).length?'':'new'}"><div class="ic">📝</div><h3>学校词表</h3><div class="t2">家长输入本周要学的词</div><div class="cnt">➕ 新增 / 编辑</div></button>`}</div>`}
 
 function vTopic(){
   const t=T(view.topic);if(!t){view={name:'home'};return vHome()}
@@ -1882,7 +1923,7 @@ function mistGames(){return Object.entries(S.mist.m).map(([k,n])=>{const [g,l]=k
 function wordQ(w,lang,m){const pool=T(w.t).words.filter(x=>x[lang]);return {w,lang,m:m||pick(['listen','read']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}}
 function mathQ(g,l){return Object.assign(genL(GAME(g),l),{m:'math',g,lvl:l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})}
 function startMist(){if(overLimit()){showRest();return}const ws=mistWords().slice(0,6),gs=mistGames();const qs=ws.map(x=>wordQ(x.w,x.lang));
-  let k=0;while(gs.length&&qs.length<10&&k<20){const x=gs[k%gs.length];qs.push(mathQ(x.g,x.l));k++;if(k>=gs.reduce((a,y)=>a+y.n,0))break}
+  let room=10-qs.length;gs.forEach(x=>{const n=Math.min(x.n,room);if(n<=0)return;room-=n;genSet(GAME(x.g),x.l,n,x.g+':'+x.l).forEach(q=>qs.push(Object.assign(q,{m:'math',g:x.g,lvl:x.l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})))});
   if(!qs.length){toast('错题本是空的，真厉害！🎉');return}
   resetRec();G={topic:'mist',mode:'mist',lang:S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs)};
   go({name:'game'});setTimeout(()=>{if(!G||!G.qs[G.i])return;const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
@@ -1895,7 +1936,7 @@ function vMist(){const ws=mistWords(),gs=mistGames();
 /* ---------- 每周小测 weekly test ---------- */
 function startTest(){if(overLimit()){showRest();return}const qs=[];
   const tried=l=>BASE.filter(t=>t.words.some(w=>{const r=wstat(l,w);return r.c+r.w>0}));
-  ['en','ms'].forEach(l=>{const ts=tried(l).length?tried(l):BASE.filter(t=>!t.yr);for(let k=0;k<2;k++){const t=pick(ts);qs.push(wordQ(pick(t.words),l))}});
+  ['en','ms'].forEach(l=>{const ts=tried(l).length?tried(l):BASE.filter(t=>!t.yr&&!t.book);const used=new Set();for(let k=0,tries=0;k<2&&tries<50;tries++){const t=pick(ts),w=pick(t.words),key=t.id+':'+(w.k||w.en);if(used.has(key))continue;used.add(key);qs.push(wordQ(w,l));k++}});
   const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);shuffle(Object.keys(MG).filter(k=>!MG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));shuffle(Object.keys(SG).filter(k=>!SG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));shuffle(Object.keys(CG).filter(k=>!CG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));
   resetRec();G={topic:'test',mode:'test',lang:S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs)};
   go({name:'game'});setTimeout(()=>{if(!G||!G.qs[G.i])return;const m=cur().m;if(m==='listen'||m==='math')speakCur()},350)}
