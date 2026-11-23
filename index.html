@@ -652,7 +652,7 @@ function fixKid(k){const b=blank();
   k.name=str(k.name,16);k.avatar=AVAS.includes(k.avatar)?k.avatar:'🐼';k.lang=k.lang==='ms'?'ms':'en';k.subj=['lang','math','sci','cn','world'].includes(k.subj)?k.subj:'lang';
   k.showZh=k.showZh!==false;k.sound=k.sound!==false;k.goal=[5,10,15,20].includes(+k.goal)?+k.goal:10;k.limit=[0,15,20,30].includes(+k.limit)?+k.limit:0;
   k.stars=Math.max(0,num(k.stars));k.bamboo=Math.max(0,num(k.bamboo));k.updatedAt=num(k.updatedAt);k.skin=str(k.skin,20);k.letterWk=DATE_RE.test(k.letterWk)?k.letterWk:'';
-  k.days=cleanMap(k.days,d=>{d=obj(d);const r={};['stars','correct','wrong','mins','secs','rec','mc','sc','cc','wc','extra','say'].forEach(f=>{if(d[f]!=null)r[f]=num(d[f])});r.stars=r.stars||0;r.correct=r.correct||0;r.wrong=r.wrong||0;r.mins=r.mins||0;return r},DATE_RE);
+  k.days=cleanMap(k.days,d=>{d=obj(d);const r={};['stars','correct','wrong','mins','secs','rec','mc','sc','cc','wc','extra','say','mh'].forEach(f=>{if(d[f]!=null)r[f]=num(d[f])});r.stars=r.stars||0;r.correct=r.correct||0;r.wrong=r.wrong||0;r.mins=r.mins||0;return r},DATE_RE);
   k.words=cleanMap(k.words,cw,WKEY_RE);['math','sci','cn','world'].forEach(f=>{k[f]=cleanMap(k[f],cw,ID_RE)});
   k.sessions=(Array.isArray(k.sessions)?k.sessions:[]).filter(x=>x&&typeof x==='object').slice(-300).map(x=>{const r={t:num(x.t),topic:str(x.topic,60),mode:str(x.mode,20),lang:str(x.lang,4),score:x.score==null?null:num(x.score),total:num(x.total)};if(x.sec!=null)r.sec=num(x.sec);return r});
   k.tests=(Array.isArray(k.tests)?k.tests:[]).filter(x=>x&&DATE_RE.test(x.d)).slice(-30).map(x=>({d:x.d,s:num(x.s),n:num(x.n,10)}));
@@ -1939,7 +1939,7 @@ function vHome(){
   <h2 style="font-size:28px;margin:4px 0 12px;text-align:center">今天学什么？👇</h2>
   ${flower(last)}
   <p class="zh" style="text-align:center;margin:-6px 0 16px">点一片花瓣开始学习 🌺</p>
-  <div class="panel more"><h2>更多好玩的 🎈</h2><div class="feats" style="margin:0">${[['map','🗺️','冒险地图',Math.min(advNext(),STATIONS.length)+' / '+STATIONS.length+' 站'],['album','📚','卡片册',cardCount()+' 张卡片'],['missions','🏠','生活任务','今天 '+missionState().done.length+' / 3'],['duel','⚔️','亲子对战','两人一起玩'],['world','🌍','环游世界','52 个国家'],['mist','📒','错题本',(mistWords().length+mistGames().length)?(mistWords().length+mistGames().reduce((a,x)=>a+x.n,0))+' 题要重做':'没有错题 🎉'],['test','📝','每周小测',(()=>{const wk=weekKeys(0),t=(S.tests||[]).filter(x=>wk.includes(x.d));return t.length?'本周 '+Math.max(...t.map(x=>x.s))+' / 10':'本周还没测'})()]].map(([a,e,t,x])=>`<button class="btn feat" data-act="${a}"><span class="fe">${e}</span><b>${t}</b><span class="fs">${x}</span></button>`).join('')}</div></div>`}
+  <div class="panel more"><h2>更多好玩的 🎈</h2><div class="feats" style="margin:0">${[['map','🗺️','冒险地图',Math.min(advNext(),STATIONS.length)+' / '+STATIONS.length+' 站'],['album','📚','卡片册',cardCount()+' 张卡片'],['missions','🏠','生活任务','今天 '+missionState().done.length+' / 3'],['duel','⚔️','亲子对战','两人一起玩'],['world','🌍','环游世界','52 个国家'],['malware','🛡️','病毒猎人',mhTicket()?'⏱️ 还可以玩':MH_COST+' 🎋 玩 '+MH_MIN+' 分钟'],['mist','📒','错题本',(mistWords().length+mistGames().length)?(mistWords().length+mistGames().reduce((a,x)=>a+x.n,0))+' 题要重做':'没有错题 🎉'],['test','📝','每周小测',(()=>{const wk=weekKeys(0),t=(S.tests||[]).filter(x=>wk.includes(x.d));return t.length?'本周 '+Math.max(...t.map(x=>x.s))+' / 10':'本周还没测'})()]].map(([a,e,t,x])=>`<button class="btn feat" data-act="${a}"><span class="fe">${e}</span><b>${t}</b><span class="fs">${x}</span></button>`).join('')}</div></div>`}
 function vSubject(){const x=SUBJS.find(y=>y.k===curSubj())||SUBJS[0];
   return bar('home')+`
   <div class="panel row subhead" style="background:${x.hue}"><span class="se2">${x.e}</span><div style="flex:1"><h1 style="font-size:36px">${x.zh}</h1><div style="font-weight:700">${x.d}</div></div><button class="btn big" data-act="home">⬅ 换科目</button></div>
@@ -2113,6 +2113,19 @@ function maybeLetter(){if(letterShown||view.name!=='home'||!S.name)return;const 
 function showLetter(){letterShown=true;const o=document.createElement('div');o.className='rest';const t=letterText();
   o.innerHTML=`<div class="panel setup letter"><h1 style="font-size:30px">📮 Momo 的信</h1><div style="text-align:center">${pandaDressed(90,'happy')}</div><div>${esc(t)}</div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn sky big" data-l="say">🔊 念给我听</button><button class="btn sun big" data-l="ok">谢谢 Momo ❤️</button></div></div>`;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(!b)return;if(b.dataset.l==='say')speak(t.replace(/[⭐🎋🐼📮]/gu,''),'zh');else{try{speechSynthesis.cancel()}catch(x){}o.remove();render()}});document.body.appendChild(o)}
+
+/* ---------- 🛡️ 病毒猎人 Malware Hunter: costs bamboo for a time ticket, limited per day ---------- */
+const MH_COST=10,MH_MIN=10,MH_DAY=2,MH_KEY='momo-ticket';
+function mhTicket(){try{const t=JSON.parse(localStorage.getItem(MH_KEY)||'{}');return t&&t.kid===ALL.cur&&Date.now()<t.until?t:null}catch(e){return null}}
+function openMalware(){const t=mhTicket();if(t){location.href='malware/index.html';return}
+  const d=dayRec(),used=d.mh||0,b=S.bamboo||0;
+  if(overLimit()){showRest();return}
+  if(used>=MH_DAY){sBad();toast('今天的病毒猎人已经玩了 '+MH_DAY+' 次啦，明天再来吧 🛡️');return}
+  if(b<MH_COST){sBad();toast('要 '+MH_COST+' 根竹子才可以玩 '+MH_MIN+' 分钟，你有 '+b+' 根。先去学习赚竹子吧 🎋');return}
+  if(!confirm('🛡️ 病毒猎人 Malware Hunter\n扮演杀毒软件，在电脑网络里清除卡通病毒。\n\n用 '+MH_COST+' 根竹子 🎋 换 '+MH_MIN+' 分钟（你有 '+b+' 根）。\n今天还可以换 '+(MH_DAY-used)+' 次。时间到了会自动回到 Momo。\n\n要换吗？'))return;
+  S.bamboo=b-MH_COST;d.mh=used+1;touch();
+  try{localStorage.setItem(MH_KEY,JSON.stringify({kid:ALL.cur,until:Date.now()+MH_MIN*60000}))}catch(e){}
+  location.href='malware/index.html'}
 
 /* ---------- 家长后台 parent dashboard (PIN only) ---------- */
 const SNAME={en:'🔤 英文',ms:'🇲🇾 国文',math:'🔢 数学',sci:'🔬 科学',cn:'🀄 华文',world:'🌍 环游世界',map:'🗺️ 冒险地图',mist:'📒 错题本',test:'📝 小测',duel:'⚔️ 对战',other:'其他'};
@@ -2463,6 +2476,7 @@ app.addEventListener('click',e=>{
     case 'cldel':{const c=(S.custom||[]).find(x=>x.id===v);if(!c)return;if(confirm('要删除词表「'+c.name+'」吗？')){S.custom=S.custom.filter(x=>x!==c);touch();toast('已删除');render()}break}
     case 'export':exportData();break;
     case 'world':S.subj='world';touch();sTap();go({name:'subject'});speak('我们去环游世界！','zh');break;
+    case 'malware':sTap();openMalware();break;
     case 'mist':sTap();go({name:'mist'});break;
     case 'mistplay':startMist();break;
     case 'mistgame':{const [g,l]=v.split(':');startMath(g,+l);break}
