@@ -133,6 +133,16 @@ h1,h2,h3{margin:0;line-height:1.15}
 .wbig{display:flex;justify-content:center;margin:4px 0}
 .wbig svg{width:min(260px,70vw);height:auto;border-radius:10px;box-shadow:0 4px 0 var(--edge);border:3px solid var(--edge)}
 .wflag{display:block;width:100%;height:auto}.wfo{display:block;width:84px;margin:0 auto 4px}.wfo svg{border-radius:6px;border:2px solid var(--edge)}
+#scenedeco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#scenedeco span{position:absolute;font-size:64px;opacity:.22;animation:floaty 6s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+@media (prefers-reduced-motion: reduce){#scenedeco span{animation:none}}
+@media (max-width:560px){#scenedeco span{font-size:42px;opacity:.16}.scenepill{display:none}}
+#app{position:relative;z-index:1}
+html[data-scene] body{background:linear-gradient(var(--scene-tint),var(--scene-tint)),var(--paper);background-attachment:fixed}
+html[data-scene="ocean"]{--scene-tint:rgba(40,150,255,.22)}html[data-scene="space"]{--scene-tint:rgba(70,50,170,.26)}html[data-scene="forest"]{--scene-tint:rgba(46,160,80,.2)}
+html[data-scene="candy"]{--scene-tint:rgba(255,120,190,.2)}html[data-scene="farm"]{--scene-tint:rgba(230,180,60,.22)}html[data-scene="garden"]{--scene-tint:rgba(255,150,200,.16)}
+html[data-scene="city"]{--scene-tint:rgba(120,140,170,.2)}html[data-scene="toys"]{--scene-tint:rgba(255,200,60,.2)}html[data-scene="fruit"]{--scene-tint:rgba(255,110,90,.18)}
 .ghead{grid-column:1/-1;margin:6px 0 -4px;font-size:22px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
 .topic{
@@ -638,7 +648,7 @@ const MASTER=3;
 
 /* ---------------- state ---------------- */
 const KEY='momo-learn.v1';
-function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},cn:{},world:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,custom:[],mist:{w:{},m:{}},tests:[],letterWk:'',pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},skin:'toy',updatedAt:0}}
+function blank(){return{v:1,name:'',avatar:'🐼',lang:'en',showZh:true,sound:true,goal:10,stars:0,days:{},words:{},sessions:[],math:{},sci:{},cn:{},world:{},subj:'lang',bamboo:0,bambooInit:1,adv:{done:{}},missions:{date:'',done:[]},limit:0,custom:[],autoLook:true,mist:{w:{},m:{}},tests:[],letterWk:'',pet:{owned:[],wear:{},bg:'sky',fed:0,happy:60},skin:'toy',updatedAt:0}}
 /* Saves can come from a backup file someone else made, so every field is checked and coerced here:
    numbers become numbers, ids/dates must match a pattern, text is length-limited (and still escaped when shown). */
 const num=(v,d)=>{v=+v;return Number.isFinite(v)?v:(d||0)},str=(v,n)=>typeof v==='string'?v.slice(0,n):'';
@@ -650,7 +660,7 @@ const cw=v=>{v=obj(v);const r={c:num(v.c),w:num(v.w)};if(DATE_RE.test(v.m))r.m=v
 const safeEmoji=e=>{e=str(e,12);return /[<>&"'`=\\/A-Za-z0-9]/.test(e)?'':e};
 function fixKid(k){const b=blank();
   k.name=str(k.name,16);k.avatar=AVAS.includes(k.avatar)?k.avatar:'🐼';k.lang=k.lang==='ms'?'ms':'en';k.subj=['lang','math','sci','cn','world'].includes(k.subj)?k.subj:'lang';
-  k.showZh=k.showZh!==false;k.sound=k.sound!==false;k.goal=[5,10,15,20].includes(+k.goal)?+k.goal:10;k.limit=[0,15,20,30].includes(+k.limit)?+k.limit:0;
+  k.showZh=k.showZh!==false;k.autoLook=k.autoLook!==false;k.sound=k.sound!==false;k.goal=[5,10,15,20].includes(+k.goal)?+k.goal:10;k.limit=[0,15,20,30].includes(+k.limit)?+k.limit:0;
   k.stars=Math.max(0,num(k.stars));k.bamboo=Math.max(0,num(k.bamboo));k.updatedAt=num(k.updatedAt);k.skin=str(k.skin,20);k.letterWk=DATE_RE.test(k.letterWk)?k.letterWk:'';
   k.days=cleanMap(k.days,d=>{d=obj(d);const r={};['stars','correct','wrong','mins','secs','rec','mc','sc','cc','wc','extra','say','mh'].forEach(f=>{if(d[f]!=null)r[f]=num(d[f])});r.stars=r.stars||0;r.correct=r.correct||0;r.wrong=r.wrong||0;r.mins=r.mins||0;return r},DATE_RE);
   k.words=cleanMap(k.words,cw,WKEY_RE);['math','sci','cn','world'].forEach(f=>{k[f]=cleanMap(k[f],cw,ID_RE)});
@@ -776,7 +786,27 @@ const L=()=>S.lang, other=()=>S.lang==='en'?'ms':'en';
 function zh(t){return S.showZh?`<div class="helpzh">${esc(t)}</div>`:''}
 
 /* ---------------- 数学 Math ---------------- */
-const OBJ=['🍎','🍓','🐟','⭐','🎈','🐥','🍬','🚗','🌸','⚽','🐞','🍩'];
+const OBJ0=['🍎','🍓','🐟','⭐','🎈','🐥','🍬','🚗','🌸','⚽','🐞','🍩'],OBJ=OBJ0.slice();
+/* 每一轮换场景和画风: a random scene (background tint, decorations, counting objects) and a random art style per game round */
+const SCENES=[
+ {id:'ocean',e:'🌊',zh:'海底',obj:['🐠','🐙','🐚','🦀','🐡','🐳','🦑','🐟'],deco:['🐠','💧','🐙','🐚','🌊','🐳']},
+ {id:'space',e:'🚀',zh:'太空',obj:['⭐','🪐','🚀','🛸','🌙','☄️','👽','🛰️'],deco:['🪐','⭐','🚀','🌙','✨','🛸']},
+ {id:'forest',e:'🌳',zh:'森林',obj:['🍄','🐿️','🦔','🌰','🍁','🐞','🦉','🐻'],deco:['🌳','🍄','🦉','🍁','🌲','🐿️']},
+ {id:'candy',e:'🍭',zh:'糖果屋',obj:['🍭','🍬','🧁','🍩','🍪','🍫','🍰','🍦'],deco:['🍭','🧁','🍬','🍩','🍰','🍪']},
+ {id:'farm',e:'🚜',zh:'农场',obj:['🐔','🐄','🐷','🥕','🌽','🐑','🐣','🦆'],deco:['🚜','🐄','🌽','🐔','🌻','🐑']},
+ {id:'garden',e:'🌸',zh:'花园',obj:['🌸','🌻','🦋','🐝','🐌','🌷','🐛','🌼'],deco:['🌸','🦋','🌷','🐝','🌻','🌼']},
+ {id:'city',e:'🏙️',zh:'城市',obj:['🚗','🚌','🚲','🚕','🚓','🚑','🛴','🚂'],deco:['🏙️','🚌','🚦','🚕','🏢','🚲']},
+ {id:'toys',e:'🧸',zh:'玩具房',obj:['🧸','⚽','🪁','🎈','🎲','🪀','🚂','🎨'],deco:['🧸','🎈','🪁','🎲','⚽','🪀']},
+ {id:'fruit',e:'🍉',zh:'水果摊',obj:['🍎','🍌','🍇','🍓','🍊','🍉','🍍','🥭'],deco:['🍉','🍍','🍇','🍌','🍓','🍊']}];
+let LOOK=null;
+function newLook(){if(S.autoLook===false){LOOK=null;OBJ.splice(0,OBJ.length,...OBJ0);return}
+  const prev=LOOK;const SK=SKINS.map(x=>x[0]).filter(x=>x!=='glass');let sc=pick(SCENES),sk=pick(SK);if(prev){let n=0;while((sc.id===prev.scene.id||sk===prev.skin)&&n++<20){sc=pick(SCENES);sk=pick(SK)}}
+  LOOK={scene:sc,skin:sk};OBJ.splice(0,OBJ.length,...sc.obj)}
+function sceneDeco(){let d=document.getElementById('scenedeco');const on=LOOK&&['game','end','duelplay'].includes(view.name);
+  if(!on){if(d)d.remove();delete document.documentElement.dataset.scene;return}
+  document.documentElement.dataset.scene=LOOK.scene.id;
+  if(!d){d=document.createElement('div');d.id='scenedeco';d.setAttribute('aria-hidden','true');document.body.prepend(d)}
+  if(d.dataset.s!==LOOK.scene.id){d.dataset.s=LOOK.scene.id;const pos=[[4,14],[88,10],[2,52],[90,48],[6,84],[86,86]];d.innerHTML=LOOK.scene.deco.map((e,i)=>`<span style="left:${pos[i][0]}%;top:${pos[i][1]}%;animation-delay:${-i*1.3}s">${e}</span>`).join('')}}
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const sumOf=a=>a.reduce((x,y)=>x+y,0);
 function numOpts(ans,min,max,step,fmt){step=step||1;fmt=fmt||(v=>String(v));const set=new Set([ans]);let n=0;
@@ -937,7 +967,7 @@ function genSet(gm,level,n,key){const out=[],hist=(RECENT[key]||[]).slice();
     for(let t=0;t<60;t++){const q=genL(gm,level),k=hist.indexOf(qSig(q)),sc=k<0?1e9:k;if(sc>bs){best=q;bs=sc;if(sc===1e9)break}}
     out.push(best);hist.unshift(qSig(best))}
   RECENT[key]=hist.slice(0,80);return out}
-function startMath(game,level){if(overLimit()){showRest();return}resetRec();const kind=GKIND(game),g=GAME(game);
+function startMath(game,level){newLook();if(overLimit()){showRest();return}resetRec();const kind=GKIND(game),g=GAME(game);
   G={topic:kind+':'+game,mode:kind,game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
      qs:genSet(g,level,level===3?10:8,game+':'+level).map(q=>Object.assign(q,{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
   go({name:'game'});setTimeout(speakCur,350)}
@@ -1808,7 +1838,7 @@ function stLabel(st){if(st.k==='word'){const t=T(st.topic);return{e:t.icon,t:t.z
 function startStation(idx){if(overLimit()){showRest();return}const st=STATIONS[idx];
   if(st.k==='word'){view.topic=st.topic;startGame(st.mode,st.topic,st.lang)}else if(st.k==='math')startMath(st.game,st.level);else startBoss(idx);
   if(G)G.station=idx}
-function startBoss(idx){const st=STATIONS[idx];const qs=[];
+function startBoss(idx){newLook();const st=STATIONS[idx];const qs=[];
   st.words.forEach(tid=>{const pool=T(tid).words;shuffle(pool).slice(0,2).forEach(w=>qs.push({w,m:pick(['read','listen']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}))});
   st.games.forEach(g=>{const gm=MG[g]||SG[g];genSet(gm,1,2,g+':1').forEach(q0=>qs.push(Object.assign(q0,{m:'math',g,lvl:1,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})))});
   resetRec();G={topic:'boss:'+idx,mode:'boss',lang:st.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs),station:idx};
@@ -1849,7 +1879,7 @@ function makeDuelQs(sub){const qs=[],used=new Set();for(let n=0,tries=0;n<10&&tr
   if(sub==='math'){const q0=MG[pick(['count','add','sub'])].gen(1);const dk2=sigTxt(q0.title+q0.html(false))+'|'+q0.ans;if(used.has(dk2))continue;used.add(dk2);n++;qs.push({top:`<div class="mq">${q0.title}</div><div class="mview">${q0.html(false)}</div>`,opts:q0.opts,ans:q0.ans,say:q0.say,ansText:q0.sayAns,ansLang:'zh'})}
   else{const t=pick(BASE),w=pick(t.words);if(used.has(w.en))continue;used.add(w.en);n++;qs.push({top:`<div class="prompt" style="font-size:84px;margin:0">${pic(w)}</div>${w.e?zh(w.zh):''}`,opts:shuffle([w,...shuffle(t.words.filter(x=>x!==w)).slice(0,3)]).map(x=>({v:x.en,l:esc(x[sub])})),ans:w.en,say:null,ansText:w[sub],ansLang:sub})}}
   return qs}
-function startDuel(){if(overLimit()){showRest();return}const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
+function startDuel(){newLook();if(overLimit()){showRest();return}const opps=duelOpps(),sel=Math.min(view.opp||0,opps.length-1),sub=view.sub||'en';
   D={p:[[S.avatar,S.name],opps[sel]],sub,opp:sel,i:0,sc:[0,0],qs:makeDuelQs(sub),lock:[false,false],done:false,winner:null,over:false};go({name:'duelplay'});setTimeout(duelSay,300)}
 function duelSay(){const q=D&&D.qs[D.i];if(q&&q.say)speak(q.say,'zh')}
 function duelNext(){if(!D||view.name!=='duelplay')return;D.i++;
@@ -1969,7 +1999,7 @@ function reviewInfo(){const weak=[],due=[],today=dk();
   TOPICS.filter(t=>!t.only||t.only===S.lang).forEach(t=>t.words.forEach(w=>{const r=wstat(S.lang,w);if(r.c+r.w>0&&r.c<MASTER)weak.push({w,k:r.w*2-r.c});else if(r.c>=MASTER&&(!r.due||r.due<=today))due.push(w)}));
   return{weak:shuffle(weak).sort((a,b)=>b.k-a.k).map(x=>x.w),due:shuffle(due)}}
 function reviewWords(){const r=reviewInfo();const a=r.weak.slice(0,6);return a.concat(r.due.slice(0,8-a.length))}
-function startGame(mode,topicId0,lang0){
+function startGame(mode,topicId0,lang0){newLook();
   if(overLimit()){showRest();return}
   resetRec();
   if(mode==='match'){const t=T(topicId0||view.topic||(G&&G.topic));const ws=shuffle(t.words).slice(0,6);
@@ -1999,7 +2029,7 @@ function setupTiles(){const q=cur();
 function gameBar(){
   return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button>
   <div class="dots">${G.qs.map((q,i)=>`<i class="${i===G.i&&!q.done?'now':q.done?(q.missed||q.hinted?'no':'ok'):''}"></i>`).join('')}</div>
-  ${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span>${fsOK()?`<button class="btn round" data-act="fs" aria-label="${fsEl()?'退出全屏':'全屏'}">${fsEl()?'🗗':'⛶'}</button>`:''}</div>`}
+  ${LOOK?`<span class="pill scenepill" title="这一轮的场景">${LOOK.scene.e} ${LOOK.scene.zh}</span>`:''}${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span>${fsOK()?`<button class="btn round" data-act="fs" aria-label="${fsEl()?'退出全屏':'全屏'}">${fsEl()?'🗗':'⛶'}</button>`:''}</div>`}
 
 function feedbackBox(){
   const q=cur();if(!q.done)return '';const c=pick(CHEER);const first=!q.missed&&!q.hinted;const lg=q.lang||G.lang;
@@ -2064,7 +2094,7 @@ function mistWords(){return Object.entries(S.mist.w).sort((a,b)=>b[1]-a[1]).map(
 function mistGames(){return Object.entries(S.mist.m).map(([k,n])=>{const [g,l]=k.split(':');return GAME(g)?{k,g,l:+l,n,gm:GAME(g)}:null}).filter(Boolean).sort((a,b)=>b.n-a.n)}
 function wordQ(w,lang,m){const pool=T(w.t).words.filter(x=>x[lang]);return {w,lang,m:m||pick(['listen','read']),opts:shuffle([w,...shuffle(pool.filter(x=>x!==w)).slice(0,3)]),missed:false,hinted:false,done:false,wrongIdx:[]}}
 function mathQ(g,l){return Object.assign(genL(GAME(g),l),{m:'math',g,lvl:l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})}
-function startMist(){if(overLimit()){showRest();return}const ws=mistWords().slice(0,6),gs=mistGames();const qs=ws.map(x=>wordQ(x.w,x.lang));
+function startMist(){newLook();if(overLimit()){showRest();return}const ws=mistWords().slice(0,6),gs=mistGames();const qs=ws.map(x=>wordQ(x.w,x.lang));
   let room=10-qs.length;gs.forEach(x=>{const n=Math.min(x.n,room);if(n<=0)return;room-=n;genSet(GAME(x.g),x.l,n,x.g+':'+x.l).forEach(q=>qs.push(Object.assign(q,{m:'math',g:x.g,lvl:x.l,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]})))});
   if(!qs.length){toast('错题本是空的，真厉害！🎉');return}
   resetRec();G={topic:'mist',mode:'mist',lang:S.lang,i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),qs:shuffle(qs)};
@@ -2076,7 +2106,7 @@ function vMist(){const ws=mistWords(),gs=mistGames();
   ${gs.length?`<div class="panel"><h2>数学 · 科学 · 华文</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">重做时会出同一类型的新题目</div><div class="mlist">${gs.map(x=>`<button class="chip" data-act="mistgame" data-v="${x.k}">${x.gm.e} ${x.gm.zh} · ${LVN[x.l]||LVN[1]} <span class="zh">错 ${x.n} 次</span></button>`).join('')}</div></div>`:''}`}
 
 /* ---------- 每周小测 weekly test ---------- */
-function startTest(){if(overLimit()){showRest();return}const qs=[];
+function startTest(){newLook();if(overLimit()){showRest();return}const qs=[];
   const tried=l=>BASE.filter(t=>t.words.some(w=>{const r=wstat(l,w);return r.c+r.w>0}));
   ['en','ms'].forEach(l=>{const ts=tried(l).length?tried(l):BASE.filter(t=>!t.yr&&!t.book);const used=new Set();for(let k=0,tries=0;k<2&&tries<50;tries++){const t=pick(ts),w=pick(t.words),key=t.id+':'+(w.k||w.en);if(used.has(key))continue;used.add(key);qs.push(wordQ(w,l));k++}});
   const pk=(o,n)=>shuffle(Object.keys(o)).slice(0,n);shuffle(Object.keys(MG).filter(k=>!MG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,rnd(1,2))));shuffle(Object.keys(SG).filter(k=>!SG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));shuffle(Object.keys(CG).filter(k=>!CG[k].yr)).slice(0,2).forEach(g=>qs.push(mathQ(g,1)));
@@ -2341,6 +2371,7 @@ function vSettings(){
     <div class="row" style="margin-bottom:12px"><b>每天时间提醒</b>${[0,15,20,30].map(n=>`<button class="btn ${S.limit===n?'sky':''}" data-act="limit" data-v="${n}">${n?n+' 分钟':'关'}</button>`).join('')}</div>
     <div class="row" style="margin-bottom:12px"><b>华文帮助</b><button class="btn ${S.showZh?'mint':''}" data-act="zh">${S.showZh?'开 ✓':'关'}</button>
       <b style="margin-left:12px">音效</b><button class="btn ${S.sound?'mint':''}" data-act="snd">${S.sound?'开 ✓':'关'}</button></div>
+    <div class="row" style="margin-bottom:12px"><b>游戏画风</b><button class="btn ${S.autoLook!==false?'mint':''}" data-act="autolook">${S.autoLook!==false?'每一轮换场景和画风 ✓':'固定（用下面选的画风）'}</button></div>
   </div>
   <div class="panel"><h2>画风皮肤 🎨</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">换一个喜欢的画风，整个 App 都会变样子</div>
     <div class="skins">${SKINS.map(([id,e,name])=>`<button class="skin ${S.skin===id?'on':''}" data-skin="${id}" data-act="skin" data-v="${id}" aria-pressed="${S.skin===id}" aria-label="画风 ${name}"><span class="sk-row">${panda(46,'happy')}<span class="sk-b">Aa</span></span><b>${e} ${name}</b></button>`).join('')}</div></div>
@@ -2416,7 +2447,7 @@ function voiceSettings(){
 function render(){
   syncCustom();
   const v=view.name;
-  document.documentElement.dataset.skin=SKINS.some(s=>s[0]===S.skin)?S.skin:'toy';
+  const inGame=LOOK&&['game','end','duelplay'].includes(view.name),sk=inGame?LOOK.skin:S.skin;document.documentElement.dataset.skin=SKINS.some(s=>s[0]===sk)?sk:'toy';sceneDeco();
   app.innerHTML=v==='setup'?vSetup():v==='home'?vHome():v==='subject'?vSubject():v==='topic'?vTopic():v==='game'?vGame():v==='end'?vEnd():v==='growth'?vGrowth():v==='map'?vMap():v==='album'?vAlbum():v==='missions'?vMissions():v==='duel'?vDuelSetup():v==='duelplay'?vDuel():v==='pet'?vPet():v==='mtopic'?vMTopic():v==='kids'?vKids():v==='custom'?vCustom():v==='mist'?vMist():v==='test'?vTest():v==='print'?vPrint():v==='admin'?vAdmin():vSettings();
   if(v==='home')setTimeout(maybeLetter,500);
 }
@@ -2530,6 +2561,7 @@ app.addEventListener('click',e=>{
     case 'goal':S.goal=+v;touch();render();break;
     case 'zh':S.showZh=!S.showZh;touch();render();break;
     case 'snd':S.sound=!S.sound;touch();render();break;
+    case 'autolook':S.autoLook=S.autoLook===false;touch();sTap();render();break;
     case 'skin':S.skin=v;touch();render();sGood();break;
     case 'reset':if(confirm('确定要清除全部学习记录吗？星星、贴纸和成长记录都会归零。')&&confirm('真的确定吗？这个动作不能复原。')){const keep={name:S.name,avatar:S.avatar,custom:S.custom||[]};S=ALL.kids[ALL.cur]=Object.assign(blank(),keep);touch();toast('已清除');go({name:'home'})}break;
   }
