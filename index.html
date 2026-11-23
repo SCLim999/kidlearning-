@@ -171,6 +171,10 @@ html[data-scene="city"]{--scene-tint:rgba(120,140,170,.2)}html[data-scene="toys"
 
 /* game */
 .gbar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.gbar .pill{white-space:nowrap;flex:none}
+.gbar .btn.round{flex:none}
+.gbar .fsico{width:22px;height:22px;display:block}
+@media (max-width:700px){.gbar{flex-wrap:wrap;gap:8px;justify-content:flex-end}.gbar>.btn.round:first-child{margin-right:auto}.gbar .dots{order:9;flex:1 1 100%;justify-content:center;gap:5px}.gbar .dots i{width:14px;height:14px;border-width:2.5px}}
 .dots{display:flex;gap:6px;flex:1;flex-wrap:wrap}
 .dots i{width:16px;height:16px;border-radius:50%;border:3px solid var(--edge);background:var(--surface)}
 .dots i.ok{background:var(--good)} .dots i.no{background:var(--sun)} .dots i.now{background:var(--sky)}
@@ -2331,7 +2335,7 @@ function setupTiles(){const q=cur();
 function gameBar(){
   return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button>
   <div class="dots">${G.qs.map((q,i)=>`<i class="${i===G.i&&!q.done?'now':q.done?(q.missed||q.hinted?'no':'ok'):''}"></i>`).join('')}</div>
-  ${LOOK?`<span class="pill scenepill" title="这一轮的场景">${LOOK.scene.e} ${LOOK.scene.zh}</span>`:''}${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span>${fsOK()?`<button class="btn round" data-act="fs" aria-label="${fsEl()?'退出全屏':'全屏'}">${fsEl()?'🗗':'⛶'}</button>`:''}</div>`}
+  ${LOOK?`<span class="pill scenepill" title="这一轮的场景">${LOOK.scene.e} ${LOOK.scene.zh}</span>`:''}${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}<span class="pill">⭐ +${G.mode==='learn'?0:G.score}</span>${fsOK()?`<button class="btn round" data-act="fs" aria-label="${fsEl()?'退出全屏':'全屏'}">${fsEl()?'<svg class="fsico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 2h3v8H2V7h5zM17 2h-3v8h8V7h-5zM7 22h3v-8H2v3h5zM17 22h-3v-8h8v3h-5z"/></svg>':'<svg class="fsico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2 2h8v3H5v5H2zM22 2h-8v3h5v5h3zM2 22h8v-3H5v-5H2zM22 22h-8v-3h5v-5h3z"/></svg>'}</button>`:''}</div>`}
 
 function feedbackBox(){
   const q=cur();if(!q.done)return '';const c=pick(CHEER);const first=!q.missed&&!q.hinted;const lg=q.lang||G.lang;
