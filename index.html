@@ -77,7 +77,8 @@ h1,h2,h3{margin:0;line-height:1.15}
 .ava{width:52px;height:52px;border-radius:50%;background:var(--surface);border:3px solid var(--edge);display:grid;place-items:center;font-size:30px}
 .pill{display:inline-flex;align-items:center;gap:6px;background:var(--sun);color:#2A2F6B;border:3px solid var(--edge);border-radius:999px;padding:4px 14px;font-weight:800}
 .tabs{display:flex;gap:8px}
-.tabs .btn{min-height:48px;padding:6px 14px}
+.tabs .btn{min-height:48px;padding:6px 14px;white-space:nowrap}
+@media (max-width:560px){.tabs{gap:6px;flex-wrap:wrap}.tabs .btn{padding:6px 9px;font-size:15px}.subhead h1{font-size:28px!important}}
 .tabs .btn.on{background:var(--sky);color:#fff}
 
 /* panels */
@@ -148,7 +149,11 @@ html[data-scene="city"]{--scene-tint:rgba(120,140,170,.2)}html[data-scene="toys"
 .topic{
   border:var(--bw) solid var(--edge);border-radius:var(--rp);padding:16px 14px 14px;text-align:left;cursor:pointer;
   box-shadow:var(--shb);color:#2A2F6B;transition:transform .08s, box-shadow .08s;position:relative;
+  display:flex;flex-direction:column;align-items:flex-start;
 }
+.topic>*{max-width:100%}
+.topic .foot{margin-top:auto;padding-top:8px;align-self:stretch}
+@media (max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.topic{padding:12px 10px 10px}.topic .ic{font-size:40px}.topic h3{font-size:19px}.topic .t2{font-size:14px}}
 .topic:active{transform:var(--press);box-shadow:var(--shpress)}
 .topic .ic{font-size:52px;line-height:1}
 .topic h3{font-size:24px;margin-top:6px}
@@ -950,6 +955,11 @@ const MG={
    return{title:`这支${e}有几厘米长？`,say:`这支${e}有几厘米长？`,html:h=>rulerSvg(len)+(h?'<div class="hintbox">💡 从 0 开始，看尖尖的那一头对着几</div>':''),ans:len,opts:nearOpts(len,1,15,[1,2]).map(o=>({v:o.v,l:o.v+' cm'})),explain:`从 0 量到 ${len}，所以是 <b>${len} 厘米</b>`,sayAns:`${len}厘米`}}}
 };
 const GKIND=g=>MG[g]?'math':SG[g]?'sci':CG[g]?'cn':WG[g]?'world':null, GAME=g=>MG[g]||SG[g]||CG[g]||WG[g];
+// One card and one year grouping for every subject page, so all subjects look the same
+function gameCard([k,g]){const r=(S[GKIND(k)]||{})[k]||{c:0,w:0};
+  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="foot"><div class="cnt">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></div></button>`}
+const groups=(gs,card)=>gs.filter(([,xs])=>xs.length).map(([h,xs])=>`<h2 class="ghead">${h}</h2>`+xs.map(card).join('')).join('');
+const byYear=(all,card)=>groups([['📗 一年级',all.filter(([,g])=>!g.yr)],['📘 二年级',all.filter(([,g])=>g.yr===2)]],card);
 const LVN=['','容易','中等','困难'];
 // 困难: games without their own l3 mix 容易 and 中等 questions
 const genL=(g,l)=>l<3||g.l3?g.gen(l):g.gen(rnd(1,2));
@@ -979,8 +989,7 @@ function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.op
    <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
    ${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
   </div>`}
-function mathCards(){const all=Object.entries(MG),card=([k,g])=>{const r=S.math[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`};return `<h2 class="ghead">📗 一年级</h2>`+all.filter(([,g])=>!g.yr).map(card).join('')+`<h2 class="ghead">📘 二年级</h2>`+all.filter(([,g])=>g.yr===2).map(card).join('')}
+const mathCards=()=>byYear(Object.entries(MG),gameCard);
 function vMTopic(){const g=GAME(view.game);
   return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="subjpage">⬅ 返回</button></div>
   <div class="modes"><button class="btn mode" data-act="mplay" data-v="1"><span class="e">🌱</span><b>${LVN[1]}</b><span>${g.l1}</span></button><button class="btn mode" data-act="mplay" data-v="2"><span class="e">⭐</span><b>${LVN[2]}</b><span>${g.l2}</span></button><button class="btn mode" data-act="mplay" data-v="3"><span class="e">🚀</span><b>${LVN[3]}</b><span>${g.l3||'容易和中等混合'} · 10 题 · 没有提示</span></button></div>
@@ -1188,8 +1197,7 @@ const CG={
    return{title:`「${blank}」少了哪一个字？`,say:`${blank.replace('＿','什么')}，少了哪一个字？`,html:h=>`<div class="hz" style="font-size:72px;letter-spacing:8px">${blank}</div>`+(h?`<div class="hintbox">💡 ${z[2]} 拼音：${z[1]}</div>`:''),big:true,ans:z[0],opts:chars.map(c=>({v:c,l:`<span class="hz">${c}</span>`})),
     explain:`${z[2]}「${z[3]}」少了「<b>${z[0]}</b>」（${z[1]}）。`,sayAns:z[3]}}}
 };
-function cnCards(){const all=Object.entries(CG),card=([k,g])=>{const r=(S.cn||{})[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`};return `<h2 class="ghead">📗 一年级</h2>`+all.filter(([,g])=>!g.yr).map(card).join('')+`<h2 class="ghead">📘 二年级</h2>`+all.filter(([,g])=>g.yr===2).map(card).join('')}
+const cnCards=()=>byYear(Object.entries(CG),gameCard);
 function cnPanel(){const st=S.cn||{};const rows=Object.entries(CG).map(([k,g])=>{const r=st[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--pink)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>华文 🀄</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">粉红条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
@@ -1768,15 +1776,11 @@ const WG={
    return{title:`哪一个好玩的地方在${st[0]}？`,say:`哪一个好玩的地方在${st[0]}？`,html:h=>`<div style="font-size:40px;font-weight:800">📍 ${st[0]} ${esc(st[1])}</div>`+(h?`<div class="hintbox">💡 ${t[4]}</div>`:''),big:true,ans:t[1],
     opts:shuffle([t,...others]).map(x=>({v:x[1],l:lab(x[0],x[1])})),explain:`${t[0]} <b>${t[1]}</b>（${esc(t[2])}）在${st[0]}：${t[4]}。`,sayAns:`${t[1]}在${st[0]}`}}}
 };
-function worldCards(){return Object.entries(WG).filter(([,g])=>!g.needEmoji||flagEmojiOK()).map(([k,g])=>{const r=(S.world||{})[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}).join('')}
-function sciCard([k,g]){const r=(S.sci||{})[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div>${g.yr===2?'<span class="tag">二年级</span>':''}<div class="cnt" style="margin-top:8px">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></button>`}
+const worldCards=()=>Object.entries(WG).filter(([,g])=>!g.needEmoji||flagEmojiOK()).map(gameCard).join('');
 function worldPanel(){const st=S.world||{};const rows=Object.entries(WG).map(([k,g])=>{const r=st[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sky)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>环游世界 🌍</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">蓝色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
-function sciCards(){const all=Object.entries(SG),y1=all.filter(([,g])=>!g.yr),y2=all.filter(([,g])=>g.yr===2);
-  return `<h2 class="ghead">📗 一年级</h2>`+y1.map(sciCard).join('')+`<h2 class="ghead">📘 二年级</h2>`+y2.map(sciCard).join('')}
+const sciCards=()=>byYear(Object.entries(SG),gameCard);
 function sciPanel(){const st=S.sci||{};const rows=Object.entries(SG).map(([k,g])=>{const r=st[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--mint)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>科学 🔬</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">绿色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
@@ -1978,9 +1982,9 @@ function vSubject(){const x=SUBJS.find(y=>y.k===curSubj())||SUBJS[0];
   ${S.subj==='world'?`<div class="panel row" style="justify-content:center;gap:16px"><span style="font-size:48px">🌏</span><div style="flex:1;min-width:200px"><b style="font-size:22px">3D 地球 · World Explorer</b><div class="zh">转地球、看 52 个国家、世界历史、搭建工坊、漫游世界……（这里玩的不算星星）</div></div><a class="btn sun big" href="world/index.html" style="text-decoration:none">打开 ▶</a></div>`:''}
   <div class="grid">${S.subj==="math"?mathCards():S.subj==="sci"?sciCards():S.subj==="cn"?cnCards():S.subj==="world"?worldCards():(()=>{const tc=t=>{const m=mastered(L(),t.id),n=t.words.length;
     return `<button class="topic" style="background:${t.hue}" data-act="topic" data-v="${t.id}">
-      <div class="ic">${esc(t.icon)}</div><h3>${esc(t.zh)}</h3><div class="t2">${esc(t[L()])}</div>${t.yr===2?'<span class="tag">二年级</span>':''}${t.tag&&L()==='en'?`<span class="tag">${t.tag.replace('Super Minds 1 · ','📗 课本 ')}</span>`:''}
-      <div class="meter"><i style="width:${m*100/n}%"></i></div><div class="cnt">${m===n?'🏅 全部学会！':'学会 '+m+' / '+n}</div></button>`};const ts=TOPICS.filter(t=>!t.only||t.only===L());
-    return `<h2 class="ghead">📗 一年级</h2>`+ts.filter(t=>!t.yr&&!t.custom&&!t.book).map(tc).join('')+`<h2 class="ghead">📘 二年级</h2>`+ts.filter(t=>t.yr===2).map(tc).join('')+`<h2 class="ghead">📙 图解词典</h2>`+ts.filter(t=>t.book).map(tc).join('')+`<h2 class="ghead">📝 学校词表</h2>`+ts.filter(t=>t.custom).map(tc).join('')})()+`<button class="topic add" data-act="cl" data-v="${(S.custom||[]).length?'':'new'}"><div class="ic">📝</div><h3>学校词表</h3><div class="t2">家长输入本周要学的词</div><div class="cnt">➕ 新增 / 编辑</div></button>`}</div>`}
+      <div class="ic">${esc(t.icon)}</div><h3>${esc(t.zh)}</h3><div class="t2">${esc(t[L()])}</div>${t.tag&&L()==='en'?`<span class="tag">${t.tag.replace('Super Minds 1 · ','📗 课本 ')}</span>`:''}
+      <div class="foot"><div class="meter"><i style="width:${m*100/n}%"></i></div><div class="cnt">${m===n?'🏅 全部学会！':'学会 '+m+' / '+n}</div></div></button>`};const ts=TOPICS.filter(t=>!t.only||t.only===L());
+    return groups([['📗 一年级',ts.filter(t=>!t.yr&&!t.custom&&!t.book)],['📘 二年级',ts.filter(t=>t.yr===2)],['📙 图解词典',ts.filter(t=>t.book)]],tc)+`<h2 class="ghead">📝 学校词表</h2>`+ts.filter(t=>t.custom).map(tc).join('')})()+`<button class="topic add" data-act="cl" data-v="${(S.custom||[]).length?'':'new'}"><div class="ic">📝</div><h3>学校词表</h3><div class="t2">家长输入本周要学的词</div><div class="cnt">➕ 新增 / 编辑</div></button>`}</div>`}
 
 function vTopic(){
   const t=T(view.topic);if(!t){view={name:'home'};return vHome()}
