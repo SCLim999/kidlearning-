@@ -2,6 +2,28 @@
 
 给马来西亚华小一年级孩子的学习 App：英文、国文、数学、科学、华文，有华文帮助、朗读、跟读录音和成长记录。
 
+## 截图
+
+<p align="center"><img src="docs/desktop.png" alt="电脑上的首页：大红花选科目" width="720"></p>
+
+<table>
+<tr>
+<td align="center"><img src="docs/home.png" alt="首页：点大红花的花瓣选科目" width="200"><br>首页：点花瓣选科目</td>
+<td align="center"><img src="docs/english.png" alt="英文页：一年级、二年级、课本、图解词典分组" width="200"><br>英文：按年级和课本分组</td>
+<td align="center"><img src="docs/word-game.png" alt="听音选图游戏" width="200"><br>听一听，选对的图</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/maths.png" alt="数学日历游戏，有提示" width="200"><br>数学：日历（💡 提示）</td>
+<td align="center"><img src="docs/science.png" alt="科学调颜色游戏" width="200"><br>科学：调颜色</td>
+<td align="center"><img src="docs/story-map.png" alt="彩虹岛历险记地图" width="200"><br>📖 彩虹岛历险记</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/story-paint.png" alt="故事页：答对后把灰色的东西涂上颜色" width="200"><br>答对后把画涂回颜色</td>
+<td align="center"><img src="docs/story-tell.png" alt="用宝物讲故事" width="200"><br>🎭 用宝物讲故事</td>
+<td></td>
+</tr>
+</table>
+
 ## 打开方式
 - 网址：https://sclim999.github.io/kidlearning-/
 - iPad / iPhone：用 Safari 打开 › 分享 › 添加到主屏幕
