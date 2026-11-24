@@ -1316,7 +1316,7 @@ const MG={
    const [a,b]=ns,big=more?'大':'小',ans=more?Math.max(...ns):Math.min(...ns),ta=Math.floor(a/10),tb=Math.floor(b/10);
    const why=L===3?`先看十位，十位一样再看个位：${ns.join('、')}。`:ta!==tb?`先看十位：${a} 有 ${ta} 个十，${b} 有 ${tb} 个十。`:`十位一样（都是 ${ta} 个十），再看个位：${a%10} 和 ${b%10}。`;
    return{title:`哪一个数${L===3?'最':'比较'}${big}？`,say:`哪一个数${L===3?'最':'比较'}${big}？`,html:h=>h?`<div class="hintbox">💡 ${why}</div>`:'',wide:true,opts:shuffle(ns).map(v=>({v,l:`<span style="font-size:60px">${v}</span>`})),ans,explain:why+`所以 <b>${ans}</b> ${L===3?'最':'比较'}${big}。`,sayAns:`${ans}${L===3?'最':'比较'}${big}`}}},
- add:{zh:'加法',e:'➕',hue:'#93E3BE',d:'合起来一共有几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'把两边的东西合起来，数一数一共有几个。按「💡 提示」会帮你从 1 一直数下去。困难关先算个位，再加上十位。',
+ add:{fig:'add',zh:'加法',e:'➕',hue:'#93E3BE',d:'合起来一共有几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'把两边的东西合起来，数一数一共有几个。按「💡 提示」会帮你从 1 一直数下去。困难关先算个位，再加上十位。',
   gen:L=>{if(L===3){const a=rnd(11,40),b=rnd(2,9),s=a+b,o=a%10,tip=`先算个位：${o} + ${b} = ${o+b}，再加 ${a-o}`;
     return{title:`${a} + ${b} = ?`,say:`${a}加${b}等于几？`,html:h=>h?`<div class="hintbox">💡 ${tip}</div>`:'<div style="font-size:64px">➕</div>',ans:s,opts:numOpts(s,0,60),explain:`${tip}：${a} + ${b} = <b>${s}</b>`,sayAns:`${a}加${b}等于${s}`}}
    const max=L===1?10:20,a=rnd(1,L===1?9:12),b=rnd(1,Math.min(10,max-a)),s=a+b,e=pick(OBJ);
