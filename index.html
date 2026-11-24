@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https:; frame-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
@@ -1093,6 +1094,21 @@ const obj=v=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
 function cleanMap(o,fn,keyRe){const out={};Object.keys(obj(o)).slice(0,5000).forEach(k=>{if(keyRe&&!keyRe.test(k))return;const v=fn(o[k]);if(v!==undefined)out[k]=v});return out}
 const cw=v=>{v=obj(v);const r={c:num(v.c),w:num(v.w)};if(DATE_RE.test(v.m))r.m=v.m;if(DATE_RE.test(v.due))r.due=v.due;if(v.iv!=null)r.iv=num(v.iv,1);return r};
 const safeEmoji=e=>{e=str(e,12);return /[<>&"'`=\\/A-Za-z0-9]/.test(e)?'':e};
+/* 家长密码 is stored only as a salted, repeated SHA-256 ("h1:salt:hash"), never as the 4 digits themselves.
+   Old saves and backups that still hold the plain digits are converted in normalize(). */
+const PINH_RE=/^h1:[0-9a-f]{16}:[0-9a-f]{64}$/;
+function sha256hex(str){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes=[...new TextEncoder().encode(str)],l=bytes.length*8;bytes.push(0x80);while(bytes.length%64!==56)bytes.push(0);for(let i=7;i>=0;i--)bytes.push(i>3?0:(l>>>(i*8))&255);
+  const H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19],W=new Array(64),r=(x,n)=>(x>>>n)|(x<<(32-n));
+  for(let o=0;o<bytes.length;o+=64){for(let i=0;i<16;i++)W[i]=(bytes[o+i*4]<<24)|(bytes[o+i*4+1]<<16)|(bytes[o+i*4+2]<<8)|bytes[o+i*4+3];
+    for(let i=16;i<64;i++){const s0=r(W[i-15],7)^r(W[i-15],18)^(W[i-15]>>>3),s1=r(W[i-2],17)^r(W[i-2],19)^(W[i-2]>>>10);W[i]=(W[i-16]+s0+W[i-7]+s1)|0}
+    let [a,b,c,d,e,f,g,h]=H;
+    for(let i=0;i<64;i++){const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+W[i])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&c)^(b&c)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0}
+    H[0]=(H[0]+a)|0;H[1]=(H[1]+b)|0;H[2]=(H[2]+c)|0;H[3]=(H[3]+d)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0}
+  return H.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('')}
+function pinHash(pin,salt){if(!salt){const u=new Uint8Array(8);crypto.getRandomValues(u);salt=[...u].map(x=>x.toString(16).padStart(2,'0')).join('')}
+  let h=salt+':'+pin;for(let i=0;i<500;i++)h=sha256hex(salt+h);return 'h1:'+salt+':'+h}
+function pinOk(pin){const m=PINH_RE.test(ALL.pin||'')&&ALL.pin.split(':');return !!m&&pinHash(pin,m[1])===ALL.pin}
 function fixKid(k){const b=blank();
   k.name=str(k.name,16);k.avatar=AVAS.includes(k.avatar)?k.avatar:'🐼';k.lang=k.lang==='ms'?'ms':'en';k.subj=['lang','math','sci','cn','world'].includes(k.subj)?k.subj:'lang';
   k.showZh=k.showZh!==false;k.autoLook=k.autoLook!==false;k.sound=k.sound!==false;k.goal=[5,10,15,20].includes(+k.goal)?+k.goal:10;k.limit=[0,15,20,30].includes(+k.limit)?+k.limit:0;
@@ -1113,11 +1129,13 @@ function normalize(o){
   if(o&&o.kids&&typeof o.kids==='object'){const kids={};Object.keys(o.kids).slice(0,20).forEach((key,i)=>{const raw=o.kids[key];if(!raw||typeof raw!=='object'||Array.isArray(raw))return;
       const k=fixKid(Object.assign(blank(),raw));if(!raw.bambooInit)k.bamboo=Math.max(0,num(raw.stars));kids[ID_RE.test(key)?key:'k'+(i+1)]=k});
     if(!Object.keys(kids).length)kids.k1=blank();const out={v:2,cur:kids[o.cur]?o.cur:Object.keys(kids)[0],kids,updatedAt:num(o.updatedAt)};
-    if(typeof o.pin==='string'&&/^\d{4}$/.test(o.pin))out.pin=o.pin;if(o.lastBackup)out.lastBackup=num(o.lastBackup);return out}
+    if(typeof o.pin==='string'&&PINH_RE.test(o.pin))out.pin=o.pin;else if(typeof o.pin==='string'&&/^\d{4}$/.test(o.pin))out.pin=pinHash(o.pin);if(o.lastBackup)out.lastBackup=num(o.lastBackup);return out}
   const raw=o&&typeof o==='object'?o:{};const k=fixKid(Object.assign(blank(),raw));if(!raw.bambooInit)k.bamboo=Math.max(0,num(raw.stars));return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return normalize(JSON.parse(r))}catch(e){}return normalize(null)}
 let ALL=load();let S=ALL.kids[ALL.cur];
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(ALL))}catch(e){}}
+// an old save still holding the plain 4-digit PIN: write the hashed version back straight away
+try{if(/"pin":"\d{4}"/.test(localStorage.getItem(KEY)||''))saveLocal()}catch(e){}
 function touch(){S.updatedAt=ALL.updatedAt=Date.now();saveLocal();queueCloud()}
 function dk(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dayRec(){const k=dk();return S.days[k]||(S.days[k]={stars:0,correct:0,wrong:0,mins:0})}
@@ -1456,7 +1474,7 @@ function vMTopic(){const g=GAME(view.game);
   <div class="panel" style="margin-top:18px"><h2>怎么玩？</h2><p style="margin:0">${g.how}</p></div>
   ${g.fig?`<div class="panel" style="margin-top:18px"><h2>🔍 看看里面</h2><iframe class="figframe" src="fig/${g.fig}.html" title="${g.zh}：立体图" loading="lazy"></iframe></div>`:''}`}
 // fig/*.html posts its card height so the iframe fits without scrollbars
-addEventListener('message',e=>{const d=e.data;if(!d||!d.momoFig||!d.h)return;document.querySelectorAll('.figframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=d.h+'px'})});
+addEventListener('message',e=>{const d=e.data;if(!d||typeof d!=='object'||!d.momoFig)return;const h=Math.round(Number(d.h));if(!(h>50&&h<4000))return;document.querySelectorAll('.figframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=h+'px'})});
 function mathPanel(){const rows=Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>数学 🔢</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">黄色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
@@ -2536,7 +2554,8 @@ const STORY=[
   ['🌈👾⭐🌈','灰灰怪说：「答对最后一题，我就把星星全部还给你们！」','mix','七颗知识星回到天上，彩虹群岛又变得五颜六色！灰灰怪变成了彩虹怪，和大家一起玩。{n}，你是了不起的小英雄！']]}];
 let ST=null;
 function stDone(){return (S.story&&S.story.done)||{}}
-function stBag(){return ((S.story&&S.story.bag)||[]).filter(k=>SOBJ[k])}
+const isObj=k=>typeof k==='string'&&Object.prototype.hasOwnProperty.call(SOBJ,k);
+function stBag(){return ((S.story&&S.story.bag)||[]).filter(isObj)}
 /* a learning question from one subject, in the shared {title, say, html, opts, ans, explain} shape */
 function storyQ(kind,lv){
   if(kind==='mix')kind=pick(['en','ms','math','sci','cn']);
@@ -2552,7 +2571,7 @@ function stUseQ(u){const o=SOBJ[u.use];return{use:u.use,title:'要用背包里�
 function stScene(){const c=STORY[ST.ch],s=c.sc[ST.i],a=s[2];
   ST.q=typeof a==='object'?stUseQ(a):storyQ(a.replace('2',''),/2$/.test(a)?2:1);ST.wrong=[];ST.solved=false;ST.missed=false;ST.hint=false;ST.painted=[];
   if(typeof a==='object'&&!stBag().includes(a.use))stGive(a.use)}
-function stGive(k){S.story=S.story||{done:{},bag:[]};if(!S.story.bag.includes(k))S.story.bag.push(k);touch()}
+function stGive(k){if(!isObj(k))return;S.story=S.story||{done:{},bag:[]};if(!S.story.bag.includes(k))S.story.bag.push(k);touch()}
 function stText(t){return t.replace(/\{n\}/g,S.name||'你')}
 function startStory(ch){if(overLimit()){showRest();return}if(ch>0&&!stDone()[STORY[ch-1].id])return;
   ST={ch,i:0,t0:Date.now(),ok:0,n:0};stScene();go({name:'story'});const tx=stText(STORY[ch].sc[0][1]);setTimeout(()=>speak(tx,'zh'),300)}
@@ -2868,10 +2887,10 @@ function openAdmin(){if(!ALL.pin){if(!confirm('家长后台只有家长能看。
 /* ---------- 家长密码 parent PIN ---------- */
 let pinUntil=0;
 function needPin(cb){if(!ALL.pin||Date.now()<pinUntil)return cb();const a=prompt('请输入家长密码（4 位数字）');if(a===null)return;
-  if(a.trim()===ALL.pin){pinUntil=Date.now()+10*60e3;return cb()}
+  if(pinOk(a.trim())){pinUntil=Date.now()+10*60e3;return cb()}
   const x=rnd(12,29),y=rnd(3,9),b2=prompt('密码不对。忘记密码的话，请算：'+x+' × '+y+' = ?');if(b2!==null&&+b2===x*y){pinUntil=Date.now()+10*60e3;cb()}else{sBad();toast('密码不对哦 🔒')}}
 function setPin(){const a=prompt('设定家长密码：请输入 4 位数字');if(a===null)return;if(!/^\d{4}$/.test(a.trim())){toast('要 4 位数字哦');return}
-  const b2=prompt('再输入一次确认');if(b2===null)return;if(b2.trim()!==a.trim()){toast('两次不一样，请再试一次');return}ALL.pin=a.trim();pinUntil=Date.now()+10*60e3;touch();toast('已设定家长密码 🔒');render()}
+  const b2=prompt('再输入一次确认');if(b2===null)return;if(b2.trim()!==a.trim()){toast('两次不一样，请再试一次');return}ALL.pin=pinHash(a.trim());pinUntil=Date.now()+10*60e3;touch();toast('已设定家长密码 🔒');render()}
 
 /* ---------- 说说看 speaking check ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -3120,7 +3139,7 @@ app.addEventListener('click',e=>{
     case 'stnext':sTap();stNext();break;
     case 'stread':{if(v==='intro')speak('调皮的灰灰怪偷走了彩虹群岛的七颗知识星，岛上的颜色全都变灰了！请你和 Momo 一起出发，用学过的知识帮朋友们过难关，再把颜色涂回去吧！','zh');else if(v==='page'&&ST)speak(stText(STORY[ST.ch].sc[ST.i][1]),'zh');else{const c=STORY.find(x=>x.id===v);if(c)speak(stText(stRecap(c)),'zh')}break}
     case 'sttell':sTap();go({name:'storytell',pick:[]});break;
-    case 'sttpick':{const p=view.pick||(view.pick=[]);if(p.length<3&&!p.includes(v)&&SOBJ[v]){p.push(v);sTap();render();if(p.length===3)setTimeout(()=>speak(stTell(p)[0],'zh'),200)}break}
+    case 'sttpick':{const p=view.pick||(view.pick=[]);if(p.length<3&&!p.includes(v)&&isObj(v)&&stBag().includes(v)){p.push(v);sTap();render();if(p.length===3)setTimeout(()=>speak(stTell(p)[0],'zh'),200)}break}
     case 'sttreset':sTap();view.pick=[];render();break;
     case 'sttread':{const t=stTell(view.pick||[]);speak(b.dataset.l==='en'?t[1]:t[0],b.dataset.l==='en'?'en':'zh');break}
     case 'play':startGame(v);break;

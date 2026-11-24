@@ -24,7 +24,7 @@ hosted on GitHub Pages: https://sclim999.github.io/kidlearning-/
 stars, bamboo (pet currency, +1 per star in `addStars`), days{YYYY-MM-DD:{stars,correct,wrong,mins,secs,rec,mc,sc,extra}},
 words{"lang:topic:en":{c,w,m,iv,due}} (mastered at c>=3; then spaced review every 1/3/7/14/30 days via `due`), math{}, sci{}, cn{}, world{}, sessions[], pet{owned,wear,bg,fed,happy},
 adv{done{}}, story{done{},bag[]} (彩虹岛历险记), missions{date,done[]}, custom[{id,name,lang,words[{w,zh,e}]}] (parent's school word lists), mist{w{wordKey:ts},m{'game:level':n}} (错题本), tests[{d,s,n}] (每周小测), letterWk, settings (lang, subj, showZh, sound, goal, limit).
-`ALL.lastBackup` = time of the last backup download; `ALL.pin` = optional 4-digit parent PIN (`needPin(cb)` guards settings, word-list editing and extra time).
+`ALL.lastBackup` = time of the last backup download; `ALL.pin` = optional parent PIN, stored only as `h1:salt:hash` (500 rounds of salted SHA-256 via the built-in `sha256hex`; `pinHash`/`pinOk`; plain 4-digit PINs in old saves or backups are converted in `normalize()` and written back on load). `needPin(cb)` guards settings, word-list editing and extra time.
 Old saves and imported backups are upgraded in `normalize()` / `fixKid()`; keep it backward compatible.
 Voice choices are per device in `momo-voice`.
 In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.claude.use('db')`; on GitHub Pages that is skipped and data stays on the device.
@@ -48,6 +48,7 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 - Speech: Web Speech API via `speak(text, lang, queue)`; Malay falls back to Indonesian if no ms voice.
 
 ## Conventions
+- Security: a `Content-Security-Policy` meta tag in `<head>` allows only this site, Google Fonts and inline code (no objects, no form posts, no base tag). Everything from storage or a backup goes through `fixKid`/`normalize` and is `esc()`-ed when shown; look-ups keyed by stored strings must use own-property checks (e.g. `isObj` for `SOBJ`). The figure `message` handler only resizes the iframe that sent it and clamps the height. All of the account's GitHub Pages projects share the `sclim999.github.io` origin, so they can read this app's localStorage.
 - Keep the app a single self-contained file (the generated `fig/*.html` pages and the copied `world/` and `malware/` games are the only extra pages); no external requests besides Google Fonts.
 - Every new game must record progress (`recordWord` / `recordMath`) and work with the combo, stars, cards and time-limit hooks (`overLimit()` at game start).
 - Give every question a hint (`💡`) and a short child-friendly explanation after answering.
