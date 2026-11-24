@@ -1321,7 +1321,7 @@ const MG={
     return{title:`${a} + ${b} = ?`,say:`${a}加${b}等于几？`,html:h=>h?`<div class="hintbox">💡 ${tip}</div>`:'<div style="font-size:64px">➕</div>',ans:s,opts:numOpts(s,0,60),explain:`${tip}：${a} + ${b} = <b>${s}</b>`,sayAns:`${a}加${b}等于${s}`}}
    const max=L===1?10:20,a=rnd(1,L===1?9:12),b=rnd(1,Math.min(10,max-a)),s=a+b,e=pick(OBJ);
    return{title:`${a} + ${b} = ?`,say:`${a}加${b}等于几？`,html:h=>`<div class="eq">${objs(a,e,{hint:h,row:5})}<span class="sym">+</span>${objs(b,e,{hint:h,start:a,row:5})}</div>`,ans:s,opts:numOpts(s,0,20),explain:`${a} 个和 ${b} 个合起来，一共 <b>${s}</b> 个：${a} + ${b} = ${s}`,sayAns:`${a}加${b}等于${s}`}}},
- sub:{zh:'减法',e:'➖',hue:'#FFB3B3',d:'拿走以后还剩几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'打 ✕ 的是被拿走的，数一数没打 ✕ 的还剩几个。困难关个位不够减，就借一个十。',
+ sub:{fig:'subtract',zh:'减法',e:'➖',hue:'#FFB3B3',d:'拿走以后还剩几个',l1:'10 以内',l2:'20 以内',l3:'50 以内',how:'打 ✕ 的是被拿走的，数一数没打 ✕ 的还剩几个。困难关个位不够减，就借一个十。',
   gen:L=>{if(L===3){const a=rnd(21,50),b=rnd(2,9),r=a-b,o=a%10,tip=o>=b?`先算个位：${o} − ${b} = ${o-b}，再加 ${a-o}`:`借一个十：${10+o} − ${b} = ${10+o-b}，再加 ${a-o-10}`;
     return{title:`${a} − ${b} = ?`,say:`${a}减${b}等于几？`,html:h=>h?`<div class="hintbox">💡 ${tip}</div>`:'<div style="font-size:64px">➖</div>',ans:r,opts:numOpts(r,0,60),explain:`${tip}：${a} − ${b} = <b>${r}</b>`,sayAns:`${a}减${b}等于${r}`}}
    const a=L===1?rnd(2,10):rnd(11,20),b=rnd(1,L===1?a-1:Math.min(10,a-1)),r=a-b,e=pick(OBJ);
@@ -1363,7 +1363,7 @@ const MG={
    const hl=String(n).split('').map((c,i)=>i===pos?`<b style="color:var(--bad)">${c}</b>`:c).join('');
    return{title:`${n} 里的红色 ${d} 代表多少？`,say:`${n}里的${d}，代表多少？`,html:hn=>`<div style="font-size:72px;font-weight:800;letter-spacing:6px">${hl}</div>`+(hn?`<div class="hintbox">💡 从右边数：个位、十位、百位。${d} 在${nm}</div>`:''),ans:val,
     opts:shuffle([d*100,d*10,d,d*100+d]).map(v=>({v,l:String(v)})),explain:`${d} 在<b>${nm}</b>，代表 <b>${val}</b>。`,sayAns:`${d}在${nm}，代表${val}`}}},
- addsub3:{yr:2,zh:'加减法 1000 以内',e:'🧮',hue:'#93E3BE',d:'用直式算一算',l1:'不用进位 / 退位',l2:'要进位 / 退位',how:'把数字对齐：个位对个位、十位对十位。从个位开始算。加法满十要「进一」到前一位；减法不够减要向前一位「借一」。',
+ addsub3:{yr:2,fig:'subtract',zh:'加减法 1000 以内',e:'🧮',hue:'#93E3BE',d:'用直式算一算',l1:'不用进位 / 退位',l2:'要进位 / 退位',how:'把数字对齐：个位对个位、十位对十位。从个位开始算。加法满十要「进一」到前一位；减法不够减要向前一位「借一」。',
   gen:L=>{const add=Math.random()<0.5;let a,b;
    if(L===1){if(add){const x=dg(rnd(100,899));const y=x.map((v,i)=>rnd(i?0:1,Math.min(9-v,i?9:8)));a=x[0]*100+x[1]*10+x[2];b=y[0]*100+y[1]*10+y[2]}
      else{const x=dg(rnd(200,999));const y=x.map((v,i)=>rnd(0,i?v:Math.max(0,v-1)));a=x[0]*100+x[1]*10+x[2];b=y[0]*100+y[1]*10+y[2];if(b<10)b+=10*Math.min(1,x[1])}}
@@ -1371,14 +1371,14 @@ const MG={
    const ans=add?a+b:a-b,op=add?'+':'−';
    return{title:`${a} ${op} ${b} = ?`,say:`${a}${add?'加':'减'}${b}等于多少？`,html:h=>colCalc(a,b,op,null)+(h?`<div class="hintbox">💡 从个位开始${add?'加：满十就进一到十位':'减：不够减就向十位借一'}。个位：${a%10} ${op} ${b%10}</div>`:''),ans,
     opts:nearOpts(ans,0,1000,[1,10,100,9]),explain:colCalc(a,b,op,ans)+`${a} ${op} ${b} = <b>${ans}</b>`,sayAns:`${a}${add?'加':'减'}${b}等于${ans}`}}},
- mul:{yr:2,zh:'乘法',e:'✖️',hue:'#FFC56B',d:'几组，每组几个',l1:'看图：几组几个',l2:'乘法表 2、3、4、5、10',how:'乘法就是很多个一样的数加起来。3 组，每组 4 个：4 + 4 + 4 = 12，写成 3 × 4 = 12。',
+ mul:{yr:2,fig:'times',zh:'乘法',e:'✖️',hue:'#FFC56B',d:'几组，每组几个',l1:'看图：几组几个',l2:'乘法表 2、3、4、5、10',how:'乘法就是很多个一样的数加起来。3 组，每组 4 个：4 + 4 + 4 = 12，写成 3 × 4 = 12。',
   gen:L=>{if(L===1){const g=rnd(2,5),k=rnd(2,5),e=pick(OBJ),ans=g*k;
      return{title:`${g} 组，每组 ${k} 个，一共几个？`,say:`${g}组，每组${k}个，一共有几个？`,html:h=>`<div class="eq">${Array.from({length:g},()=>`<span class="grp">${objs(k,e)}</span>`).join('')}</div>`+(h?`<div class="hintbox">💡 ${Array(g).fill(k).join(' + ')} = ? 也可以写成 ${g} × ${k}</div>`:''),ans,
       opts:nearOpts(ans,1,50,[1,2,k]),explain:`${Array(g).fill(k).join(' + ')} = <b>${ans}</b>，就是 ${g} × ${k} = ${ans}`,sayAns:`${g}乘${k}等于${ans}`}}
    const k=pick([2,3,4,5,10]),m=rnd(1,10),ans=k*m;
    return{title:`${m} × ${k} = ?`,say:`${m}乘${k}等于多少？`,html:h=>h?`<div class="hintbox">💡 ${k} 个 ${k} 个数：${Array.from({length:m},(_,i)=>k*(i+1)).map((v,i)=>i===m-1?'?':v).join('、')}</div>`:'',ans,
     opts:nearOpts(ans,0,100,[k,1,2]),explain:`${m} 个 ${k}：${Array.from({length:m},(_,i)=>k*(i+1)).join('、')}，所以 ${m} × ${k} = <b>${ans}</b>`,sayAns:`${m}乘${k}等于${ans}`}}},
- div:{yr:2,zh:'除法',e:'➗',hue:'#FFB3B3',d:'平分给大家',l1:'看图：平分',l2:'除法 ÷ 2、3、4、5、10',how:'除法就是平分：每个人分到一样多。12 个分给 3 个人，每人 4 个，写成 12 ÷ 3 = 4。想乘法也可以：3 × ? = 12。',
+ div:{yr:2,fig:'times',zh:'除法',e:'➗',hue:'#FFB3B3',d:'平分给大家',l1:'看图：平分',l2:'除法 ÷ 2、3、4、5、10',how:'除法就是平分：每个人分到一样多。12 个分给 3 个人，每人 4 个，写成 12 ÷ 3 = 4。想乘法也可以：3 × ? = 12。',
   gen:L=>{if(L===1){const pp=rnd(2,4),each=rnd(1,5),tot=pp*each,e=pick(['🍬','🍪','🍓','⭐','🎈']);
      return{title:`${tot} 个${e}平分给 ${pp} 个人，每人几个？`,say:`${tot}个，平分给${pp}个人，每人分到几个？`,html:h=>(h?`<div class="eq">${Array.from({length:pp},(_,i)=>`<span class="grp">${PEOPLE[i]} ${objs(each,e)}</span>`).join('')}</div><div class="hintbox">💡 一个一个轮流分，每人分到一样多</div>`:`<div>${objs(tot,e,{row:6})}</div><div style="font-size:44px">${PEOPLE.slice(0,pp).join(' ')}</div>`),ans:each,
       opts:nearOpts(each,1,12,[1,2]),explain:`${tot} ÷ ${pp} = <b>${each}</b>，每人分到 ${each} 个`,sayAns:`${tot}除以${pp}等于${each}`}}
