@@ -1378,7 +1378,7 @@ const MG={
    const k=pick([2,3,4,5,10]),m=rnd(1,10),ans=k*m;
    return{title:`${m} × ${k} = ?`,say:`${m}乘${k}等于多少？`,html:h=>h?`<div class="hintbox">💡 ${k} 个 ${k} 个数：${Array.from({length:m},(_,i)=>k*(i+1)).map((v,i)=>i===m-1?'?':v).join('、')}</div>`:'',ans,
     opts:nearOpts(ans,0,100,[k,1,2]),explain:`${m} 个 ${k}：${Array.from({length:m},(_,i)=>k*(i+1)).join('、')}，所以 ${m} × ${k} = <b>${ans}</b>`,sayAns:`${m}乘${k}等于${ans}`}}},
- div:{yr:2,fig:'times',zh:'除法',e:'➗',hue:'#FFB3B3',d:'平分给大家',l1:'看图：平分',l2:'除法 ÷ 2、3、4、5、10',how:'除法就是平分：每个人分到一样多。12 个分给 3 个人，每人 4 个，写成 12 ÷ 3 = 4。想乘法也可以：3 × ? = 12。',
+ div:{yr:2,fig:'divide',zh:'除法',e:'➗',hue:'#FFB3B3',d:'平分给大家',l1:'看图：平分',l2:'除法 ÷ 2、3、4、5、10',how:'除法就是平分：每个人分到一样多。12 个分给 3 个人，每人 4 个，写成 12 ÷ 3 = 4。想乘法也可以：3 × ? = 12。',
   gen:L=>{if(L===1){const pp=rnd(2,4),each=rnd(1,5),tot=pp*each,e=pick(['🍬','🍪','🍓','⭐','🎈']);
      return{title:`${tot} 个${e}平分给 ${pp} 个人，每人几个？`,say:`${tot}个，平分给${pp}个人，每人分到几个？`,html:h=>(h?`<div class="eq">${Array.from({length:pp},(_,i)=>`<span class="grp">${PEOPLE[i]} ${objs(each,e)}</span>`).join('')}</div><div class="hintbox">💡 一个一个轮流分，每人分到一样多</div>`:`<div>${objs(tot,e,{row:6})}</div><div style="font-size:44px">${PEOPLE.slice(0,pp).join(' ')}</div>`),ans:each,
       opts:nearOpts(each,1,12,[1,2]),explain:`${tot} ÷ ${pp} = <b>${each}</b>，每人分到 ${each} 个`,sayAns:`${tot}除以${pp}等于${each}`}}
