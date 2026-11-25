@@ -1,5 +1,5 @@
 /* Momo offline cache: network first (so updates show up), cache as fallback when offline */
-const CACHE='momo-v8';
+const CACHE='momo-v9';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./fig/clock.html','./fig/magnet.html','./fig/plant.html','./fig/soil.html','./fig/times.html','./fig/subtract.html','./fig/add.html','./fig/divide.html','./world/index.html','./malware/index.html','./malware/css/game.css','./malware/css/firewall.css','./malware/js/firewall-levels.js','./malware/js/firewall-history.js','./malware/js/firewall-phishing.js','./malware/js/firewall.js','./malware/js/momo-variety.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
