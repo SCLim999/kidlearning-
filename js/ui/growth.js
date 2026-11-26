@@ -92,7 +92,7 @@ function vSettings(){
     <div class="skins">${SKINS.map(([id,e,name])=>`<button class="skin ${S.skin===id?'on':''}" data-skin="${id}" data-act="skin" data-v="${id}" aria-pressed="${S.skin===id}" aria-label="画风 ${name}"><span class="sk-row">${panda(46,'happy')}<span class="sk-b">Aa</span></span><b>${e} ${name}</b></button>`).join('')}</div></div>
   <div class="panel row"><span style="font-size:44px">📝</span><div style="flex:1"><h2 style="margin:0">学校词表</h2><div class="zh" style="font-size:15px">输入学校这星期要学的英文或国文词，Momo 会把它们变成游戏。现在有 ${(S.custom||[]).length} 个词表。</div></div><button class="btn sun" data-act="cl">管理词表 ▶</button></div>
   ${voiceSettings()}
-  ${backupPanel()}
+  ${syncPanel()}${backupPanel()}
   <div class="panel"><h2>家长密码 🔒</h2><p style="margin:0 0 10px">设定以后，打开「家长设置」、编辑学校词表、或休息时间多加 10 分钟，都要先输入密码。</p><div class="row">${ALL.pin?'<b>✅ 已设定</b><button class="btn" data-act="pinset">更改密码</button><button class="btn pink" data-act="pinoff">取消密码</button>':'<button class="btn mint" data-act="pinset">设定密码</button>'}</div></div>
   <div class="panel"><h2>学习记录保存</h2>
     <p style="margin:0 0 10px">${cloudOn?'☁️ 学习记录会自动保存在你的 Claude 帐号里，换设备打开同一个链接也能继续。':'💾 学习记录保存在这台设备的浏览器里（换设备不会同步）。'}</p>
@@ -103,7 +103,7 @@ function backupPanel(){const lb=ALL.lastBackup,days=lb?Math.floor((Date.now()-lb
     <p style="margin:0 0 10px">把所有孩子的星星、单词、宠物和学校词表存成一个文件。换设备、换浏览器或清除了浏览器资料之后，可以用这个文件恢复。</p>
     <p class="zh" style="font-size:15px;margin:0 0 12px">${lb?'上次备份：'+dk(new Date(lb))+(days>=14?' ⚠️ 已经 '+days+' 天没备份了':''):'⚠️ 还没有备份过'}</p>
     <div class="row"><button class="btn mint" data-act="export">⬇️ 下载备份文件</button><button class="btn" data-act="import">⬆️ 从备份文件恢复</button><input type="file" id="imp" hidden></div>
-    <p class="zh" style="font-size:14px;margin:10px 0 0">iPad / iPhone：文件会存到「文件」App 的「下载」里。恢复时会取代这台设备上现在的全部资料。</p></div>`}
+    <p class="zh" style="font-size:14px;margin:10px 0 0">iPad / iPhone：文件会存到「文件」App 的「下载」里。恢复时会取代这台设备上现在的全部资料。</p>${snapPanel()}</div>`}
 function exportData(){
   const name='momo-backup-'+dk()+'.json';const blob=new Blob([JSON.stringify({app:'momo-learn',exported:new Date().toISOString(),data:ALL})],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
@@ -112,5 +112,5 @@ function importData(file){if(!file)return;if(file.size>5e6){sBad();toast('这个
   r.onload=()=>{let n;try{let o=JSON.parse(r.result);if(o&&o.app==='momo-learn')o=o.data;if(!o||typeof o!=='object'||!(o.kids||o.days||o.words))throw 0;n=normalize(o)}catch(e){sBad();toast('这个文件不是 Momo 的备份文件 😕');return}
     const names=Object.values(n.kids).map(k=>(k.avatar||'')+(k.name||'?')+' ⭐'+k.stars).join('、');
     if(!confirm('要用备份文件里的资料取代这台设备上现在的全部资料吗？\n\n备份里有：'+names))return;
-    ALL=n;S=ALL.kids[ALL.cur];G=null;touch();sGood();toast('已恢复 ✓');go({name:S.name?'home':'setup'})};
+    snapshot('import');ALL=n;S=ALL.kids[ALL.cur];G=null;touch();sGood();toast('已恢复 ✓');go({name:S.name?'home':'setup'})};
   r.onerror=()=>toast('读不到这个文件');r.readAsText(file)}

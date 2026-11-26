@@ -54,7 +54,7 @@ let ALL=load();let S=ALL.kids[ALL.cur];
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(ALL))}catch(e){}}
 // an old save still holding the plain 4-digit PIN: write the hashed version back straight away
 try{if(/"pin":"\d{4}"/.test(localStorage.getItem(KEY)||''))saveLocal()}catch(e){}
-function touch(){S.updatedAt=ALL.updatedAt=Date.now();saveLocal();queueCloud()}
+function touch(){S.updatedAt=ALL.updatedAt=Date.now();saveLocal();queueCloud();queueSync()}
 function dk(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dayRec(){const k=dk();return S.days[k]||(S.days[k]={stars:0,correct:0,wrong:0,mins:0})}
 function addStars(n){S.stars+=n;S.bamboo=(S.bamboo||0)+n;dayRec().stars+=n}

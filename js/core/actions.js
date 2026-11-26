@@ -67,6 +67,17 @@ app.addEventListener('click',e=>{
     case 'clplay':{const c=(S.custom||[]).find(x=>x.id===v);if(!c)return;S.subj='lang';S.lang=c.lang;touch();sTap();go({name:'topic',topic:'my-'+c.id});break}
     case 'cldel':{const c=(S.custom||[]).find(x=>x.id===v);if(!c)return;if(confirm('要删除词表「'+c.name+'」吗？')){S.custom=S.custom.filter(x=>x!==c);touch();toast('已删除');render()}break}
     case 'export':exportData();break;
+    case 'sbsend':{const em=((document.getElementById('sbmail')||{}).value||'').trim().toLowerCase();if(!/^[^\s@]{1,64}@[^\s@]{1,100}\.[a-z]{2,}$/.test(em)){toast('请输入正确的电邮');break}
+      view.sb={email:em,msg:'正在寄……'};render();sbSendCode(em).then(()=>{view.sb={step:'code',email:em,msg:''};render()}).catch(e=>{view.sb={email:em,msg:'寄不出去：'+e.message};render()});break}
+    case 'sbverify':{const code=((document.getElementById('sbcode')||{}).value||'').replace(/\s/g,'');if(!/^\d{6,10}$/.test(code)){toast('请输入邮件里的数字登入码');break}
+      const em=(view.sb||{}).email;sbVerify(em,code).then(()=>{view.sb={};toast('已登入 ☁️');render();syncNow()}).catch(e=>{view.sb=Object.assign({},view.sb,{msg:'登入失败：'+e.message});render()});break}
+    case 'sbback':view.sb={email:(view.sb||{}).email};render();break;
+    case 'sbsync':sTap();syncNow();break;
+    case 'sbout':if(confirm('要登出云端吗？这台设备上的资料会保留，只是不再同步。')){sbSignOut().then(()=>{view.sb={};sbState={msg:'',at:0,err:''};render()})}break;
+    case 'sbbackups':cloudBackups().then(list=>{view.sb=Object.assign({},view.sb,{list});render()}).catch(e=>{view.sb=Object.assign({},view.sb,{msg:e.message});render()});break;
+    case 'sbrestore':cloudRestore(v).then(r=>applyRestore(r.data,'云端备份 '+r.day)).catch(e=>toast(e.message));break;
+    case 'sbdel':if(confirm('要删除云端的全部学习记录、云端备份和这个登入账号吗？\n这台设备上的资料会保留。删除以后不能复原。')){cloudDeleteAll().then(()=>sbSignOut()).then(()=>{view.sb={msg:'云端资料已经删除。'};render()}).catch(e=>{view.sb=Object.assign({},view.sb,{msg:'删除失败：'+e.message});render()})}break;
+    case 'snapuse':{const x=snaps()[+v];if(x)applyRestore(normalize(x.data),x.day+' 的快照');break}
     case 'world':S.subj='world';touch();sTap();go({name:'subject'});speak('我们去环游世界！','zh');break;
     case 'malware':sTap();openMalware();break;
     case 'mist':sTap();go({name:'mist'});break;
@@ -164,5 +175,6 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nm'){app.q
 
 render();
 setTimeout(initCloud,0);
+setTimeout(initSync,0);
 /* offline: cache the app on GitHub Pages (needs https, or localhost for testing) */
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
