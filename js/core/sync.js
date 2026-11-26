@@ -54,7 +54,7 @@ function mergeAll(local,remote){if(!remote||!remote.kids)return local;const kids
   for(const id of new Set([...Object.keys(local.kids),...Object.keys(remote.kids)]))kids[id]=local.kids[id]&&remote.kids[id]?mergeKid(local.kids[id],remote.kids[id]):(local.kids[id]||remote.kids[id]);
   const newer=(remote.updatedAt||0)>(local.updatedAt||0)?remote:local;
   const out={v:2,cur:kids[local.cur]?local.cur:Object.keys(kids)[0],kids,updatedAt:mx(local.updatedAt,remote.updatedAt)};
-  if(newer.pin||local.pin)out.pin=newer.pin||local.pin;if(local.lastBackup||remote.lastBackup)out.lastBackup=mx(local.lastBackup,remote.lastBackup);
+  const ps=newer.pin?newer:local;if(ps.pin){out.pin=ps.pin;if(ps.pinRec)out.pinRec=ps.pinRec}if(local.lastBackup||remote.lastBackup)out.lastBackup=mx(local.lastBackup,remote.lastBackup);
   return normalize(out)}
 /* ---- syncing ---- */
 function queueSync(){if(!SB||!syncReady())return;clearTimeout(sbTimer);sbTimer=setTimeout(syncNow,4000)}
@@ -97,7 +97,7 @@ function snapPanel(){const list=snaps();if(!list.length)return '';
   return `<div style="margin-top:12px"><b>🕒 自动快照</b><div class="zh" style="font-size:14px">这台设备每天自动保存一份（最近 7 份），资料不对时可以回到那时候。</div>
    ${list.map((x,i)=>`<div class="tuline"><span>📸</span><div class="tn">${esc(x.day)} <small class="zh">${SNAPWHY[x.why]||''}</small></div><button class="btn" data-act="snapuse" data-v="${i}">恢复</button></div>`).join('')}</div>`}
 function applyRestore(data,label){if(!confirm('要用「'+label+'」的资料取代这台设备上现在的全部资料吗？\n（现在的资料会先存成一份快照）'))return;
-  snapshot('restore');ALL=data;S=ALL.kids[ALL.cur];G=null;ALL.updatedAt=S.updatedAt=Date.now();saveLocal();
+  snapshot('restore');keepPin(data);ALL=data;S=ALL.kids[ALL.cur];G=null;ALL.updatedAt=S.updatedAt=Date.now();saveLocal();
   if(SB&&syncReady())sbFetch('/rest/v1/momo_progress?on_conflict=owner',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:{data:ALL,updated_at:new Date().toISOString()}}).catch(()=>{});
   sGood();toast('已恢复 ✓');go({name:S.name?'home':'setup'})}
 function initSync(){dailySnapshot();if(!syncReady())return;sbLoad();
