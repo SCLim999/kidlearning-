@@ -75,7 +75,6 @@ function vGrowth(){
     return `<li><span style="font-size:28px">${t?t.icon:'📘'}</span><span style="flex:1"><b>${t?t.zh+' · ':''}${m?m.zh:''}</b> <span class="zh">${LANGS[r.lang]?LANGS[r.lang].flag+' '+LANGS[r.lang].zh:''}</span></span>
     <span>${r.score==null?'📖 学完':r.score+'/'+r.total}</span><span class="zh" style="font-size:14px">${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}</span></li>`}).join('')}</ul>`:'<p class="zh" style="margin:0">还没有记录，去玩第一个游戏吧！</p>'}</div>`}
 
-const SKINS=[['toy','🧱','积木'],['crayon','🖍️','蜡笔'],['pixel','👾','像素'],['ink','🖌️','水墨'],['candy','🍬','糖果'],['neon','🌌','星空霓虹'],['iso','🧊','立体'],['origami','🦢','折纸'],['glass','⛪','彩绘玻璃']];
 function vSettings(){
   return bar('settings')+`
   <div class="panel row" style="background:var(--s-en);color:#2A2F6B"><span style="font-size:44px">📊</span><div style="flex:1"><h2 style="margin:0">家长后台</h2><div style="font-size:15px">看所有孩子的学习进度、强项、弱项和兴趣（要输入家长密码）</div></div><button class="btn sun big" data-act="admin">打开 ▶</button></div>

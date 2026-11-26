@@ -10,12 +10,15 @@ hosted on GitHub Pages: https://sclim999.github.io/kidlearning-/
   |---|---|
   | `css/app.css`, `css/skins.css` | all styles and colour tokens; the 画风 skins |
   | `data/icons.js` | `ICO` hand-drawn word pictures, `icoSvg` |
-  | `data/topics.js` | sentence helpers, `TOPICS` and the textbook/dictionary sentence tables (`BM13`, `SM44`, `SMX`, `BMX`, `SEASON`, `PHAB`…), `BASE`, `WMAP` |
+  | `data/topics.js` | sentence helpers, `TOPICS` and the textbook/dictionary sentence tables (`BM13`, `SM44`, `SMX`, `BMX`, `SEASON`…), `BASE`, `WMAP` |
+  | `data/science.js`, `data/chinese.js`, `data/world.js` | question banks for the science games (`LIVE1`…`HABA`, `PHAB`); `HZ`/`HZ2`/`TONEV`; `WX` (copied world-explorer data), `WF_RAW`, `WF_SAME`, `MYST`, `MYTOUR` — plain tables only, no functions |
   | `js/core/state.js` | storage, `blank`/`fixKid`/`normalize`, PIN hashing, `recordWord` |
-  | `js/core/cloud.js`, `js/core/sound.js`, `js/core/helpers.js` | artifact cloud sync; speech, sounds and recording; small helpers (`T`, `pick`, `esc`…) |
-  | `js/subjects/math.js`, `science.js`, `chinese.js`, `world.js` | `MG`, `SG`, `CG`, `WX`/`WG` games and their data (math.js also still holds the shared `recordMath`, `genSet`/`qSig`, `SCENES`/`newLook`) |
-  | `js/games/extras.js` | pet, match/bubble, adventure map, album, missions, duel, time reminders and `showRest` |
-  | `js/ui/views.js`, `js/ui/growth.js` | home, subject page with its tabs, topic page; growth, settings, `SKINS` and other views |
+  | `js/core/cloud.js`, `js/core/sound.js`, `js/core/helpers.js` | artifact cloud sync; speech, sounds and recording; small helpers (`T`, `pick`, `esc`, `rnd`, `sumOf`…) |
+  | `js/core/look.js`, `js/core/timelimit.js` | per-round `SCENES`/`SKINS`/`newLook`/`sceneDeco`, `OBJ`; daily time limit (`todaySecs`, `overLimit`, `showRest`, the 30-second timer) |
+  | `js/subjects/math.js`, `science.js`, `chinese.js`, `world.js` | the `MG`, `SG`, `CG`, `WG` games and their drawing helpers |
+  | `js/games/questions.js` | the shared question-game engine: `GKIND`/`GAME`, `gameCard`/`byYear`, `LVN`, `genL`, `recordMath`, `qSig`/`genSet`, `startMath`/`vMath`, `vMTopic`, the figure-height listener |
+  | `js/games/extras.js` | pet, match/bubble, adventure map, album, missions, duel |
+  | `js/ui/views.js`, `js/ui/growth.js` | home, subject page with its tabs, topic page; growth, settings and other views |
   | `js/games/engine.js` | the shared game engine (`startGame`, `answer`, `vGame`…) |
   | `js/games/story.js`, `worlds.js`, `review.js`, `malware.js`, `saycheck.js` | 彩虹岛历险记; 学习世界 + 创作工坊; 错题本, 小测, print, letter; 病毒猎人 ticket; 说说看 |
   | `js/learning/tutor.js` | Momo 小老师 |
@@ -79,7 +82,7 @@ In the claude.ai artifact version, `initCloud()` also syncs `ALL` via `window.cl
 Commit to `main`; GitHub Pages serves the repo root.
 
 ## Ideas not done yet
-- Next steps of the file split (one at a time, each checked with `tools/check.mjs` and by comparing rendered views): move `recordMath`, `genSet`/`qSig` and `SCENES`/`newLook` out of `js/subjects/math.js` into `js/core/`, `SKINS` into its own file, `showRest`/time limits into `js/core/`; move big data tables (`WF_RAW`, `COUNTRIES`, `HZ`/`HZ2`/`CI2`, `HABA`…) from the subject files into `data/`.
+- Possible further split steps (each checked with `tools/check.mjs` and by comparing rendered views): the maths and word-mode question data could move to `data/`; `js/games/engine.js` and `js/ui/views.js` could be split by view.
 - Align BM vocabulary exactly to the SJKC Year 1 Bahasa Melayu textbook units (needs the textbook's word lists).
 - Align the 华文 character list to the SJKC Year 1 华文 textbook.
 - Check the Year 2 units (English/BM topics, 华文 characters, maths, science) against the actual SJKC Year 2 textbooks.
