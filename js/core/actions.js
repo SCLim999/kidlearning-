@@ -69,8 +69,8 @@ app.addEventListener('click',e=>{
     case 'export':exportData();break;
     case 'sbsend':{const em=((document.getElementById('sbmail')||{}).value||'').trim().toLowerCase();if(!/^[^\s@]{1,64}@[^\s@]{1,100}\.[a-z]{2,}$/.test(em)){toast('请输入正确的电邮');break}
       view.sb={email:em,msg:'正在寄……'};render();sbSendCode(em).then(()=>{view.sb={step:'code',email:em,msg:''};render()}).catch(e=>{view.sb={email:em,msg:'寄不出去：'+e.message};render()});break}
-    case 'sbverify':{const code=((document.getElementById('sbcode')||{}).value||'').replace(/\s/g,'');if(!/^\d{6,10}$/.test(code)){toast('请输入邮件里的数字登入码');break}
-      const em=(view.sb||{}).email;sbVerify(em,code).then(()=>{view.sb={};toast('已登入 ☁️');render();syncNow()}).catch(e=>{view.sb=Object.assign({},view.sb,{msg:'登入失败：'+e.message});render()});break}
+    case 'sbverify':{const raw=((document.getElementById('sbcode')||{}).value||'').trim(),code=raw.replace(/\s/g,''),link=/^https:\/\//i.test(raw);if(!link&&!/^\d{6,10}$/.test(code)){toast('请输入邮件里的数字登入码，或贴上登入链接');break}
+      const em=(view.sb||{}).email;(link?sbVerifyLink(raw):sbVerify(em,code)).then(()=>{view.sb={};toast('已登入 ☁️');render();syncNow()}).catch(e=>{view.sb=Object.assign({},view.sb,{msg:'登入失败：'+e.message});render()});break}
     case 'sbback':view.sb={email:(view.sb||{}).email};render();break;
     case 'sbsync':sTap();syncNow();break;
     case 'sbout':if(confirm('要登出云端吗？这台设备上的资料会保留，只是不再同步。')){sbSignOut().then(()=>{view.sb={};sbState={msg:'',at:0,err:''};render()})}break;

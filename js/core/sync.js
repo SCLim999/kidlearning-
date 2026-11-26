@@ -25,6 +25,13 @@ async function sbFresh(){if(!SB||Date.now()<SB.exp-60e3)return;
 function sbTake(j){if(!j||!j.access_token)throw new Error('登入失败');SB={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(+j.expires_in||3600)*1000,email:String((j.user&&j.user.email)||(SB&&SB.email)||'').slice(0,120)};sbSave()}
 async function sbSendCode(email){await sbFetch('/auth/v1/otp',{method:'POST',auth:false,body:{email,create_user:true}})}
 async function sbVerify(email,code){sbTake(await sbFetch('/auth/v1/verify',{method:'POST',auth:false,body:{type:'email',email,token:code}}))}
+/* a sign-in link pasted from the email (for the home-screen app, which opens links in Safari instead) */
+async function sbVerifyLink(txt){let u;try{u=new URL(String(txt).trim())}catch(e){throw new Error('这不是登入链接')}
+  const q=u.searchParams,h=new URLSearchParams(u.hash.slice(1));
+  if(h.get('access_token')&&h.get('refresh_token'))return sbTake({access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_in:h.get('expires_in')});
+  const th=q.get('token_hash')||q.get('token'),ty=q.get('type')||'magiclink';
+  if(!th||!/^[\w-]{6,200}$/.test(th)||!/^(magiclink|signup|email)$/.test(ty))throw new Error('这不是登入链接');
+  sbTake(await sbFetch('/auth/v1/verify',{method:'POST',auth:false,body:{type:ty,token_hash:th}}))}
 async function sbSignOut(){try{if(SB)await sbFetch('/auth/v1/logout',{method:'POST'})}catch(e){}SB=null;sbSave()}
 /* ---- merging two copies of ALL ---- */
 const mx=(a,b)=>Math.max(+a||0,+b||0);
@@ -82,8 +89,8 @@ function syncPanel(){const ready=syncReady(),sb=view.sb||{};
    ${SB?`<p style="margin:0 0 8px">已登入：<b>${esc(SB.email||'家长')}</b>　${status}</p>
      <div class="row"><button class="btn mint" data-act="sbsync">🔄 现在同步</button><button class="btn" data-act="sbbackups">🗂️ 云端备份</button><button class="btn" data-act="sbout">登出</button><button class="btn pink" data-act="sbdel">删除云端资料</button></div>
      ${sb.list?`<div style="margin-top:10px">${sb.list.length?sb.list.map(b=>`<div class="tuline"><span>☁️</span><div class="tn">${esc(b.day)}</div><button class="btn" data-act="sbrestore" data-v="${esc(String(b.id))}">恢复到这一天</button></div>`).join(''):'<p class="zh" style="margin:0">还没有云端备份（每天第一次同步时会自动备份）。</p>'}</div>`:''}`
-   :sb.step==='code'?`<p style="margin:0 0 8px">登入码已经寄到 <b>${esc(sb.email||'')}</b>，请输入邮件里的 6 位数字（或者直接按邮件里的链接）。</p>
-     <div class="row"><input id="sbcode" inputmode="numeric" maxlength="10" placeholder="123456" style="width:140px" aria-label="登入码"><button class="btn sun" data-act="sbverify">登入</button><button class="btn" data-act="sbback">换电邮</button></div>`
+   :sb.step==='code'?`<p style="margin:0 0 8px">登入码已经寄到 <b>${esc(sb.email||'')}</b>，请输入邮件里的 6 位数字。如果邮件里只有链接：在链接上长按 →「拷贝链接」，再贴到这里。</p>
+     <div class="row"><input id="sbcode" maxlength="2000" autocomplete="one-time-code" placeholder="123456 或贴上链接" style="min-width:200px" aria-label="登入码或登入链接"><button class="btn sun" data-act="sbverify">登入</button><button class="btn" data-act="sbback">换电邮</button></div>`
    :`<div class="row"><input id="sbmail" type="email" maxlength="120" placeholder="家长的电邮" value="${esc(sb.email||'')}" style="min-width:220px" aria-label="家长的电邮"><button class="btn sun" data-act="sbsend">寄登入码</button></div>`}
    ${sb.msg?`<p class="zh" style="margin:8px 0 0">${esc(sb.msg)}</p>`:''}</div>`}
 function snapPanel(){const list=snaps();if(!list.length)return '';
