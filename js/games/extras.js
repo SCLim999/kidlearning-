@@ -31,10 +31,10 @@ function vPet(){const p=pet(),h=happyNow(),bg=BGS[p.bg]||BGS.sky;
   </div>`}
 
 /* ---------------- 翻牌配对 & 泡泡 ---------------- */
-function vMatch(){const done=G.cards.filter(c=>c.done).length/2;
-  return `<div class="gbar"><button class="btn round" data-act="quit" aria-label="离开">✕</button><div style="flex:1;font-weight:800">🃏 找到 ${done} / ${G.qs.length} 对　<span class="zh">翻了 ${G.moves} 次</span></div>${G.combo>=2?`<span class="pill" style="background:var(--pink)">🔥 ${G.combo}</span>`:''}</div>
-  <p class="zh" style="text-align:center;margin:0 0 12px">翻开两张牌，把图片和${LANGS[G.lang].zh}单词配成一对</p>
-  <div class="cards">${G.cards.map(c=>`<button class="mcard ${c.up||c.done?'up':''} ${c.done?'done':''}" data-act="card" data-v="${c.i}" ${c.done?'disabled':''} aria-label="第${c.i+1}张牌">${c.up||c.done?(c.k==='e'?`<span class="ce">${pic(c.w)}</span>`:`<span class="ct">${esc(c.w[G.lang])}</span>`):'<span class="cb">🐼</span>'}</button>`).join('')}</div>`}
+function vMatch(){const done=G.cards.filter(c=>c.done).length/2,n=G.qs.length;
+  return gameBar({label:`找到 <b>${done}</b> / ${n} 对`,done,total:n,segs:G.qs.map((q,i)=>i<done?'ok':i===done?'now':'')})
+  +coach(`翻开两张牌，把图片和${LANGS[G.lang].zh}单词配成一对<small>翻了 ${G.moves} 次</small>`,G.combo>=2?'happy':'think')
+  +`<div class="cards aarea">${G.cards.map(c=>`<button class="mcard ${c.up||c.done?'up':''} ${c.done?'done':''}" data-act="card" data-v="${c.i}" ${c.done?'disabled':''} aria-label="第${c.i+1}张牌">${c.up||c.done?(c.k==='e'?`<span class="ce">${pic(c.w)}</span>`:`<span class="ct">${esc(c.w[G.lang])}</span>`):'<span class="cb">🐼</span>'}</button>`).join('')}</div>`}
 function comboBadge(){return G&&G.combo>=2?`<span class="combo">🔥 连对 ${G.combo} 题！</span>`:''}
 
 /* ---------------- 冒险地图 ---------------- */

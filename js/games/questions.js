@@ -28,13 +28,11 @@ function startMath(game,level){newLook();if(overLimit()){showRest();return}reset
   G={topic:kind+':'+game,mode:kind,game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
      qs:genSet(g,level,level===3?10:8,game+':'+level).map(q=>Object.assign(q,{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
   go({name:'game'});setTimeout(speakCur,350)}
-function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);const first=!q.missed&&!q.hinted;
-  return gameBar()+`<div class="stage">
-   <div class="mq">${q.title}</div>
-   <div class="mview">${q.html(h)}</div>
-   <div class="row" style="justify-content:center;margin:6px 0"><button class="btn sky" data-act="sayCur">🔊 听题目</button>${q.done||q.hint||q.lvl===3?'':'<button class="btn" data-act="mhint">💡 提示</button>'}</div>
-   <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''} ${q.reveal&&!q.done&&o.v===q.ans?'glow':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
-   ${tutorBox(q)}${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
+function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);
+  return gameBar()+`<div class="stage">${qCoach(q,'想一想，选出正确的答案',{open:CB.say('听题目')+(q.hint||q.lvl===3?'':CB.hint('mhint')),done:CB.say('听题目')})}
+   <div class="qcard"><div class="mq">${q.title}</div><div class="mview">${q.html(h)}</div></div>
+   <div class="opts aarea${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''} ${q.reveal&&!q.done&&o.v===q.ans?'glow':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
+   ${tutorBox(q)}${q.done?fbOk(q.explain):''}
   </div>`}
 function vMTopic(){const g=GAME(view.game);
   return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="subjpage">⬅ 返回</button></div>

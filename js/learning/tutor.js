@@ -21,7 +21,7 @@ const tlangBtns=()=>`<span class="tl">${Object.keys(TLANGS).map(l=>`<button clas
 function tutorBox(q){if(!q.tutor||q.done||(G&&G.mode==='test'))return '';
   let extra='';
   if(q.tutor==='h1w'&&q.w){const lg=q.lang||G.lang;extra=q.m==='listen'?`<br><small>💡 意思是「${esc(q.w.zh)}」</small>`:`<br><small>💡 第一个字母是「${esc(String(q.w[lg]||'').charAt(0))}」</small>`}
-  return `<div class="tutor" role="status"><span style="font-size:40px" aria-hidden="true">🐼</span><div class="tm">${esc(tmsg(q.tutor))}${extra}</div><button class="btn round" data-act="tsay" data-v="${q.tutor}" aria-label="读出来">🔊</button>${tlangBtns()}</div>`}
+  return `<div class="fb try tutor" role="status"><span class="fbi" aria-hidden="true">💡</span><div class="tm">${esc(tmsg(q.tutor))}${extra}</div><button class="btn round" data-act="tsay" data-v="${q.tutor}" aria-label="读出来">🔊</button>${tlangBtns()}</div>`}
 /* graded help after each wrong pick on the same question */
 function tutorWrong(q){if(!G||G.mode==='test'||q.done)return;
   const isMath=q.m==='math',pickable=isMath||q.m==='listen'||q.m==='read';
@@ -42,7 +42,7 @@ function reteach(q){if(!G||view.name!=='game'||G.mode==='test'||document.querySe
     <p class="zh" style="margin:10px 0 0">一起念三次：英文、国文、华文 👄</p>`}
   else return;
   const o=document.createElement('div');o.className='rest reteach';
-  o.innerHTML=`<div class="panel" role="dialog" aria-modal="true" aria-label="Momo 小老师"><div class="tutor" style="margin:0 0 12px"><span style="font-size:40px" aria-hidden="true">🐼</span><div class="tm">${esc(tmsg('re'))}</div></div><div style="text-align:center">${body}</div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn sun big" data-rt="ok">我明白了，继续 ▶</button></div></div>`;
+  o.innerHTML=`<div class="panel" role="dialog" aria-modal="true" aria-label="Momo 小老师"><div class="tutor" style="margin:0 0 12px">${pandaDressed(52,'teach')}<div class="tm">${esc(tmsg('re'))}</div></div><div style="text-align:center">${body}</div><div class="row" style="justify-content:center;margin-top:12px"><button class="btn sun big" data-rt="ok">我明白了，继续 ▶</button></div></div>`;
   o.addEventListener('click',e=>{const t=e.target.closest('[data-rt]');if(!t)return;if(t.dataset.rt==='ok'){sTap();o.remove()}else if(t.dataset.rt==='say')speak(t.dataset.t,t.dataset.l)});
   document.body.appendChild(o);sayTutor('re');const ok=o.querySelector('[data-rt="ok"]');if(ok)ok.focus()}
 /* level suggestion from the per-level records: move up after 8+ answers at 85%+ */
