@@ -93,7 +93,7 @@ function vSettings(){
   <div class="panel row"><span style="font-size:44px">📝</span><div style="flex:1"><h2 style="margin:0">学校词表</h2><div class="zh" style="font-size:15px">输入学校这星期要学的英文或国文词，Momo 会把它们变成游戏。现在有 ${(S.custom||[]).length} 个词表。</div></div><button class="btn sun" data-act="cl">管理词表 ▶</button></div>
   ${voiceSettings()}
   ${syncPanel()}${backupPanel()}
-  <div class="panel"><h2>家长密码 🔒</h2><p style="margin:0 0 10px">设定以后，打开「家长设置」、编辑学校词表、或休息时间多加 10 分钟，都要先输入密码。更改或取消密码时，每次都要再输入现在的密码；连续输错 3 次会锁 5 分钟。忘记密码要用设定时给你的「恢复码」。</p><div class="row">${ALL.pin?'<b>✅ 已设定</b><button class="btn" data-act="pinset">更改密码</button><button class="btn pink" data-act="pinoff">取消密码</button>':'<button class="btn mint" data-act="pinset">设定密码</button>'}</div></div>
+  <div class="panel"><h2>家长密码 🔒</h2><p style="margin:0 0 10px">设定以后，打开「家长设置」、编辑学校词表、或休息时间多加 10 分钟，都要先输入密码。更改或取消密码时，每次都要再输入现在的密码；连续输错 3 次会锁 5 分钟。忘记密码时，可以寄验证码到云端同步登入的家长电邮，或者用设定密码时给你的「恢复码」。</p><div class="row">${ALL.pin?'<b>✅ 已设定</b><button class="btn" data-act="pinset">更改密码</button><button class="btn pink" data-act="pinoff">取消密码</button>':'<button class="btn mint" data-act="pinset">设定密码</button>'}</div></div>
   <div class="panel"><h2>学习记录保存</h2>
     <p style="margin:0 0 10px">${cloudOn?'☁️ 学习记录会自动保存在你的 Claude 帐号里，换设备打开同一个链接也能继续。':'💾 学习记录保存在这台设备的浏览器里（换设备不会同步）。'}</p>
     <div class="row"><button class="btn pink" data-act="reset">清除 ${esc(S.name)} 的学习记录</button>${Object.keys(ALL.kids).length>1?`<button class="btn" data-act="delkid">删除 ${esc(S.name)}</button>`:''}</div></div>`}

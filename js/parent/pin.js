@@ -1,7 +1,7 @@
 /* ---------- 家长密码 parent PIN ----------
    Entering settings unlocks for 10 minutes, but changing or removing the PIN always asks for the current PIN again.
    Wrong PINs: after 3 in a row the PIN is locked for 5 minutes (stored per device in localStorage momo-pinlock).
-   Forgotten PIN: the 8-character recovery code shown when the PIN was set (stored hashed in ALL.pinRec);
+   Forgotten PIN: a code sent to the parent's 云端同步 email (when signed in), or the 8-character recovery code shown when the PIN was set (stored hashed in ALL.pinRec);
    an old PIN without a recovery code falls back to a two-digit × two-digit sum and gets a code the next time the PIN is entered. */
 let pinUntil=0;
 const RECCH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -11,14 +11,27 @@ function pinLocked(){const l=pinLock(),left=l.until-Date.now();if(left>0){sBad()
 function pinWrong(){const l=pinLock();l.n++;if(l.n>=3){l.n=0;l.until=Date.now()+5*60e3}pinLockSave(l);return l.until>Date.now()}
 function pinRight(){pinLockSave({n:0,until:0})}
 function newRecCode(){const u=new Uint8Array(8);crypto.getRandomValues(u);const c=[...u].map(x=>RECCH[x%RECCH.length]).join('');ALL.pinRec=pinHash(c);
-  alert('请把这个「恢复码」写下来，收在孩子拿不到的地方：\n\n      '+c.slice(0,4)+'-'+c.slice(4)+'\n\n忘记家长密码时，要用它才能重新设定密码。这个码只显示这一次。')}
+  alert('请把这个「恢复码」写下来，收在孩子拿不到的地方：\n\n      '+c.slice(0,4)+'-'+c.slice(4)+'\n\n忘记家长密码时，可以用它重新设定密码（登入了云端同步的话，也可以用电邮验证码）。这个码只显示这一次。')}
 function recOk(a){return hashOk(ALL.pinRec,String(a||'').toUpperCase().replace(/[^A-Z0-9]/g,''))}
 // forgotten PIN → recovery code (or, for an old PIN without one, a hard sum) → must set a new PIN at once
 function pinForgot(cb){
-  if(ALL.pinRec){const a=prompt('忘记家长密码？请输入设定密码时记下的 8 个字「恢复码」：');if(a===null)return;
+  const em=pinMail();if(em&&confirm('忘记家长密码？\n\n按「确定」：寄验证码到家长电邮 '+em+'\n按「取消」：用恢复码'))return pinByMail(em,cb);
+  if(ALL.pinRec){const a=prompt('请输入设定密码时记下的 8 个字「恢复码」：');if(a===null)return;
     if(!recOk(a)){pinWrong();sBad();toast('恢复码不对 🔒');return}}
   else{const x=rnd(23,89),y=rnd(13,89),a=prompt('忘记家长密码？请算：'+x+' × '+y+' = ?');if(a===null)return;if(+a!==x*y){pinWrong();sBad();toast('答案不对 🔒');return}}
-  pinRight();const old=ALL.pin;toast('请设定新的家长密码');setPin();if(ALL.pin!==old&&cb)cb()}
+  pinReset(cb)}
+function pinReset(cb){pinRight();const old=ALL.pin;toast('请设定新的家长密码');setPin();if(ALL.pin!==old&&cb)cb()}
+// reset by email: the parent's ☁️ 云端同步 login gets a Supabase sign-in code; only someone who can read that inbox can reset the PIN
+function pinMail(){return typeof syncReady==='function'&&syncReady()&&SB&&SB.email&&navigator.onLine!==false?SB.email:''}
+async function pinByMail(em,cb){
+  try{await sbSendCode(em)}catch(e){sBad();toast('寄不出去：'+e.message);return}
+  const a=prompt('验证码已经寄到 '+em+'。\n请输入邮件里的 6 位数字；如果邮件里只有链接，不要按它，长按 →「拷贝链接」再贴到这里：');if(a===null)return;
+  const raw=a.trim(),link=/^https:\/\//i.test(raw);
+  if(!link&&!/^\d{6,10}$/.test(raw.replace(/\s/g,''))){pinWrong();sBad();toast('验证码不对 🔒');return}
+  const prev=SB;
+  try{if(link)await sbVerifyLink(raw);else await sbVerify(em,raw.replace(/\s/g,''))}catch(e){pinWrong();sBad();toast('验证码不对或已过期 🔒');return}
+  if(!SB||String(SB.email).toLowerCase()!==em.toLowerCase()){SB=prev;sbSave();pinWrong();sBad();toast('这不是家长电邮的验证码 🔒');return}
+  pinReset(cb)}
 function askPin(msg,cb){if(pinLocked())return;const a=prompt(msg);if(a===null)return;
   if(pinOk(a.trim())){pinRight();if(!ALL.pinRec){newRecCode();touch()}return cb()}
   if(pinWrong()){sBad();toast('密码输错太多次，请 5 分钟后再试 🔒');return}
