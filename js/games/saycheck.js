@@ -31,21 +31,38 @@ function endGame(){
   S.sessions.push({t:Date.now(),topic:G.topic,mode:G.mode,lang:G.lang,score:G.mode==='learn'?null:G.score,total:G.qs.length,sec:Math.round((Date.now()-G.start)/1000)});
   S.sessions=S.sessions.slice(-300);touch();
   const earned=S.stars-G.starsBefore;const newSt=STICKERS.filter(s=>s.n>G.starsBefore&&s.n<=S.stars);
-  go({name:'end',earned,newSt,mode:G.mode,score:G.score,total:G.qs.length,best:G.best||0,moves:G.moves||0,station:G.station,pass,world:G.world,ch:G.ch,missedNodes:[...new Set(G.qs.filter(q=>q.missed||q.hinted).map(q=>q.node).filter(Boolean))],newCards:cardCount()-(G.cardsBefore||0)});
+  go({name:'end',earned,newSt,mode:G.mode,score:G.score,total:G.qs.length,best:G.best||0,moves:G.moves||0,station:G.station,pass,world:G.world,ch:G.ch,missedNodes:[...new Set(G.qs.filter(q=>q.missed||q.hinted).map(q=>q.node).filter(Boolean))],review:G.mode==='learn'||G.mode==='match'?[]:G.qs.filter(q=>q.missed||q.hinted),lang:G.lang,topic:G.topic,newCards:cardCount()-(G.cardsBefore||0)});
   setTimeout(()=>{sGood();burst(document.querySelector('.endstar'),'🌟')},200);
 }
+/* results: tiles (答对 / 再练练 / 正确率 / 星星), what to review from this round, one suggested next step. Uses only this round's G.qs. */
+function resReview(v){const seen=new Set(),out=[];
+  for(const q of v.review||[]){if(q.m==='math'){const g=GAME(q.g||(G&&G.game));if(!g||seen.has('g:'+g.id))continue;seen.add('g:'+g.id);out.push(`<span class="rchip">${g.e} ${esc(g.zh)}</span>`)}
+    else if(q.w){const lg=q.lang||v.lang,k=lg+':'+(q.w.k||q.w.en);if(seen.has(k))continue;seen.add(k);out.push(`<span class="rchip">${ico(q.w)||pic(q.w)} ${esc(q.w[lg]||'')}${S.showZh&&q.w.zh?` <small>${esc(q.w.zh)}</small>`:''}</span>`)}
+    if(out.length>=8)break}
+  return out}
+function resNext(v,perfect,rev){
+  if(v.mode==='test'||v.mode==='kboss'||v.station!=null)return '';
+  if(rev.length&&v.mode!=='mist')return `<div class="rnext"><span>💡 下一步：把这几个练熟，下次就不会错啦</span><button class="btn mint" data-act="mist">📕 去错题本</button></div>`;
+  if(v.mode==='learn'&&v.topic&&v.topic!=='review'&&T(v.topic))return `<div class="rnext"><span>💡 下一步：学完了，来考考耳朵吧</span><button class="btn mint" data-act="play" data-v="listen">👂 听一听</button></div>`;
+  if(perfect)return `<div class="rnext"><span>💡 下一步：全对了！试试别的玩法</span><button class="btn mint" data-act="back">🧩 换个玩法</button></div>`;
+  return `<div class="rnext"><span>💡 下一步：再玩一次，争取全对</span><button class="btn mint" data-act="again">🔁 再玩一次</button></div>`}
 function vEnd(){
-  const v=view;const perfect=v.mode!=='learn'&&v.score===v.total;
-  return `<div class="panel setup">
-    ${pandaDressed(120,'happy','dance')}
-    <h1 style="font-size:36px;margin-top:6px">${v.mode==='match'?'全部配对成功！🎉':perfect?'全对！满分！💯':v.mode==='learn'?'学完啦！':'完成啦！'}</h1>
-    ${v.mode==='test'?(()=>{const ts=S.tests,prev=ts.length>1?ts[ts.length-2]:null;return `<p style="font-size:24px;margin:4px 0">📝 小测成绩：<b>${v.score} / ${v.total}</b>${prev?(v.score>prev.s?'　比上次进步了 '+(v.score-prev.s)+' 分！📈':v.score===prev.s?'　和上次一样，继续加油！':'　上次是 '+prev.s+' 分，下次会更好 💪'):''}</p>`})():''}
-    ${v.mode==='match'?`<p style="font-size:22px;margin:4px 0">翻了 <b>${v.moves}</b> 次${v.moves<=8?'，记性超好！🧠':''}</p>`:v.mode!=='learn'?`<p style="font-size:22px;margin:4px 0">答对 <b>${v.score}</b> / ${v.total}</p>`:''}
-    ${v.best>=3?`<p style="font-size:20px;margin:4px 0">🔥 最高连对 <b>${v.best}</b> ${v.mode==='match'?'对':'题'}</p>`:''}
-    <div class="endstar" style="font-size:48px;font-weight:800">⭐ +${v.earned}　🎋 +${v.earned}</div>
+  const v=view;const perfect=v.mode!=='learn'&&v.score===v.total;const rev=resReview(v);
+  const tile=(n,l,c)=>`<div class="rs ${c||''}"><b>${n}</b><small>${l}</small></div>`;
+  const tiles=v.mode==='learn'?tile(v.total,'📖 学了几个词','good')+tile('+'+v.earned,'⭐ 星星','star')
+    :v.mode==='match'?tile(v.total,'🃏 配对成功','good')+tile(v.moves,'🔄 翻牌次数')+tile('+'+v.earned,'⭐ 星星','star')
+    :tile(v.score,'✅ 一次答对','good')+tile(v.total-v.score,'🔁 再练练','try')+tile(Math.round(100*v.score/Math.max(1,v.total))+'%','🎯 正确率')+tile('+'+v.earned,'⭐ 星星','star');
+  return `<div class="panel setup res">
+    ${pandaDressed(110,perfect||v.mode==='match'?'party':'happy','dance')}
+    <h1 style="font-size:34px;margin:6px 0 2px">${v.mode==='match'?'全部配对成功！🎉':perfect?'全对！满分！💯':v.mode==='learn'?'学完啦！':'完成啦！'}</h1>
+    ${v.mode==='test'?(()=>{const ts=S.tests,prev=ts.length>1?ts[ts.length-2]:null;return `<p style="font-size:22px;margin:4px 0">📝 小测成绩：<b>${v.score} / ${v.total}</b>${prev?(v.score>prev.s?'　比上次进步了 '+(v.score-prev.s)+' 分！📈':v.score===prev.s?'　和上次一样，继续加油！':'　上次是 '+prev.s+' 分，下次会更好 💪'):''}</p>`})():''}
+    <div class="rstats endstar">${tiles}</div>
+    <p class="zh" style="margin:6px 0 0">${v.best>=3?`🔥 最高连对 <b>${v.best}</b> ${v.mode==='match'?'对':'题'}　`:''}🎋 Momo 的竹子 +${v.earned}</p>
+    ${rev.length?`<div class="rrev"><h2>📌 要再看看</h2><div class="rchips">${rev.join('')}</div></div>`:''}
     ${v.mode==='kboss'?(()=>{const W=WORLDS.find(x=>x.id===v.world)||WORLDS[0];return v.pass?`<div class="panel" style="background:var(--soft);border-style:dashed">👑 打败了「${esc(W.bossZh)}」！${esc(W.zh)}第 ${v.ch+1} 章完成，下一章开放了。</div>`:`<div class="panel" style="background:var(--soft);border-style:dashed">💪 ${W.boss} 还剩一点血！答对 ${Math.ceil(v.total*0.75)} 题就能打败它。${v.missedNodes&&v.missedNodes.length?'先去练练：'+v.missedNodes.map(esc).join('、'):''}</div>`})():''}
     ${v.station!=null?(v.pass?`<div class="panel" style="background:var(--soft);border-style:dashed">🗺️ 过关啦！${STATIONS[v.station].k==='boss'?'打败大魔王，得到奖杯卡片 🏆！':'下一站已经解锁'}</div>`:`<div class="panel" style="background:var(--soft);border-style:dashed">💪 差一点！答对 ${Math.ceil(v.total*0.75)} 题就能过关，再试一次吧</div>`):''}${v.newCards>0?`<div class="panel row" style="background:var(--soft);border-style:dashed;justify-content:center">📚 得到 ${v.newCards} 张新卡片！<button class="btn sky" data-act="album">去看看</button></div>`:''}${v.newSt.length?`<div class="panel" style="background:var(--soft);border-style:dashed">🎁 获得新贴纸：${v.newSt.map(s=>`<span style="font-size:40px">${s.e}</span> ${s.zh}`).join('、')}</div>`:''}
-    <div class="row" style="justify-content:center;margin-top:14px">
+    ${resNext(v,perfect,rev)}
+    <div class="row rbtns">
       <button class="btn sun big" data-act="again">🔁 再玩一次</button>
       <button class="btn big" data-act="back">${v.station!=null||v.mode==='kboss'?'🗺️ 回地图':'🧩 换个玩法'}</button>
       <button class="btn big" data-act="pet">🐼 去喂 Momo</button>

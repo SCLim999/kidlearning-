@@ -173,6 +173,11 @@ app.addEventListener('change',e=>{const t=e.target;if(t.id==='imp'){importData(t
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nm'){app.querySelector('[data-act="start"]').click();return}
   const t=e.target;if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'&&t.dataset&&t.dataset.act&&t.tagName.toLowerCase()==='g'){e.preventDefault();t.dispatchEvent(new MouseEvent('click',{bubbles:true}))}});
 
+/* keyboard: listened on document so it works when nothing in the app has focus */
+document.addEventListener('keydown',e=>{  if(view.name==='game'&&G&&G.mode!=='match'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/^(input|textarea|select|button)$/i.test(e.target.tagName||'')){
+    const q=G.qs[G.i];if(q&&!q.done&&/^[1-9]$/.test(e.key)){const b=app.querySelector(`[data-act="ans"][data-v="${+e.key-1}"]:not([disabled])`);if(b){e.preventDefault();b.click()}return}
+    if(q&&q.done&&e.key==='Enter'){const b=app.querySelector('[data-act="next"]');if(b){e.preventDefault();b.click()}return}}});
+
 render();
 setTimeout(initCloud,0);
 setTimeout(initSync,0);

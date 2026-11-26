@@ -429,3 +429,75 @@ h2{font-size:26px;margin-bottom:12px}
 @keyframes wig{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 @media (prefers-reduced-motion: reduce){.pop,.wiggle,.shake{animation:none}.pop{display:none}}
 @media (max-width:560px){.prompt{font-size:90px}.word{font-size:36px}.opt.emo{font-size:56px}.opt{font-size:24px;min-height:92px}.slot{width:42px;height:52px;font-size:26px}.tile{width:50px;height:56px;font-size:26px}}
+
+/* ===== shared game layout (UI redesign phase 1, see docs/ui-redesign-phase1.md) =====
+   gbar → coach (Momo guidance) → qcard (question) → .aarea (answers) → .fb (feedback: ok / try) */
+:root{--fb-ok:#E3F8EC;--fb-okline:#2FB36E;--fb-try:#FFF4CC;--fb-tryline:#E9A23B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--fb-ok:#1D4536;--fb-okline:#4FD08C;--fb-try:#463D1C;--fb-tryline:#E9B85B}}
+:root[data-theme="dark"]{--fb-ok:#1D4536;--fb-okline:#4FD08C;--fb-try:#463D1C;--fb-tryline:#E9B85B}
+.gbar{gap:10px;margin-bottom:12px;flex-wrap:nowrap}
+.gprog{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.gnum{font-weight:800;font-size:16px;line-height:1.1;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gnum b{color:var(--ink);font-size:21px}
+.gbar .gprog .gsegs{display:flex;flex-wrap:nowrap;gap:4px;order:0;flex:none;justify-content:flex-start}
+.gbar .gprog .gsegs i{flex:1 1 0;min-width:5px;width:auto;height:12px;border-radius:99px;border:2px solid var(--edge);background:var(--surface)}
+.gbar .gprog .gsegs i.ok{background:var(--good)}.gbar .gprog .gsegs i.no{background:var(--sun)}.gbar .gprog .gsegs i.now{background:var(--sky)}
+.coach{display:flex;align-items:center;gap:10px;max-width:760px;margin:0 auto 12px;text-align:left}
+.coach .cbub{flex:1;min-width:0;position:relative;background:var(--surface);border:var(--bw) solid var(--edge);border-radius:20px;padding:8px 14px;font-size:19px;font-weight:800;line-height:1.3}
+.coach .cbub::before{content:"";position:absolute;left:-11px;top:50%;margin-top:-8px;border-style:solid;border-width:8px 11px 8px 0;border-color:transparent var(--edge) transparent transparent}
+.coach .cbub small{display:block;font-size:15px;font-weight:600;color:var(--muted)}
+.coach .cbub .combo{margin:0 6px 2px 0}
+.coach .cbtns{display:flex;gap:6px;flex:none}
+.coach .cbtns .btn.round{width:52px;height:52px;font-size:22px}
+.qcard{max-width:640px;margin:0 auto;background:var(--surface);border:var(--bw) solid var(--edge);border-radius:var(--rp);padding:12px 16px}
+.qcard.qsmall{padding:10px}
+.qcard .prompt{margin:0}
+.qcard .mq{margin:0}
+.qlisten{font-size:28px}
+.aarea{margin-top:16px}
+.row.aarea+.row.aarea{margin-top:12px}
+.fb{max-width:640px;margin:16px auto 0;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;border:var(--bw) solid var(--fb-okline);border-radius:22px;padding:12px 14px;text-align:left;box-shadow:none}
+.fb.ok{background:var(--fb-ok);border-color:var(--fb-okline);border-style:solid}
+.fb.try{background:var(--fb-try);border-color:var(--fb-tryline);border-style:dashed;grid-template-columns:auto 1fr auto auto}
+.fb .fbi{font-size:30px;line-height:1}
+.fb .ft{font-size:20px;font-weight:700;line-height:1.35}
+.fb .ft small{display:block;font-weight:500;color:var(--muted);font-size:17px}
+.fb.try .tm{font-size:18px;font-weight:700}
+@media (max-width:700px){.gbar .btn.round{width:48px;height:48px;font-size:22px}.gbar>.btn.round:first-child{margin-right:0}}
+@media (max-width:560px){
+  .gnum{font-size:14px}.gnum b{font-size:18px}.gbar .pill{padding:3px 9px;font-size:15px}
+  .coach{gap:6px;margin-bottom:10px}.coach .cbub{font-size:16px;padding:7px 10px}.coach .cbub small{font-size:14px}
+  .coach .cbtns{gap:4px}.coach .cbtns .btn.round{width:44px;height:44px;font-size:19px}
+  .qcard{padding:8px 10px}.qcard .prompt{font-size:76px}.qlisten{font-size:22px}
+  .fb{grid-template-columns:auto 1fr;gap:8px 10px}.fb .fbn{grid-column:1/-1;width:100%}
+  .fb.try{grid-template-columns:auto 1fr auto}.fb.try .tl{grid-column:1/-1;flex-wrap:wrap}
+  .fb .ft{font-size:18px}
+}
+@media (max-width:380px){.coach .momo{display:none}.coach .cbub::before{display:none}}
+/* results screen */
+.res{max-width:680px}
+.rstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0 4px}
+.rs{background:var(--soft);border:var(--bw) solid var(--edge);border-radius:var(--rb);padding:10px 8px}
+.rs b{display:block;font-size:34px;line-height:1.1}
+.rs small{display:block;font-size:15px;font-weight:700;color:var(--muted)}
+.rs.good{background:var(--fb-ok)}.rs.try{background:var(--fb-try)}.rs.star b{color:var(--ink)}
+.rrev{text-align:left;margin:14px 0 0}
+.rrev h2{font-size:20px;margin:0 0 6px}
+.rchips{display:flex;flex-wrap:wrap;gap:8px}
+.rchip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--edge);border-radius:99px;padding:4px 12px;font-weight:800;font-size:18px}
+.rchip small{font-weight:600;color:var(--muted);font-size:15px}
+.rchip .ico,.rchip svg{width:26px;height:26px}
+.rnext{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;background:var(--fb-try);border:var(--bw) dashed var(--fb-tryline);border-radius:20px;padding:10px 14px;margin:16px 0 0;font-weight:800;font-size:18px}
+.rbtns{justify-content:center;margin-top:14px}
+@media (max-width:560px){.rstats{grid-template-columns:repeat(2,1fr)}.rs b{font-size:28px}.rbtns .btn.big{font-size:19px;padding:10px 16px;min-height:56px}}
+/* one centred column for the game on wide screens */
+.gbar{max-width:760px;margin-left:auto;margin-right:auto}
+.coach{max-width:700px}
+/* tints follow each skin's own surface colour, so text in --ink stays readable in every skin and in dark mode (fallback above for old browsers) */
+@supports (background:color-mix(in srgb,red 50%,blue)){
+  .fb.ok,.rs.good{background:color-mix(in srgb,var(--good) 20%,var(--surface))}
+  .fb.try,.rs.try,.rnext{background:color-mix(in srgb,var(--sun) 24%,var(--surface))}
+  .fb.ok{border-color:var(--good)}
+  .fb.try,.rnext{border-color:color-mix(in srgb,var(--sun) 70%,var(--edge))}
+}
+.fb .ft,.fb.try .tm,.rnext{color:var(--ink)}
