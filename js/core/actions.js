@@ -120,11 +120,11 @@ app.addEventListener('click',e=>{
     case 'printwk':go({name:'print',off:+v});break;
     case 'doprint':window.print();break;
     case 'letter':showLetter();break;
-    case 'pinset':setPin();break;
+    case 'pinset':if(ALL.pin)changePin();else setPin();break;
     case 'admin':openAdmin();break;
     case 'adminkid':needPin(()=>go({name:'admin',kid:v}));break;
     case 'copyadmin':{const t=adminText(v);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('摘要已复制 📋'),()=>toast('复制不了，请手动截图'));break}
-    case 'pinoff':if(confirm('要取消家长密码吗？')){delete ALL.pin;touch();toast('已取消密码');render()}break;
+    case 'pinoff':pinCheckNow('取消家长密码',()=>{if(confirm('要取消家长密码吗？取消后孩子可以随意打开家长设置。')){delete ALL.pin;delete ALL.pinRec;touch();toast('已取消密码');render()}});break;
     case 'saycheck':startSay();break;
     case 'import':document.getElementById('imp').click();break;
     case 'pat':{const t=pick(MOMO_TALK),li=rnd(0,2);const el=document.getElementById('petsay');if(el)el.innerHTML=esc(t[2])+'<small>'+esc(li===2?t[0]:t[li])+'</small>';speak(t[li],['en','ms','zh'][li]);

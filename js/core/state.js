@@ -24,7 +24,8 @@ function sha256hex(str){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3
   return H.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('')}
 function pinHash(pin,salt){if(!salt){const u=new Uint8Array(8);crypto.getRandomValues(u);salt=[...u].map(x=>x.toString(16).padStart(2,'0')).join('')}
   let h=salt+':'+pin;for(let i=0;i<500;i++)h=sha256hex(salt+h);return 'h1:'+salt+':'+h}
-function pinOk(pin){const m=PINH_RE.test(ALL.pin||'')&&ALL.pin.split(':');return !!m&&pinHash(pin,m[1])===ALL.pin}
+function hashOk(stored,val){const m=PINH_RE.test(stored||'')&&stored.split(':');return !!m&&pinHash(val,m[1])===stored}
+function pinOk(pin){return hashOk(ALL.pin,pin)}
 function fixKid(k){const b=blank();
   k.name=str(k.name,16);k.avatar=AVAS.includes(k.avatar)?k.avatar:'🐼';k.lang=k.lang==='ms'?'ms':'en';k.subj=['lang','math','sci','cn','world'].includes(k.subj)?k.subj:'lang';
   k.showZh=k.showZh!==false;k.autoLook=k.autoLook!==false;k.sound=k.sound!==false;k.goal=[5,10,15,20].includes(+k.goal)?+k.goal:10;k.limit=[0,15,20,30].includes(+k.limit)?+k.limit:0;
@@ -47,7 +48,7 @@ function normalize(o){
   if(o&&o.kids&&typeof o.kids==='object'){const kids={};Object.keys(o.kids).slice(0,20).forEach((key,i)=>{const raw=o.kids[key];if(!raw||typeof raw!=='object'||Array.isArray(raw))return;
       const k=fixKid(Object.assign(blank(),raw));if(!raw.bambooInit)k.bamboo=Math.max(0,num(raw.stars));kids[ID_RE.test(key)?key:'k'+(i+1)]=k});
     if(!Object.keys(kids).length)kids.k1=blank();const out={v:2,cur:kids[o.cur]?o.cur:Object.keys(kids)[0],kids,updatedAt:num(o.updatedAt)};
-    if(typeof o.pin==='string'&&PINH_RE.test(o.pin))out.pin=o.pin;else if(typeof o.pin==='string'&&/^\d{4}$/.test(o.pin))out.pin=pinHash(o.pin);if(o.lastBackup)out.lastBackup=num(o.lastBackup);return out}
+    if(typeof o.pin==='string'&&PINH_RE.test(o.pin))out.pin=o.pin;else if(typeof o.pin==='string'&&/^\d{4}$/.test(o.pin))out.pin=pinHash(o.pin);if(out.pin&&typeof o.pinRec==='string'&&PINH_RE.test(o.pinRec))out.pinRec=o.pinRec;if(o.lastBackup)out.lastBackup=num(o.lastBackup);return out}
   const raw=o&&typeof o==='object'?o:{};const k=fixKid(Object.assign(blank(),raw));if(!raw.bambooInit)k.bamboo=Math.max(0,num(raw.stars));return {v:2,cur:'k1',kids:{k1:k},updatedAt:k.updatedAt||0}}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return normalize(JSON.parse(r))}catch(e){}return normalize(null)}
 let ALL=load();let S=ALL.kids[ALL.cur];
