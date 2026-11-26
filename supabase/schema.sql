@@ -27,8 +27,11 @@ drop policy if exists "own backups" on public.momo_backups;
 create policy "own backups" on public.momo_backups for all to authenticated
   using (owner = auth.uid()) with check (owner = auth.uid());
 
--- not reachable without a login
+-- not reachable without a login; a signed-in parent may use the tables (row-level security above limits them to their own rows).
+-- Newer Supabase projects no longer grant table access to the API roles by default, so grant it here.
 revoke all on public.momo_progress, public.momo_backups from anon;
+grant select, insert, update, delete on public.momo_progress, public.momo_backups to authenticated;
+grant usage, select on sequence public.momo_backups_id_seq to authenticated;
 
 -- 「删除云端资料」 also removes the parent's login itself
 create or replace function public.delete_my_account() returns void
