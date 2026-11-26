@@ -19,3 +19,6 @@ function panda(size,mood){
   <circle cx="27" cy="65" r="6" fill="#FF8FB1" opacity=".75"/><circle cx="73" cy="65" r="6" fill="#FF8FB1" opacity=".75"/>${mouth}</svg>`}
 const L=()=>S.lang, other=()=>S.lang==='en'?'ms':'en';
 function zh(t){return S.showZh?`<div class="helpzh">${esc(t)}</div>`:''}
+
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const sumOf=a=>a.reduce((x,y)=>x+y,0);

@@ -1,27 +1,4 @@
 /* ---------------- 数学 Math ---------------- */
-const OBJ0=['🍎','🍓','🐟','⭐','🎈','🐥','🍬','🚗','🌸','⚽','🐞','🍩'],OBJ=OBJ0.slice();
-/* 每一轮换场景和画风: a random scene (background tint, decorations, counting objects) and a random art style per game round */
-const SCENES=[
- {id:'ocean',e:'🌊',zh:'海底',obj:['🐠','🐙','🐚','🦀','🐡','🐳','🦑','🐟'],deco:['🐠','💧','🐙','🐚','🌊','🐳']},
- {id:'space',e:'🚀',zh:'太空',obj:['⭐','🪐','🚀','🛸','🌙','☄️','👽','🛰️'],deco:['🪐','⭐','🚀','🌙','✨','🛸']},
- {id:'forest',e:'🌳',zh:'森林',obj:['🍄','🐿️','🦔','🌰','🍁','🐞','🦉','🐻'],deco:['🌳','🍄','🦉','🍁','🌲','🐿️']},
- {id:'candy',e:'🍭',zh:'糖果屋',obj:['🍭','🍬','🧁','🍩','🍪','🍫','🍰','🍦'],deco:['🍭','🧁','🍬','🍩','🍰','🍪']},
- {id:'farm',e:'🚜',zh:'农场',obj:['🐔','🐄','🐷','🥕','🌽','🐑','🐣','🦆'],deco:['🚜','🐄','🌽','🐔','🌻','🐑']},
- {id:'garden',e:'🌸',zh:'花园',obj:['🌸','🌻','🦋','🐝','🐌','🌷','🐛','🌼'],deco:['🌸','🦋','🌷','🐝','🌻','🌼']},
- {id:'city',e:'🏙️',zh:'城市',obj:['🚗','🚌','🚲','🚕','🚓','🚑','🛴','🚂'],deco:['🏙️','🚌','🚦','🚕','🏢','🚲']},
- {id:'toys',e:'🧸',zh:'玩具房',obj:['🧸','⚽','🪁','🎈','🎲','🪀','🚂','🎨'],deco:['🧸','🎈','🪁','🎲','⚽','🪀']},
- {id:'fruit',e:'🍉',zh:'水果摊',obj:['🍎','🍌','🍇','🍓','🍊','🍉','🍍','🥭'],deco:['🍉','🍍','🍇','🍌','🍓','🍊']}];
-let LOOK=null;
-function newLook(){if(S.autoLook===false){LOOK=null;OBJ.splice(0,OBJ.length,...OBJ0);return}
-  const prev=LOOK;const SK=SKINS.map(x=>x[0]).filter(x=>x!=='glass');let sc=pick(SCENES),sk=pick(SK);if(prev){let n=0;while((sc.id===prev.scene.id||sk===prev.skin)&&n++<20){sc=pick(SCENES);sk=pick(SK)}}
-  LOOK={scene:sc,skin:sk};OBJ.splice(0,OBJ.length,...sc.obj)}
-function sceneDeco(){let d=document.getElementById('scenedeco');const on=LOOK&&['game','end','duelplay'].includes(view.name);
-  if(!on){if(d)d.remove();delete document.documentElement.dataset.scene;return}
-  document.documentElement.dataset.scene=LOOK.scene.id;
-  if(!d){d=document.createElement('div');d.id='scenedeco';d.setAttribute('aria-hidden','true');document.body.prepend(d)}
-  if(d.dataset.s!==LOOK.scene.id){d.dataset.s=LOOK.scene.id;const pos=[[4,14],[88,10],[2,52],[90,48],[6,84],[86,86]];d.innerHTML=LOOK.scene.deco.map((e,i)=>`<span style="left:${pos[i][0]}%;top:${pos[i][1]}%;animation-delay:${-i*1.3}s">${e}</span>`).join('')}}
-const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-const sumOf=a=>a.reduce((x,y)=>x+y,0);
 function numOpts(ans,min,max,step,fmt){step=step||1;fmt=fmt||(v=>String(v));const set=new Set([ans]);let n=0;
   while(set.size<4&&n<80){n++;const x=ans+pick([-3,-2,-1,1,2,3])*step;if(x>=min&&x<=max)set.add(x)}
   let k=1;while(set.size<4){set.add(ans+k*step);k++}return shuffle([...set]).map(v=>({v,l:fmt(v)}))}
@@ -191,49 +168,7 @@ const MG={
      opts:shuffle(wk?['5','6','7','8']:['10','11','12','7']).map(x=>({v:x,l:x})),explain:wk?'一个星期有 <b>7</b> 天。':'一年有 <b>12</b> 个月。',sayAns:wk?'一个星期有7天':'一年有12个月'}}
    return L===1?calQ(WEEKZ,'天','cal'):calQ(MONZ,'个月','mon')}}
 };
-const GKIND=g=>MG[g]?'math':SG[g]?'sci':CG[g]?'cn':WG[g]?'world':null, GAME=g=>MG[g]||SG[g]||CG[g]||WG[g];
-// One card and one year grouping for every subject page, so all subjects look the same
-function gameCard([k,g]){const r=(S[GKIND(k)]||{})[k]||{c:0,w:0};
-  return `<button class="topic" style="background:${g.hue}" data-act="mtopic" data-v="${k}"><div class="ic">${g.e}</div><h3>${g.zh}</h3><div class="t2">${g.d}</div><div class="foot"><div class="cnt">${r.c?'✅ 答对 '+r.c+' 题':'还没玩过'}</div></div></button>`}
-const groups=(gs,card)=>gs.filter(([,xs])=>xs.length).map(([h,xs])=>`<h2 class="ghead">${h}</h2>`+xs.map(card).join('')).join('');
-const byYear=(all,card)=>groups([['📗 一年级',all.filter(([,g])=>!g.yr)],['📘 二年级',all.filter(([,g])=>g.yr===2)]],card);
-const LVN=['','容易','中等','困难'];
-// 困难: games without their own l3 mix 容易 and 中等 questions
-const genL=(g,l)=>l<3||g.l3?g.gen(l):g.gen(rnd(1,2));
-const isMG=m=>m==='math'||m==='sci'||m==='cn'||m==='world';
-function recordMath(g,ok,lvl){if(lvl>=1&&lvl<=3){const L=S.lv||(S.lv={}),k=g+':'+lvl,r2=L[k]||(L[k]={c:0,w:0});ok?r2.c++:r2.w++}const kind=GKIND(g);const store=S[kind]||(S[kind]={});const r=store[g]||(store[g]={c:0,w:0});const d=dayRec();if(ok){r.c++;d.correct++;const f={math:'mc',sci:'sc',cn:'cc',world:'wc'}[kind];d[f]=(d[f]||0)+1;addStars(1)}else{r.w++;d.wrong++}touch()}
-/* no repeated questions: each slot takes the least-recently-seen of up to 60 candidates
-   (this round's picks count as most recent), so a round has no repeats when the bank is big enough,
-   repeats in small banks are spread out, and the next round avoids what was just asked. History kept in memory. */
-const sigTxt=h=>String(h||'').replace(/\p{Extended_Pictographic}|\uFE0F|\u200D/gu,'');
-const qSig=q=>{if(q._sig)return q._sig;let v='';try{v=sigTxt(q.html(false))+'|'+(q.optsFn?q.optsFn(false):q.opts.map(o=>o.l==null?o.v:o.l)).map(sigTxt).sort().join('~')}catch(e){}
-  return q._sig=String(q.say||q.title||'')+'|'+String(q.ans)+'|'+v};
-const RECENT={};
-function genSet(gm,level,n,key){const out=[],hist=(RECENT[key]||[]).slice();
-  for(let i=0;i<n;i++){let best=null,bs=-2;
-    for(let t=0;t<60;t++){const q=genL(gm,level),k=hist.indexOf(qSig(q)),sc=k<0?1e9:k;if(sc>bs){best=q;bs=sc;if(sc===1e9)break}}
-    out.push(best);hist.unshift(qSig(best))}
-  RECENT[key]=hist.slice(0,80);return out}
-function startMath(game,level){newLook();if(overLimit()){showRest();return}resetRec();const kind=GKIND(game),g=GAME(game);
-  G={topic:kind+':'+game,mode:kind,game,level,lang:'zh',i:0,score:0,combo:0,best:0,start:Date.now(),starsBefore:S.stars,cardsBefore:cardCount(),
-     qs:genSet(g,level,level===3?10:8,game+':'+level).map(q=>Object.assign(q,{m:'math',g:game,lvl:level,missed:false,hinted:false,done:false,hint:false,wrongIdx:[]}))};
-  go({name:'game'});setTimeout(speakCur,350)}
-function vMath(){const q=cur();const h=q.hint||q.done;const labels=q.optsFn?q.optsFn(h):q.opts.map(o=>o.l);const first=!q.missed&&!q.hinted;
-  return gameBar()+`<div class="stage">
-   <div class="mq">${q.title}</div>
-   <div class="mview">${q.html(h)}</div>
-   <div class="row" style="justify-content:center;margin:6px 0"><button class="btn sky" data-act="sayCur">🔊 听题目</button>${q.done||q.hint||q.lvl===3?'':'<button class="btn" data-act="mhint">💡 提示</button>'}</div>
-   <div class="opts${q.wide?' wide':''}">${q.opts.map((o,i)=>`<button class="opt${q.big?' emo':''} ${q.done&&o.v===q.ans?'right':''} ${q.wrongIdx.includes(i)?'wrong':''} ${q.reveal&&!q.done&&o.v===q.ans?'glow':''}" data-act="ans" data-v="${i}" ${q.done?'disabled':''}>${labels[i]}</button>`).join('')}</div>
-   ${tutorBox(q)}${q.done?`<div class="feedback">${pandaDressed(64,"happy",G.combo>=3?"dance":"")}<div class="ft">${comboBadge()}${first?pick(CHEER)[2]:'答对了！下次会更快哦 💪'}<small>${q.explain}</small></div><button class="btn sun big" data-act="next">${G.i<G.qs.length-1?'下一题 ▶':'看成绩 🎉'}</button></div>`:''}
-  </div>`}
 const mathCards=()=>byYear(Object.entries(MG),gameCard);
-function vMTopic(){const g=GAME(view.game);
-  return bar('home')+`<div class="panel row" style="background:${g.hue};color:#2A2F6B"><div style="font-size:72px;line-height:1">${g.e}</div><div><h1 style="font-size:36px">${g.zh}</h1><div style="font-weight:700">${g.d}</div></div><div class="spacer"></div><button class="btn" data-act="subjpage">⬅ 返回</button></div>
-  <p class="zh" style="margin:0 0 8px">🐼 Momo 推荐你玩「${LVN[recLevel(view.game)]}」${recWhy(view.game)}</p><div class="modes"><button class="btn mode ${recLevel(view.game)===1?'recmode':''}" data-act="mplay" data-v="1"><span class="e">🌱</span><b>${LVN[1]}</b><span>${g.l1}</span></button><button class="btn mode ${recLevel(view.game)===2?'recmode':''}" data-act="mplay" data-v="2"><span class="e">⭐</span><b>${LVN[2]}</b><span>${g.l2}</span></button><button class="btn mode ${recLevel(view.game)===3?'recmode':''}" data-act="mplay" data-v="3"><span class="e">🚀</span><b>${LVN[3]}</b><span>${g.l3||'容易和中等混合'} · 10 题 · 没有提示</span></button></div>
-  <div class="panel" style="margin-top:18px"><h2>怎么玩？</h2><p style="margin:0">${g.how}</p></div>
-  ${g.fig?`<div class="panel" style="margin-top:18px"><h2>🔍 看看里面</h2><iframe class="figframe" src="fig/${g.fig}.html" title="${g.zh}：立体图" loading="lazy"></iframe></div>`:''}`}
-// fig/*.html posts its card height so the iframe fits without scrollbars
-addEventListener('message',e=>{const d=e.data;if(!d||typeof d!=='object'||!d.momoFig)return;const h=Math.round(Number(d.h));if(!(h>50&&h<4000))return;document.querySelectorAll('.figframe').forEach(f=>{if(f.contentWindow===e.source)f.style.height=h+'px'})});
 function mathPanel(){const rows=Object.entries(MG).map(([k,g])=>{const r=S.math[k]||{c:0,w:0},t=r.c+r.w,acc=t?Math.round(r.c*100/t):0;
   return `<div style="font-weight:700">${g.e} ${g.zh}${g.yr===2?' <span class="zh" style="font-size:13px">二年级</span>':''}</div><div class="mrow"><div class="meter"><i style="width:${acc}%;background:var(--sun)"></i></div>${t?'答对 '+r.c+' 题 · '+acc+'%':'还没玩过'}</div>`}).join('');
   return `<div class="panel"><h2>数学 🔢</h2><div class="zh" style="font-size:14px;margin:-6px 0 10px">黄色条＝第一次就答对的比例</div><div class="bars2">${rows}</div></div>`}
